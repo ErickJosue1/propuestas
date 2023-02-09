@@ -13,4 +13,7 @@ class Document_Supporting extends Model
     
     protected $fillable = ['name'];
 
+    public function announcements(){
+        return $this->belongsToMany(Announcements::class);
+    }
 }
