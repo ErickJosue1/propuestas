@@ -18,7 +18,9 @@ const props = defineProps({
   },
 });
 
-const form = useForm();
+const form = useForm(
+  { name: '' }
+);
 
 const verificationLinkSent = computed(
   () => props.status === "verification-link-sent"
@@ -31,6 +33,7 @@ const submit = () => {
 
 <template>
   <LayoutGuest>
+
     <Head title="Email Verification" />
 
     <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
@@ -53,15 +56,10 @@ const submit = () => {
         <BaseDivider />
 
         <BaseLevel>
-          <BaseButton
-            type="submit"
-            color="info"
-            label="Resend Verification Email"
-            :class="{ 'opacity-25': form.processing }"
-            :disabled="form.processing"
-          />
+          <BaseButton type="submit" color="info" label="Resend Verification Email"
+            :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
           <Link :href="route('logout')" method="post" as="button">
-            Logout
+          Logout
           </Link>
         </BaseLevel>
       </CardBox>

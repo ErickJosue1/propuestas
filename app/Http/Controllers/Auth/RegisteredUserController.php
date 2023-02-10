@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Fortify\PasswordValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -13,15 +14,28 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Colony;
+use App\Models\Workplace;
+use Illuminate\Support\Arr;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Validator;
+
 
 class RegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
      */
+
+    use PasswordValidationRules;
+
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', [
+            'roles' => Role::pluck('name'),
+            'workplaces' => Workplace::all(),
+            'colonies' => Colony::all(),
+        ]);
     }
 
     /**
@@ -29,19 +43,30 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(array $input): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        Validator::make($input, [
+            'curp' => ['required', 'string', 'max:18', 'unique:users'],
+            'name' => ['required', 'string', 'max:255'],
+            'paternal_surname' => ['required', 'string', 'max:255'],
+            'maternal_surname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => $this->passwordRules(),
+            'role' => ['required', 'string',],
+            'colony_id' => ['required', 'integer', 'exists:colonies,id'],
+            'workplace_id' => ['required', 'integer', 'exists:workplaces,id'],
+        ])->validate();
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            'curp' => $input['curp'],
+            'name' => $input['name'],
+            'paternal_surname' => $input['paternal_surname'],
+            'maternal_surname' => $input['maternal_surname'],
+            'colony_id' => $input['colony_id'],
+            'workplace_id' => $input['workplace_id'],
+            'email' => $input['email'],
+            'password' => Hash::make($input['password']),
+        ])->assignRole($input['role']);
 
         event(new Registered($user));
 

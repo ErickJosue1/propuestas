@@ -65,7 +65,7 @@ const submit = () => {
         <FormField
           label="Email"
           label-for="email"
-          help="Please enter your email"
+          help="Porfavor introduce tu eamil"
         >
           <FormControl
             v-model="form.email"
@@ -78,9 +78,9 @@ const submit = () => {
         </FormField>
 
         <FormField
-          label="Password"
-          label-for="password"
-          help="Please enter your password"
+          label="Contraseña"
+          label-for="Contraseña"
+          help="Porfavor introduce tu contraseña"
         >
           <FormControl
             v-model="form.password"
@@ -95,7 +95,7 @@ const submit = () => {
         <FormCheckRadioGroup
           v-model="form.remember"
           name="remember"
-          :options="{ remember: 'Remember' }"
+          :options="{ remember: 'Recordar' }"
         />
 
         <BaseDivider />
@@ -105,7 +105,7 @@ const submit = () => {
             <BaseButton
               type="submit"
               color="info"
-              label="Login"
+              label="Iniciar sesion"
               :class="{ 'opacity-25': form.processing }"
               :disabled="form.processing"
             />
@@ -114,13 +114,13 @@ const submit = () => {
               route-name="password.request"
               color="info"
               outline
-              label="Remind"
+              label="Olvidaste tu contraseña?"
             />
           </BaseButtons>
           <Link
             :href="route('register')"
           >
-            Register
+            Registrarse
           </Link>
         </BaseLevel>
       </CardBox>

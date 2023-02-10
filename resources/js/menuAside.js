@@ -10,7 +10,9 @@ import {
   mdiTelevisionGuide,
   mdiResponsive,
   mdiPalette,
-  mdiReact,
+  mdiClockCheck,
+  mdiBookshelf
+
 } from "@mdi/js";
 
 
@@ -21,53 +23,50 @@ export default [
     icon: mdiMonitor,
     label: "Dashboard",
   },
- /*  {
-    href: "/tables",
-    to: "/tables",
-    label: "Tables",
-    icon: mdiTable,
-  },
-  {
-    href: '/forms',
-    to: "/forms",
-    label: "Forms",
-    icon: mdiSquareEditOutline,
-  },
-  {
-    href: "/ui",
-    to: "/ui",
-    label: "UI",
-    icon: mdiTelevisionGuide,
-  },
-  {
-    href: "/responsive",
-    to: "/responsive",
-    label: "Responsive",
-    icon: mdiResponsive,
-  },
-  {
+
+  /*  {
+     href: "/tables",
+     to: "/tables",
+     label: "Tables",
+     icon: mdiTable,
+   },
+     {
     to: "/",
     href: "/",
     label: "Styles",
     icon: mdiPalette,
   },
-  {
-    href: "/profile",
-    to: "/profile",
-    label: "Profile",
-    icon: mdiAccountCircle,
-  },
-  {
-    to: "/login",
-    label: "Login",
-    icon: mdiLock,
-  },
-  {
-    href: "/error",
-    to: "/error",
-    label: "Error",
-    icon: mdiAlertCircle,
-  }, */
+
+   {
+     href: "/ui",
+     to: "/ui",
+     label: "UI",
+     icon: mdiTelevisionGuide,
+   },
+   {
+     href: "/responsive",
+     to: "/responsive",
+     label: "Responsive",
+     icon: mdiResponsive,
+   },
+ 
+   {
+     href: "/profile",
+     to: "/profile",
+     label: "Profile",
+     icon: mdiAccountCircle,
+   },
+   {
+     to: "/login",
+     label: "Login",
+     icon: mdiLock,
+   },
+   {
+     href: "/error",
+     to: "/error",
+     label: "Error",
+     icon: mdiAlertCircle,
+   }, */
   {
     label: "Admin",
     icon: mdiViewList,
@@ -99,16 +98,16 @@ export default [
       },
     ],
   },
+
   {
-    href: "https://github.com/justboil/admin-one-vue-tailwind",
-    label: "GitHub",
-    icon: mdiGithub,
+    label: "Propuestas",
+    icon: mdiBookshelf,
     target: "_blank",
   },
   {
-    href: "https://github.com/justboil/admin-one-react-tailwind",
-    label: "React version",
-    icon: mdiReact,
+    label: "Convocatorias",
+    icon: mdiClockCheck,
     target: "_blank",
   },
+
 ];

@@ -48,6 +48,7 @@ const props = defineProps({
   borderless: Boolean,
   transparent: Boolean,
   ctrlKFocus: Boolean,
+  disabled: Boolean
 });
 
 const emit = defineEmits(["update:modelValue", "setRef"]);
@@ -133,13 +134,14 @@ if (props.ctrlKFocus) {
       v-model="computedValue"
       :name="name"
       :class="inputElClass"
+      :disabled="disabled"
     >
       <option
         v-for="option in options"
         :key="option.id ?? option"
-        :value="option"
+        :value="option.id ?? option"
       >
-        {{ option.label ?? option }}
+        {{ option.name ?? option }}
       </option>
     </select>
     <textarea
@@ -158,6 +160,7 @@ if (props.ctrlKFocus) {
       ref="inputEl"
       v-model="computedValue"
       :name="name"
+      :disabled="disabled"
       :maxlength="maxlength"
       :inputmode="inputmode"
       :autocomplete="autocomplete"

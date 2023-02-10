@@ -7,6 +7,8 @@ use App\Http\Requests\StoreInstitutionsRequest;
 use App\Http\Requests\UpdateInstitutionsRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
+
 
 class InstitutionsController extends Controller
 {
@@ -32,11 +34,20 @@ class InstitutionsController extends Controller
         $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
         $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']); 
     }
-    public function index()
+    public function index(Request $request): Response
     {
+
+        $records = $this->model;
+        $records = $records->when($request->search, function ($query, $search) {
+            if ($search != '') {
+                $query->where('name',          'LIKE', "%$search%");
+                $query->orWhere('status', 'LIKE', "%$search%");
+            }
+        })->paginate(5)->withQueryString();
+
         return Inertia::render("Institutions/Index", [
             'titulo'      => 'Instituciones',
-            'institutions'    => $this->model::all(),
+            'institutions'    => $records,
             'routeName'      => $this->routeName,
             'loadingResults' => false
         ]);

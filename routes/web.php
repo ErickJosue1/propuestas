@@ -1,6 +1,13 @@
 <?php
 
+use App\Http\Controllers\AssestmentCriteriaController;
+use App\Http\Controllers\ColonyController;
+use App\Http\Controllers\DocumentSupportingController;
+use App\Http\Controllers\EventsController;
+use App\Http\Controllers\InstitutionsController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RenapoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,7 +33,7 @@ Route::get('/', function () {
 });
 
 Route::resource('renapo', RenapoController::class)->names('renapo');
-Route::resource('colony', ColonyController::class)->names('colony');
+Route::resource('colony', ColonyController  ::class)->names('colony');
 
 Route::get('/dashboard', function () {
     return Inertia::render('HomeView');
@@ -34,7 +41,6 @@ Route::get('/dashboard', function () {
 
 
 Route::middleware('auth')->group(function () {
-
 
     Route::get('/forms', function () {
         return Inertia::render('FormsView');
@@ -54,14 +60,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/error', function () {
         return Inertia::render('ErrorView');
     });
-    Route::get('/', function () {
+
+    /* Route::get('/', function () {
         return Inertia::render('StyleView');
-    });
+    }); */
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
     Route::resource('permissions', PermissionController::class)->names('permissions');
     Route::resource('events', EventsController::class)->names('events');
