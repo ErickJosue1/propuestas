@@ -6,6 +6,9 @@ use App\Models\Events;
 use App\Http\Requests\StoreEventsRequest;
 use App\Http\Requests\UpdateEventsRequest;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use Inertia\Response;
+
 
 class EventsController extends Controller
 {
@@ -28,16 +31,23 @@ class EventsController extends Controller
         $this->source    = "Events/";
         $this->routeName = 'events.';
 
-   /*     $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
+        $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
         $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
         $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
-        $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']); */
+        $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']);
     }
-    public function index()
+    public function index(Request $request): Response
     {
+        $records = $this->model;
+        $records = $records->when($request->search, function ($query, $search) {
+            if ($search != '') {
+                $query->where('name',          'LIKE', "%$search%");
+            }
+        })->paginate(5)->withQueryString();
+
         return Inertia::render("{$this->source}Index", [
             'titulo'      => 'Eventos',
-            'events'    => $this->model::all(),
+            'events'    => $records,
             'routeName'      => $this->routeName,
             'loadingResults' => false
         ]);

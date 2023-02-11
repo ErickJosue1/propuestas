@@ -1,36 +1,45 @@
 <template>
-    <div v-if="links.length > 3" class="mt-6">
-        <ul class="pagination">
-            <li v-for="(link, key) in links"
-                class="page-item"
-                :class="estatus(link)"
-                :key="key">
-
-                <Link class="page-link" v-html="link.label" :href="link.url ? link.url : '#'" />
-
-            </li>
-        </ul>
+    <div v-if="(total) > 1" class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+        <BaseLevel>
+            <BaseButtons>
+                <BaseButton v-for="page in total" :key="page" :active="page === currentPage" :label="page"
+                    :href="links[page].url" @click="() => {
+                        currentPage = page
+                        isLoading = true
+                    }"
+                    :color="page === currentPage ? 'lightDark' : 'whiteDark'" small />
+            </BaseButtons>
+            <small> Pagina {{ currentPage }} de {{
+                total
+            }}</small>
+        </BaseLevel>
     </div>
-    <span v-if="total>0" class="text-black-50 ml-auto font-weight-lighter">Usted tiene {{ useNFmt(total, 0) }} registros</span>
+
+    <div class="vl-parent">
+        <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="true" />
+    </div>
 </template>
 
 <script>
-import { useNFmt } from '@/Hooks/useFormato.js';
-import { Link } from '@inertiajs/inertia-vue3';
+import BaseLevel from "@/components/BaseLevel.vue";
+import BaseButtons from "@/components/BaseButtons.vue";
+import BaseButton from "@/components/BaseButton.vue";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
+import { ref } from "vue";
+
 export default {
-    props: { links: Array, total: Number },
-    components:{
-        Link,
+    props: { links: Array, total: Number, currentPage: Number },
+    components: {
+        BaseLevel,
+        BaseButtons,
+        BaseButton,
+        Loading
     },
-    setup()
-    {
-        const estatus = (link) => {
-            if(link.url===null)
-                return 'disabled'
-            if(link.active)
-                return 'active'
-        }
-        return { useNFmt, estatus }
+    setup() {
+        const isLoading = ref(false);
+
+        return { isLoading }
     }
 }
 </script>

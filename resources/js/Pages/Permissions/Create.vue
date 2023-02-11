@@ -1,5 +1,6 @@
 <script>
 import { Link, useForm } from '@inertiajs/vue3';
+import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
@@ -10,10 +11,10 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 
 
+
 export default {
     props: {
         titulo: { type: String, required: true },
-        event: { type: Object, required: true },
         routeName: { type: String, required: true },
     },
     components: {
@@ -26,15 +27,19 @@ export default {
         CardBox,
         SectionTitleLineWithButton
     },
-    setup(props) {
-
-        const form = useForm({ ...props.event });
-
-        const guardar = () => {
-            form.put(route("events.update", props.event.id));
+    setup() {
+        const submit = () => {
+            form.post(route('permissions.store'));
         };
 
-        return { form, guardar }
+        const form = useForm({
+            name: '',
+            guard_name: '',
+            description: '',
+            module_key: ''
+        });
+
+        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub }
     }
 }
 </script>
@@ -53,9 +58,22 @@ export default {
             <FormField label="Nombre">
                 <FormControl placeholder="Nombre" v-model="form.name" :icon="mdiAccount" />
             </FormField>
+
+            <FormField label="Descripcion">
+                <FormControl placeholder="Descripcion" v-model="form.description" :icon="mdiAccount" />
+            </FormField>
+
+            <FormField label="Guard Name">
+                <FormControl placeholder="Guard Name" v-model="form.guard_name" :icon="mdiAccount" />
+            </FormField>
+
+            <FormField label="Llave de modulo">
+                <FormControl placeholder="Llave de modulo" v-model="form.module_key" :icon="mdiAccount" />
+            </FormField>
+
             <template #footer>
                 <BaseButtons>
-                    <BaseButton @click="guardar" type="submit" color="info" label="Actualizar" />
+                    <BaseButton @click="submit" type="submit" color="info" label="Crear" />
                     <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
                         label="Cancelar" />
                 </BaseButtons>

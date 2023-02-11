@@ -239,36 +239,6 @@ export default {
             <FormControl v-model="cp.postal_code.state" id="state" :icon="mdiEmail" type="text" transparent disabled />
           </FormField>
 
-          <FormField label="Municipio" label-for="township"
-            help="Este campo se autocompletara al introducir el codigo postal">
-            <FormControl v-model="cp.postal_code.township" id="township" :icon="mdiEmail" type="text" transparent
-              disabled />
-          </FormField>
-
-          <FormField label="Colonia" label-for="colony" help="Este campo se abilitara al introducir el codigo postal">
-            <FormControl v-model="form.colony_id" id="colony" :options="cp.postal_code.colony" :icon="mdiEmail"
-              :transparent="cp.postal_code.colony == ''" :disabled="cp.postal_code.colony == ''" />
-          </FormField>
-
-
-          <FormField label="Email" label-for="email" help="Please enter your email">
-            <FormControl v-model="form.email" id="email" :icon="mdiEmail" autocomplete="email" type="email" required />
-          </FormField>
-
-
-          <FormField label="Password" label-for="password" help="Please enter new password">
-            <FormControl v-model="form.password" id="password" :icon="mdiFormTextboxPassword" type="password"
-              autocomplete="new-password" required />
-          </FormField>
-
-          <FormField label="Confirm Password" label-for="password_confirmation" help="Please confirm your password">
-            <FormControl v-model="form.password_confirmation" id="password_confirmation" :icon="mdiFormTextboxPassword"
-              type="password" autocomplete="new-password" required />
-          </FormField>
-
-          <FormField label="Centro de trabajo" label-for="workplace" help="Porfavor seleccione un centro de trabajo">
-            <FormControl v-model="form.workplace_id" id="workplace" :options="workplaces" required />
-          </FormField>
 
           <BaseDivider />
 

@@ -1,5 +1,5 @@
 <script>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";

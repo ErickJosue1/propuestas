@@ -1,5 +1,5 @@
 <script>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {  Link, useForm } from '@inertiajs/vue3';
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";

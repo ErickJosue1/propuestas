@@ -12,8 +12,8 @@ import CardBox from "@/components/CardBox.vue";
 
 export default {
     props: {
+        permission: { type: Object, required: true },
         titulo: { type: String, required: true },
-        event: { type: Object, required: true },
         routeName: { type: String, required: true },
     },
     components: {
@@ -27,14 +27,15 @@ export default {
         SectionTitleLineWithButton
     },
     setup(props) {
-
-        const form = useForm({ ...props.event });
-
         const guardar = () => {
-            form.put(route("events.update", props.event.id));
+            form.put(route('permissions.update', props.permission.id));
         };
 
-        return { form, guardar }
+        const form = useForm({
+            ...props.permission
+        });
+
+        return { guardar, form }
     }
 }
 </script>
@@ -53,6 +54,19 @@ export default {
             <FormField label="Nombre">
                 <FormControl placeholder="Nombre" v-model="form.name" :icon="mdiAccount" />
             </FormField>
+
+            <FormField label="Descripcion">
+                <FormControl placeholder="Descripcion" v-model="form.description" :icon="mdiAccount" />
+            </FormField>
+
+            <FormField label="Guard Name">
+                <FormControl placeholder="Guard Name" v-model="form.guard_name" :icon="mdiAccount" />
+            </FormField>
+
+            <FormField label="Llave de modulo">
+                <FormControl placeholder="Llave de modulo" v-model="form.module_key" :icon="mdiAccount" />
+            </FormField>
+
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="guardar" type="submit" color="info" label="Actualizar" />

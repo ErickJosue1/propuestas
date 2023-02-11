@@ -37,7 +37,7 @@ class PermissionController extends Controller
                 $query->orWhere('description', 'LIKE', "%$search%");
                 $query->orWhere('module_key',  'LIKE', "%$search%");
             }
-        })->get();
+        })->paginate(10)->withQueryString();
 
         return Inertia::render("{$this->source}Index", [
             'titulo'          => 'Catálogo de Permisos',
@@ -45,7 +45,6 @@ class PermissionController extends Controller
             'routeName'      => $this->routeName,
             'loadingResults' => false,
             'search'         => $request->search ?? '',
-            'status'         => (bool) $request->status,
         ]);
     }
 

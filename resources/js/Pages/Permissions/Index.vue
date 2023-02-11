@@ -17,18 +17,20 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
-
+import { reactive, toRefs, ref } from 'vue';
 
 
 export default {
     props: {
         titulo: { type: String, required: true },
-        institutions: {
+        records: {
             type: Object,
-            required: true
+            default: {},
+            required: true,
         },
         routeName: { type: String, required: true },
-        loadingResults: { type: Boolean, required: true, default: true }
+        loadingResults: { type: Boolean, required: true, default: true },
+        search: { type: String, required: true },
     },
     components: {
         Link,
@@ -42,11 +44,15 @@ export default {
         CardBoxComponentEmpty,
         Pagination
     },
-    setup() {
+
+    setup(props) {
         const form = useForm({
             name: '',
-            status: ''
+            guard_name: '',
+            description: '',
+            module_key: ''
         });
+
         const eliminar = (id) => {
             Swal.fire({
                 title: "¿Esta seguro?",
@@ -58,25 +64,45 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("institutions.destroy", id));
+                    form.delete(route("permissions.destroy", id));
                 }
             });
         };
 
+        const isLoading = ref(false );
+
+        const state = reactive({
+            filters: {
+                page: props.records.current_page,
+                search: props.search,
+                status: props.status ?? 1,
+            },
+        });
+        const search = () => {
+            props.loadingResults = true;
+            Inertia.replace(route(`${props.routeName}index`, state.filters));
+        };
+
         return {
-            form, eliminar, mdiMonitorCellphone,
+            ...toRefs(state),
+            search,
+            eliminar,
+            mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
             mdiEye, mdiTrashCan,
-        }
+            isLoading
+        };
     }
-
 }
 </script>
 
 <template>
+   
+    
     <LayoutMain>
+
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
             <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                     fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
@@ -88,7 +114,7 @@ export default {
             </a>
         </SectionTitleLineWithButton>
 
-        <CardBox v-if="institutions.data.length < 1">
+        <CardBox v-if="records.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
 
@@ -98,12 +124,13 @@ export default {
                     <tr>
                         <th />
                         <th>Nombre</th>
-                        <th>Status</th>
+                        <th>Descripcion</th>
+                        <th>Guard Name</th>
                         <th />
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in institutions.data" :key="item.id">
+                    <tr v-for="item in records.data" :key="item.id">
                         <td class="align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-book-half" viewBox="0 0 16 16">
@@ -114,8 +141,11 @@ export default {
                         <td data-label="Nombre">
                             {{ item.name }}
                         </td>
-                        <td data-label="Status">
-                            {{ item.status }}
+                        <td data-label="Descripcion">
+                            {{ item.description }}
+                        </td>
+                        <td data-label="Guard Name">
+                            {{ item.guard_name }}
                         </td>
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
@@ -132,8 +162,8 @@ export default {
 
 
 
-            <Pagination :currentPage="institutions.current_page" :links="institutions.links"
-                :total="institutions.links.length - 2"></Pagination>
+            <Pagination  :currentPage="records.current_page" :links="records.links" :total="records.links.length - 2">
+            </Pagination>
         </CardBox>
 
     </LayoutMain>
