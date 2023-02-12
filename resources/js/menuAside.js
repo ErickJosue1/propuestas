@@ -16,12 +16,14 @@ import {
 } from "@mdi/js";
 
 
+
 export default [
   {
     href: "/dashboard",
     to: "/dashboard",
     icon: mdiMonitor,
     label: "Dashboard",
+    role: "Admin"
   },
 
   /*  {
@@ -70,8 +72,10 @@ export default [
   {
     label: "Admin",
     icon: mdiViewList,
+    role: "Admin",
     menu: [
       {
+        permission: 'institutions.index',
         label: "Instituciones",
         href: "/institutions",
         to: "/institutions",
@@ -80,21 +84,20 @@ export default [
         label: "Eventos",
         href: "/events",
         to: "/events",
+        permission: 'events.index',
+
       },
       {
-        label: "Convocatorias",
-        href: "/assesstment",
-        to: "/assesstment",
-      },
-      {
-        label: "Soporte a documentos",
+        label: "Soporte a \ndocumentos",
         href: "/documents",
         to: "/documents",
+        permission: 'document.index',
       },
       {
         label: "Permisos",
         href: "/permissions",
         to: "/permissions",
+        permission: 'permissions.index',
       },
     ],
   },
@@ -103,11 +106,13 @@ export default [
     label: "Propuestas",
     icon: mdiBookshelf,
     target: "_blank",
+    role: "Postulante"
   },
   {
     label: "Convocatorias",
     icon: mdiClockCheck,
     target: "_blank",
+    permission: "announcements.index"
   },
 
 ];

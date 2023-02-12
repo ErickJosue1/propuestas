@@ -6,6 +6,7 @@ import { mdiMinus, mdiPlus } from "@mdi/js";
 import { getButtonColor } from "@/colors.js";
 import BaseIcon from "@/components/BaseIcon.vue";
 import AsideMenuList from "@/components/AsideMenuList.vue";
+import { useCan, useRole } from "@/Hooks/usePermissions";
 
 const props = defineProps({
   item: {
@@ -27,6 +28,18 @@ const asideMenuItemActiveStyle = computed(() =>
 
 const isDropdownActive = ref(false);
 
+const verifyPermission = () => {
+  if (props.item.permission) {
+    return useCan(props.item.permission)
+  }
+  else if (props.item.role) {
+    return useRole(props.item.role)
+  }
+  else{
+    return true
+  }
+}
+
 const componentClass = computed(() => [
   props.isDropdownList ? "py-3 px-6 text-sm" : "py-3",
   hasColor.value
@@ -47,48 +60,21 @@ const menuClick = (event) => {
 
 <template>
   <li>
-    <component
-      :is="item.to ? Link : 'a'"
-      v-slot="vSlot"
-      :to="item.to ?? null"
-      :href="item.href ?? null"
-      :target="item.target ?? null"
-      class="flex cursor-pointer"
-      :class="componentClass"
-      @click="menuClick"
-    >
-      <BaseIcon
-        v-if="item.icon"
-        :path="item.icon"
-        class="flex-none"
-        :class="[vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '']"
-        w="w-16"
-        :size="18"
-      />
-      <span
-        class="grow text-ellipsis line-clamp-1"
-        :class="[
-          { 'pr-12': !hasDropdown },
-          vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '',
-        ]"
-        >{{ item.label }}</span
-      >
-      <BaseIcon
-        v-if="hasDropdown"
-        :path="isDropdownActive ? mdiMinus : mdiPlus"
-        class="flex-none"
-        :class="[vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '']"
-        w="w-12"
-      />
+    <component v-if="verifyPermission()" :is="item.to ? Link : 'a'" v-slot="vSlot" :to="item.to ?? null"
+      :href="item.href ?? null" :target="item.target ?? null" class="flex cursor-pointer" :class="componentClass"
+      @click="menuClick">
+      <BaseIcon v-if="item.icon" :path="item.icon" class="flex-none"
+        :class="[vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '']" w="w-16" :size="18" />
+      <span class="grow text-ellipsis line-clamp-1" :class="[
+        { 'pr-12': !hasDropdown },
+        vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '',
+      ]">{{ item.label }}</span>
+      <BaseIcon v-if="hasDropdown" :path="isDropdownActive ? mdiMinus : mdiPlus" class="flex-none"
+        :class="[vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '']" w="w-12" />
     </component>
-    <AsideMenuList
-      v-if="hasDropdown"
-      :menu="item.menu"
-      :class="[
-        styleStore.asideMenuDropdownStyle,
-        isDropdownActive ? 'block dark:bg-slate-800/50' : 'hidden',
-      ]"
-      is-dropdown-list
-    />
+    <AsideMenuList v-if="hasDropdown" :menu="item.menu" :class="[
+      styleStore.asideMenuDropdownStyle,
+      isDropdownActive ? 'block dark:bg-slate-800/50' : 'hidden',
+    ]" is-dropdown-list />
   </li>
 </template>
