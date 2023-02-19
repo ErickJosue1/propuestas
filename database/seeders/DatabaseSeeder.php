@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             ColonySeeder::class,
             PermissionSeeder::class,
             AdminSeeder::class,
-            CodigosPostalesSeeder::class
-        ]);
+/*             CodigosPostalesSeeder::class
+ */        ]);
     }
 }

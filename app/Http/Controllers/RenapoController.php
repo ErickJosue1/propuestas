@@ -40,14 +40,14 @@ class RenapoController extends Controller
         } else {
             $request = Http::get("https://curpws.bienestar.gob.mx/ServiceCurpPro/ConsultaPor/Curp/$request")['response'];
 
-            $records =  Renapo::create(
+            $records = Renapo::create(
                 [
-                    "curp" =>  $request['curp'], 
+                    "curp" =>  $request['curp'],
                     "nombres" => $request['nombres'],
                     "apellidoPaterno" => $request['apellidoPaterno'],
                     "apellidoMaterno" =>  $request['apellidoMaterno'],
                 ]
-            )->get();
+            )->where('curp', $request['curp'])->get();
         }
 
         return $records[0];

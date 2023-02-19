@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementsController;
 use App\Http\Controllers\AssestmentCriteriaController;
 use App\Http\Controllers\ColonyController;
 use App\Http\Controllers\DocumentSupportingController;
@@ -7,7 +8,10 @@ use App\Http\Controllers\EventsController;
 use App\Http\Controllers\InstitutionsController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProposalsController;
 use App\Http\Controllers\RenapoController;
+use App\Models\Announcements;
+use App\Models\Proposals;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,10 +29,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'records' => Announcements::paginate(4)->withQueryString()->load('institutions')
     ]);
 });
 
@@ -72,10 +73,13 @@ Route::middleware('auth')->group(function () {
 
 
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
+    Route::resource('announcements', AnnouncementsController::class)->names('announcements');
     Route::resource('permissions', PermissionController::class)->names('permissions');
     Route::resource('events', EventsController::class)->names('events');
     Route::resource('assesstment', AssestmentCriteriaController::class)->names('assesstment');
     Route::resource('documents', DocumentSupportingController::class)->names('documents');
+    Route::resource('proposals', ProposalsController::class)->names('proposals');
+
 });
 
 require __DIR__ . '/auth.php';

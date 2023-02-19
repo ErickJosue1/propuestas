@@ -77,7 +77,7 @@ export default [
       {
         permission: 'institutions.index',
         label: "Instituciones",
-        href: "/institutions",
+        href: "/institutions",  
         to: "/institutions",
       },
       {
@@ -103,16 +103,31 @@ export default [
   },
 
   {
+    href: "/proposals",
+    to: "/dashboard",
+    icon: mdiMonitor,
+    label: "Dashboard",
+    role: "Postulante"
+  },
+  {
+    href: "/proposals",
     label: "Propuestas",
     icon: mdiBookshelf,
     target: "_blank",
     role: "Postulante"
   },
   {
+    href:"/announcements",
+    label: "Convocatorias",
+    icon: mdiClockCheck,
+    permission: "announcements.index"
+  },
+  /* {
+    href:"/announcements",
     label: "Convocatorias",
     icon: mdiClockCheck,
     target: "_blank",
     permission: "announcements.index"
-  },
+  }, */
 
 ];

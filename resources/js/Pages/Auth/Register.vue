@@ -1,7 +1,7 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { computed, ref, reactive } from "vue";
-import { mdiAccount, mdiEmail, mdiFormTextboxPassword } from "@mdi/js";
+import { mdiAccount, mdiEmail, mdiFormTextboxPassword, mdiAsterisk, mdiLogout } from "@mdi/js";
 import LayoutGuest from "@/layouts/LayoutGuest.vue";
 import SectionFullScreen from "@/components/SectionFullScreen.vue";
 import CardBox from "@/components/CardBox.vue";
@@ -12,6 +12,7 @@ import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import FormValidationErrors from "@/components/FormValidationErrors.vue";
+import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import axios from "axios";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
@@ -56,6 +57,7 @@ export default {
 
     const isLoading = ref(false);
     const fullPage = true;
+    const show = ref(true);
 
     const submit = () => {
       isLoading.value = true;
@@ -96,7 +98,6 @@ export default {
           form.name = response['data']['nombres']
           form.paternal_surname = response['data']['apellidoPaterno']
           form.maternal_surname = response['data']['apellidoMaterno']
-
         })
         .catch(function (error) {
           if (error.response) {
@@ -134,6 +135,7 @@ export default {
         axios
           .get(route("colony.index", cp.postal_code))
           .then((response) => {
+            show.value = false;
             cp.postal_code.township = response['data'][0]['township']['name'];
             cp.postal_code.colony.push({ id: response['data'][0]['id'], name: response['data'][0]['name'] });
             cp.postal_code.state = response['data'][1]['name'];
@@ -173,7 +175,7 @@ export default {
     };
 
 
-    return { submit, form, getData, getColony, cp, isLoading, fullPage, mdiAccount, mdiEmail, mdiFormTextboxPassword };
+    return { show, submit, form, getData, getColony, mdiLogout, mdiAsterisk, cp, isLoading, fullPage, mdiAccount, mdiEmail, mdiFormTextboxPassword };
   }
 }
 </script>
@@ -186,7 +188,17 @@ export default {
       <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     </div>
 
+    <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Login" main>
+      <a href=""><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+          class="bi bi-arrow-90deg-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M1.146 4.854a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H12.5A2.5 2.5 0 0 1 15 6.5v8a.5.5 0 0 1-1 0v-8A1.5 1.5 0 0 0 12.5 5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4z" />
+        </svg></a>
+    </SectionTitleLineWithButton>
+
     <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
+
+
       <CardBox :class="cardClass" class="my-12">
         <FormValidationErrors />
 
@@ -202,7 +214,7 @@ export default {
             </div>
             <input type="search" id="default-search"
               class="block w-full p-4 pl-10 text-sm text-gray-700 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500  dark:bg-slate-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-             v-model="form.curp" required>
+              v-model="form.curp" required>
             <button @click="getData"
               class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Buscar</button>
           </div>
@@ -216,13 +228,27 @@ export default {
           </FormField>
 
           <FormField label="Apellido Paterno" label-for="paternal" help="Porfavor introduce tu apellido paterno">
-            <FormControl v-model="form.paternal_surname" id="paternal" :icon="mdiAccount" autocomplete="name"
-              type="text" required />
+            <FormControl v-model="form.paternal_surname" id="paternal" :icon="mdiAccount" autocomplete="name" type="text"
+              required />
           </FormField>
 
           <FormField label="Apellido Materno" label-for="maternal" help="Porfavor introduce tu apellido materno">
-            <FormControl v-model="form.maternal_surname" id="maternal" :icon="mdiAccount" autocomplete="name"
-              type="text" required />
+            <FormControl v-model="form.maternal_surname" id="maternal" :icon="mdiAccount" autocomplete="name" type="text"
+              required />
+          </FormField>
+
+          <FormField label="Email" label-for="email" help="Porfavor introduce tu correo electronico">
+            <FormControl v-model="form.email" id="email" :icon="mdiEmail" type="text" />
+          </FormField>
+
+          <FormField label="Contraseña" label-for="password" help="Porfavor introduce tu contraseña">
+            <FormControl v-model="form.password" :icon="mdiAsterisk" type="password" id="password"
+              autocomplete="current-password" required />
+          </FormField>
+
+          <FormField label="Confirma Contraseña" label-for="password_conf" help="Confirma tu contraseña">
+            <FormControl v-model="form.password_confirmation" :icon="mdiAsterisk" type="password" id="password_conf"
+              autocomplete="current-password" required />
           </FormField>
 
           <FormField label="Rol" label-for="role" help="Porfavor seleccione un rol">
@@ -234,9 +260,24 @@ export default {
               required />
           </FormField>
 
-          <FormField label="Estado" label-for="state"
-            help="Este campo se autocompletara al introducir el codigo postal">
+          <FormField label="Estado" label-for="state" help="Este campo se autocompletara al introducir el codigo postal">
             <FormControl v-model="cp.postal_code.state" id="state" :icon="mdiEmail" type="text" transparent disabled />
+          </FormField>
+
+          <FormField label="Municipio" label-for="township"
+            help="Este campo se autocompletara al introducir el codigo postal">
+            <FormControl v-model="cp.postal_code.township" id="township" :icon="mdiEmail" type="text" transparent
+              disabled />
+          </FormField>
+
+          <FormField label="Colonia" label-for="colony" help="Las opciones se habilitaran al introducir el codigo postal">
+            <FormControl v-model="form.colony_id" id="colony" :options="cp.postal_code.colony" :disabled="show"
+              :transparent="show" required />
+          </FormField>
+
+
+          <FormField label="Centro de trabajo" label-for="workplace" help="Porfavor seleccione un centro de trabajo">
+            <FormControl v-model="form.workplace_id" id="workplace" :options="workplaces" required />
           </FormField>
 
 

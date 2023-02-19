@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Proposals;
+use App\Http\Requests\StoreProposalsRequest;
+use App\Http\Requests\UpdateProposalsRequest;
 use App\Models\Announcements;
-use App\Http\Requests\StoreAnnouncementsRequest;
-use App\Http\Requests\UpdateAnnouncementsRequest;
-use App\Models\Institutions;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-
-class AnnouncementsController extends Controller
+class ProposalsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,19 +18,19 @@ class AnnouncementsController extends Controller
      * @return \Illuminate\Http\Response
      */
     private string $routeName;
-    private Announcements $model;
-    private string $module = 'announcements';
+    private Proposals $model;
+    private string $module = 'proposals';
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->model = new Announcements();
-        $this->routeName = 'announcements.';
+        $this->model = new Proposals();
+        $this->routeName = 'proposals.';
 
-        $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
-        $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
-        $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
-        $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']);
+        /*   $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
+         $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
+         $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
+         $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']);  */
     }
 
     public function index(Request $request): Response
@@ -44,7 +43,7 @@ class AnnouncementsController extends Controller
         })->paginate(4)->withQueryString();
 
         return Inertia::render("Anouncement/Index", [
-            'titulo'      => 'Convocatorias',
+            'titulo'      => 'Selecciona una convocatoria',
             'records'    => $records->load('institutions'),
             'routeName'      => $this->routeName,
             'loadingResults' => false
@@ -56,22 +55,21 @@ class AnnouncementsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Announcements $record)
     {
-        return Inertia::render("Anouncement/Create", [
-            'titulo'      => 'Crear una convocatoria',
+        return Inertia::render("Proposals/Create", [
+            'titulo'      => 'Gestions de documentacion',
             'routeName'      => $this->routeName,
-            'institutions' => Institutions::all()
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreAnnouncementsRequest  $request
+     * @param  \App\Http\Requests\StoreProposalsRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAnnouncementsRequest $request)
+    public function store(StoreProposalsRequest $request)
     {
         //
     }
@@ -79,10 +77,10 @@ class AnnouncementsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Announcements  $announcements
+     * @param  \App\Models\Proposals  $proposals
      * @return \Illuminate\Http\Response
      */
-    public function show(Announcements $announcements)
+    public function show(Proposals $proposals)
     {
         //
     }
@@ -90,10 +88,10 @@ class AnnouncementsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Announcements  $announcements
+     * @param  \App\Models\Proposals  $proposals
      * @return \Illuminate\Http\Response
      */
-    public function edit(Announcements $announcements)
+    public function edit(Proposals $proposals)
     {
         //
     }
@@ -101,11 +99,11 @@ class AnnouncementsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateAnnouncementsRequest  $request
-     * @param  \App\Models\Announcements  $announcements
+     * @param  \App\Http\Requests\UpdateProposalsRequest  $request
+     * @param  \App\Models\Proposals  $proposals
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateAnnouncementsRequest $request, Announcements $announcements)
+    public function update(UpdateProposalsRequest $request, Proposals $proposals)
     {
         //
     }
@@ -113,10 +111,10 @@ class AnnouncementsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Announcements  $announcements
+     * @param  \App\Models\Proposals  $proposals
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Announcements $announcements)
+    public function destroy(Proposals $proposals)
     {
         //
     }

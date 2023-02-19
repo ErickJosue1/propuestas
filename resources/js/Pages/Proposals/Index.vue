@@ -17,16 +17,18 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
-import LayoutWelcome from '@/layouts/LayoutWelcome.vue';
 
 
 
 export default {
     props: {
+        titulo: { type: String, required: true },
         records: {
             type: Object,
             required: true
         },
+        routeName: { type: String, required: true },
+        loadingResults: { type: Boolean, required: true, default: true }
     },
     components: {
         Link,
@@ -38,15 +40,31 @@ export default {
         BaseButtons,
         BaseButton,
         CardBoxComponentEmpty,
-        Pagination,
-        LayoutWelcome
+        Pagination
     },
     setup() {
-
-
+        const form = useForm({
+            name: '',
+            status: ''
+        });
+        const eliminar = (id) => {
+            Swal.fire({
+                title: "¿Esta seguro?",
+                text: "Esta acción no se puede revertir",
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonColor: "#d33",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Si!, eliminar registro!",
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    form.delete(route("proposals.destroy", id));
+                }
+            });
+        };
 
         return {
-            mdiMonitorCellphone,
+            form, eliminar, mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
@@ -58,20 +76,30 @@ export default {
 </script>
 
 <template>
-    <LayoutWelcome>
-
+    <LayoutMain>
+        <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
+            <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                    <path
+                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                    <path
+                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                </svg>
+            </a>
+        </SectionTitleLineWithButton>
 
         <CardBox v-if="records.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
 
-        <div v-else class="lg:flex flex-wrap max-lg:p-5 pt-2 p-2 gap-5">
+        <div v-else class="lg:flex flex-wrap pt-0 p-2 gap-5">
+
             <div v-for="item in records" :key="item.id" class='flex items-center max-lg:pt-4 xl:max-w-lg'>
                 <div class="rounded-xl border p-5 shadow-md  bg-white dark:bg-slate-900">
                     <div class="flex w-full items-center justify-between border-b pb-3">
                         <div class="flex items-center space-x-3">
                             <div class="h-8 w-8 rounded-full bg-slate-400 bg-[url('https://i.pravatar.cc/32')]"></div>
-                            <div class="text-lg font-bold text-slate-700 dark:text-white">{{ item.name }}
+                            <div class="text-lg font-bold text-slate-700 dark:text-white">{{ $page.props.user.name }}
                             </div>
                         </div>
                         <div class="flex items-center space-x-5">
@@ -88,6 +116,8 @@ export default {
                     </div>
 
                     <div class="mt-4 mb-6">
+                        <div class="mb-3 text-xl font-bold">{{ item.name }}
+                        </div>
                         <div class="text-sm dark:text-white text-neutral-600">Aliquam a tristique sapien, nec bibendum
                             urna.
                             Maecenas
@@ -123,5 +153,5 @@ export default {
                 </div>
             </div>
         </div>
-    </LayoutWelcome>
+    </LayoutMain>
 </template>
