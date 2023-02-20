@@ -59,9 +59,7 @@ export default {
 
 <template>
     <LayoutWelcome>
-
-
-        <CardBox v-if="records.length < 1">
+        <CardBox class="mr-12 mt-24 max-xl:m-4 max-lg:mt-8" v-if="records.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
 
@@ -105,7 +103,7 @@ export default {
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                                     </svg>
-                                    <span>Inscribirse</span>
+                                    <a :href="route('login')"> <span>Inscribirse</span></a>
                                 </div>
                                 <div class="flex cursor-pointer gap-2 items-center transition hover:text-slate-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"

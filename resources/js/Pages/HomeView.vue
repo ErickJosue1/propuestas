@@ -25,7 +25,6 @@ import CardBoxClient from "@/components/CardBoxClient.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import SectionBannerStarOnGitHub from "@/components/SectionBannerStarOnGitHub.vue";
-import { Head } from "@inertiajs/vue3";
 
 
 const chartData = ref(null);
@@ -48,7 +47,6 @@ const transactionBarItems = computed(() => mainStore.history);
 <template>
   <LayoutAuthenticated>
 
-    <Head title="Dashboard" />
     <SectionMain>
       <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Overview" main>
         <BaseButton href="https://github.com/justboil/admin-one-vue-tailwind" target="_blank" :icon="mdiGithub"

@@ -2,7 +2,6 @@
 
     <div>
 
-        <Head :title="title" />
 
         <Banner />
 
@@ -212,7 +211,7 @@
 
 <script>
 import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Banner from '@/Components/Banner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -250,7 +249,6 @@ export default {
         Dropdown,
         Banner,
         ApplicationMark,
-        Head,
         Link
     },
 

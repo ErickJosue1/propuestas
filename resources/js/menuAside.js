@@ -88,10 +88,16 @@ export default [
 
       },
       {
-        label: "Soporte a \ndocumentos",
+        label: "Documentos",
         href: "/documents",
         to: "/documents",
         permission: 'document.index',
+      },
+      {
+        label: "Criterios",
+        href: "/assesstment",
+        to: "/assesstment",
+        permission: 'assesstments.index',
       },
       {
         label: "Permisos",
@@ -103,8 +109,7 @@ export default [
   },
 
   {
-    href: "/proposals",
-    to: "/dashboard",
+    href:"/announcements",
     icon: mdiMonitor,
     label: "Dashboard",
     role: "Postulante"
@@ -113,14 +118,13 @@ export default [
     href: "/proposals",
     label: "Propuestas",
     icon: mdiBookshelf,
-    target: "_blank",
     role: "Postulante"
   },
   {
     href:"/announcements",
     label: "Convocatorias",
     icon: mdiClockCheck,
-    permission: "announcements.index"
+    role: "Admin"
   },
   /* {
     href:"/announcements",

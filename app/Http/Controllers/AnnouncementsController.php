@@ -28,7 +28,6 @@ class AnnouncementsController extends Controller
         $this->model = new Announcements();
         $this->routeName = 'announcements.';
 
-        $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
         $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
         $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
         $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']);

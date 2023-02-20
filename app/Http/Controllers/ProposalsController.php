@@ -35,16 +35,16 @@ class ProposalsController extends Controller
 
     public function index(Request $request): Response
     {
-        $records = new Announcements();
+        $records = new Proposals();
         $records = $records->when($request->search, function ($query, $search) {
             if ($search != '') {
                 $query->where('name',          'LIKE', "%$search%");
             }
         })->paginate(4)->withQueryString();
 
-        return Inertia::render("Anouncement/Index", [
-            'titulo'      => 'Selecciona una convocatoria',
-            'records'    => $records->load('institutions'),
+        return Inertia::render("Proposals/Index", [
+            'titulo'      => 'Tus Propuestas',
+            'records'    => $records,
             'routeName'      => $this->routeName,
             'loadingResults' => false
         ]);
@@ -58,7 +58,8 @@ class ProposalsController extends Controller
     public function create(Announcements $record)
     {
         return Inertia::render("Proposals/Create", [
-            'titulo'      => 'Gestions de documentacion',
+            'titulo'      => 'Propuesta',
+            'convocatoria' => $record,
             'routeName'      => $this->routeName,
         ]);
     }

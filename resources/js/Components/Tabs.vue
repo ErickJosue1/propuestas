@@ -8,6 +8,10 @@
                         class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                         id="dashboard-tab" data-tabs-target="#dashboard" type="button" aria-selected="false">{{ tab.name
                         }}</button>
+                   <!--  <div
+                        class="inline-block p-4 rounded-t-lg"
+                        type="button">{{ tab.name
+                        }}</div> -->
                 </li>
             </ul>
         </div>
@@ -21,10 +25,7 @@
 export default {
     props: {
         tabs: { required: true },
-        activeTab: { required: true }
+        activeTab: { required: true },
     },
-    mounted(){
-        console.log(this.tabs); 
-    }
 }
 </script>

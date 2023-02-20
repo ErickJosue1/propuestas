@@ -11,6 +11,10 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import Tabs from '@/components/Tabs.vue';
 import Tab from '@/components/Tab.vue';
+import ToggleSwitch from '@/components/ToggleSwitch.vue';
+import TodoList from '@/components/TodoList.vue';
+
+
 
 
 export default {
@@ -19,6 +23,14 @@ export default {
         routeName: { type: String, required: true },
         institutions: { type: Object, required: true }
     },
+    data() {
+        return {
+            switch1: false,
+            switch2: true,
+            criterios: [{ name: "Criterio base", value: "normal" }]
+        }
+    }
+    ,
     components: {
         LayoutMain,
         FormField,
@@ -29,19 +41,37 @@ export default {
         CardBox,
         SectionTitleLineWithButton,
         Tabs,
-        Tab
+        Tab,
+        ToggleSwitch,
+        TodoList
     },
+    methods:{
+        todo: function(){
+            for (let index = 0; index < this.$refs.TodoListRef.tasks.length; index++) {
+                this.form.assesstments.push(this.$refs.TodoListRef.tasks[index]);                
+            }
+        }
+    }
+    ,
     setup() {
         const submit = () => {
             form.post(route('announcements.store'));
         };
 
+        const add = (e) => {
+            console.log(e)
+        }
+
         const form = useForm({
             name: '',
-            status: ''
+            num_announcement: '',
+            status: '',
+            y_announcement: '',
+            institutions_id: '',
+            assesstments: []
         });
 
-        const tabs = [{ name: 'General', tab: 'Tab1' }, { name: 'Criterios de Evaluacion', tab: 'Tab2' },];
+        const tabs = [{ name: 'General', tab: 'Tab1' }, { name: 'Criterios de Evaluacion', tab: 'Tab2' }, { name: 'Documentos', tab: 'Tab3' }];
         const activeTab = 'Tab1';
 
 
@@ -66,14 +96,15 @@ export default {
 
             <Tabs :tabs="tabs" :activeTab="activeTab">
                 <template v-slot:Tab1>
-                    <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel"
+                    <div  class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel"
                         aria-labelledby="profile-tab">
-                        <FormField label="Titulo">
-                            <FormControl v-model="form.phone" type="tel" placeholder="Titulo de la convocatoria" />
+                        <FormField label="Titulo y Status">
+                            <FormControl v-model="form.name" type="text" placeholder="Titulo de la convocatoria" />
+                            <FormControl v-model="form.status" type="number" placeholder="Status de la convocatoria" />
                         </FormField>
 
                         <FormField label="Instituciones">
-                            <FormControl v-model="form.department" :options="institutions" />
+                            <FormControl v-model="form.institutions_id" :options="institutions" />
                         </FormField>
 
                         <FormField label="Descripcion" help="Descripcion general de la convocatoria. Max 255 caracteres">
@@ -85,31 +116,13 @@ export default {
                 <template v-slot:Tab2>
                     <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel"
                         aria-labelledby="profile-tab">
-
-                        <FormField label="Grouped with icons">
-                            <FormControl v-model="form.name" :icon="mdiAccount" />
-                            <FormControl v-model="form.email" type="email" :icon="mdiMail" />
-                        </FormField>
-
-                        <FormField label="With help line" help="Do not enter the leading zero">
-                            <FormControl v-model="form.phone" type="tel" placeholder="Your phone number" />
-                        </FormField>
-
-                        <FormField label="Dropdown">
-                            <FormControl v-model="form.department" :options="selectOptions" />
-                        </FormField>
-
-                        <BaseDivider />
-
-                        <FormField label="Question" help="Your question. Max 255 characters">
-                            <FormControl type="textarea" placeholder="Explain how we can help you" />
-                        </FormField>
+                        <todo-list ref="TodoListRef"></todo-list>
                     </div>
                 </template>
+                <template v-slot:Tab3>
+
+                </template>
             </Tabs>
-
-
-
 
         </CardBox>
     </LayoutMain>
