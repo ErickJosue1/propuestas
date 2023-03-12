@@ -20,6 +20,9 @@ export const useStyleStore = defineStore("style", {
     darkMode: false,
   }),
   actions: {
+    isDark(){
+      return this.darkMode
+    },
     setStyle(payload) {
       if (!styles[payload]) {
         return;

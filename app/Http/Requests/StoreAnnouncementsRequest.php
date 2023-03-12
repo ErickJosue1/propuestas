@@ -13,7 +13,7 @@ class StoreAnnouncementsRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class StoreAnnouncementsRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name'        => "required|string|max:50",
+            'description'        => "required|string|max:255",
+            'num_announcement'        => "required|integer|max:50",
+            'y_announcement'        => "required|integer",
+            'status'        => "required|integer|max:50",
+            'institutions_id' => "required|integer|max:45",
         ];
     }
 }

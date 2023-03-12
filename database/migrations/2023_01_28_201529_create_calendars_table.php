@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreignId('id_events')->nullable();
             $table->string('observations');
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

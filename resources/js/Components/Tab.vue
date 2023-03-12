@@ -1,14 +1,19 @@
 <template>
-    <div>
+    <div v-show="title == selectedTitle">
         <slot></slot>
     </div>
 </template>
 
 <script>
+import { inject } from 'vue';
 export default {
-    props: {
-        title: { required: true },
-        isActive: { required: true, default: false }
+    props: ['title'],
+    setup(){
+        const selectedTitle = inject("selectedTitle")
+
+        return {
+            selectedTitle
+        }
     }
 }
 </script>

@@ -1,20 +1,15 @@
 <template>
     <div class="container mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Añade criterios a la convocatoria</h1>
+        <h1 class="text-2xl font-bold mb-4">Especifica la documentacion necesaria para la convocatoria</h1>
 
         <div class=" mb-4">
-            <FormField help="Los criterios agregados a esta convocatoria estaran ligados a la misma, y posteriomente podran ser utilizados en otras convocatorias">
-                <FormControl v-model="name" type="text" placeholder="Criterio" />
-                <FormControl v-model="value" type="number" placeholder="Valor del criterio (solo valores entre 1 y 100)" />
+            <FormField help="Documentos requeridos para la propuesta de un proyecto">
+                <FormControl v-model="name" type="text" placeholder="Nombre del documento" />
             </FormField>
             <BaseButtons>
                 <BaseButton @click="addTask" color="info" label="Añadir" />
             </BaseButtons>
         </div>
-
-        <!--  <ul class="list-disc pl-8">
-            <li v-for="(task, index) in tasks" :key="index" class="mb-2">{{ task.name }}</li>
-        </ul> -->
     </div>
 </template>
   
@@ -42,18 +37,16 @@ export default {
         return {
             tasks: [],
             name: '',
-            value: '',
             mdiBallotOutline
         };
     },
     methods: {
         addTask() {
             this.tasks = []
-            if (this.name.trim() !== '' && (this.value > 0 && this.value <= 100)) {
-                this.tasks.push({ name: this.name, value: this.value });
+            if (this.name.trim() !== '') {
+                this.tasks.push({ name: this.name});
                 this.name = '';
-                this.value = '';
-                this.$emit("tasks", this.tasks)
+                this.$emit("docs", this.tasks)
             }
             else {
 

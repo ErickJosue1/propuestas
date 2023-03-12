@@ -6,12 +6,14 @@ import {
   mdiAlertCircle,
   mdiSquareEditOutline,
   mdiTable,
-  mdiViewList,
+  mdiViewListOutline,
   mdiTelevisionGuide,
   mdiResponsive,
   mdiPalette,
   mdiClockCheck,
-  mdiBookshelf
+  mdiBookshelf,
+  mdiCalendarAccountOutline,
+  mdiClockTimeEleven
 
 } from "@mdi/js";
 
@@ -25,7 +27,7 @@ export default [
     label: "Dashboard",
     role: "Admin"
   },
-
+  
   /*  {
      href: "/tables",
      to: "/tables",
@@ -69,9 +71,28 @@ export default [
      label: "Error",
      icon: mdiAlertCircle,
    }, */
+   {
+    href:"/announcements",
+    label: "Convocatorias",
+    icon: mdiClockCheck,
+    role: "Admin"
+  },
   {
-    label: "Admin",
-    icon: mdiViewList,
+    label: "Calendario",
+    href: "/calendar",
+    icon: mdiCalendarAccountOutline,
+    role: "Admin"
+  },
+  {
+    label: "Eventos",
+    href: "/events",
+    to: "/events",
+    icon: mdiClockTimeEleven,
+    role: "Admin"
+  },
+  {
+    label: "Catalogos",
+    icon: mdiViewListOutline,
     role: "Admin",
     menu: [
       {
@@ -79,13 +100,6 @@ export default [
         label: "Instituciones",
         href: "/institutions",  
         to: "/institutions",
-      },
-      {
-        label: "Eventos",
-        href: "/events",
-        to: "/events",
-        permission: 'events.index',
-
       },
       {
         label: "Documentos",
@@ -111,21 +125,16 @@ export default [
   {
     href:"/announcements",
     icon: mdiMonitor,
-    label: "Dashboard",
+    label: "Convocatorias",
     role: "Postulante"
   },
   {
     href: "/proposals",
-    label: "Propuestas",
+    label: "Tus propuestas",
     icon: mdiBookshelf,
     role: "Postulante"
   },
-  {
-    href:"/announcements",
-    label: "Convocatorias",
-    icon: mdiClockCheck,
-    role: "Admin"
-  },
+  
   /* {
     href:"/announcements",
     label: "Convocatorias",

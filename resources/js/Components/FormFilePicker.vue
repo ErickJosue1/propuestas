@@ -16,6 +16,10 @@ const props = defineProps({
     type: String,
     default: mdiUpload,
   },
+  name: {
+    type: String,
+    default: null,
+  },
   accept: {
     type: String,
     default: null,
@@ -95,6 +99,7 @@ const upload = (event) => {
         :rounded-full="isRoundIcon"
       />
       <input
+        :name="name"
         ref="root"
         type="file"
         class="absolute top-0 left-0 w-full h-full opacity-0 outline-none cursor-pointer -z-1"

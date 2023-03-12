@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnnouncementsController;
 use App\Http\Controllers\AssestmentCriteriaController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ColonyController;
 use App\Http\Controllers\DocumentSupportingController;
 use App\Http\Controllers\EventsController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalsController;
 use App\Http\Controllers\RenapoController;
 use App\Models\Announcements;
+use App\Models\Calendar;
 use App\Models\Proposals;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -62,9 +64,9 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('ErrorView');
     });
 
-    /* Route::get('/', function () {
+  /*   Route::get('/', function () {
         return Inertia::render('StyleView');
-    }); */
+    });  */
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -79,6 +81,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('assesstment', AssestmentCriteriaController::class)->names('assesstment');
     Route::resource('documents', DocumentSupportingController::class)->names('documents');
     Route::resource('proposals', ProposalsController::class)->names('proposals');
+    Route::resource('calendar', CalendarController::class)->names('calendar');
+
 
 });
 

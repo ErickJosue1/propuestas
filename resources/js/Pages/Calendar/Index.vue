@@ -28,7 +28,6 @@ export default {
             required: true
         },
         routeName: { type: String, required: true },
-        loadingResults: { type: Boolean, required: true, default: true }
     },
     components: {
         Link,
@@ -46,7 +45,6 @@ export default {
         const form = useForm({
             name: ''
         });
-        
         const eliminar = (id) => {
             Swal.fire({
                 title: "¿Esta seguro?",
@@ -58,7 +56,7 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("proposals.destroy", id));
+                    form.delete(route("calendar.destroy", id));
                 }
             });
         };
@@ -97,10 +95,10 @@ export default {
                 <thead>
                     <tr>
                         <th />
-                        <th>Nombre</th>
-                        <th>Status</th>
-                        <th>Fecha Captura</th>
-                        <th>Fecha Aprobado</th>
+                        <th>Evento</th>
+                        <th>Convocatoria</th>
+                        <th>Fecha de Inicio</th>
+                        <th>Fecha Final</th>
                         <th />
                     </tr>
                 </thead>
@@ -113,20 +111,19 @@ export default {
                                     d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
                             </svg>
                         </td>
+                        <td data-label="Evento">
+                            {{ item.events.name }}
+                        </td>
+                        <td data-label="Convocatoria">
+                            {{ item.announcements.name }}
+                        </td>
+                        <td data-label="Fecha de Inicio">
+                            {{ item.date_start }}
+                        </td>
                         <td data-label="Nombre">
-                            {{ item.title }}
+                            {{ item.date_end }}
                         </td>
-                        <td data-label="Status">
-                            Pendiente
-                        </td>
-                        <td data-label="Fecha Captura">
-                            {{ item.created_at }}
-                        </td>
-                        <td data-label="Fecha Aprobado">
-                            Pendiente
-                        </td>
-
-
+                       
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>

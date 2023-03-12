@@ -58,8 +58,6 @@ class PermissionController extends Controller
         return Inertia::render("{$this->source}Create", [
             'titulo' => 'Agregar Permisos',
             'routeName' => $this->routeName,
-            /*             'modulos' => modulo::orderBy('id')->get(),
- */
         ]);
     }
 

@@ -11,4 +11,9 @@ class Events extends Model
 
     protected $fillable = ['name'];
 
+
+    public function calendars(){
+        return $this->hasMany(Calendar::class);
+    }
+
 }

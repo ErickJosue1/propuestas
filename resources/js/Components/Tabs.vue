@@ -1,31 +1,33 @@
 <template>
     <div>
         <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
-            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent"
-                role="tablist">
-                <li v-for="(tab, index) in tabs" :key="index" class="mr-2" role="presentation">
-                    <button @click="activeTab = tab.tab" :class="{ 'border-b-2': activeTab === tab.tab }"
+            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+                <li v-for="(tab, index) in tabTitle" :key="index" class="mr-2">
+                    <button @click="selectedTitle = tab" :class="{ 'border-b-2': selectedTitle === tab }"
                         class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                        id="dashboard-tab" data-tabs-target="#dashboard" type="button" aria-selected="false">{{ tab.name
+                        id="dashboard-tab" data-tabs-target="#dashboard" type="button" aria-selected="false">{{ tab
                         }}</button>
-                   <!--  <div
-                        class="inline-block p-4 rounded-t-lg"
-                        type="button">{{ tab.name
-                        }}</div> -->
                 </li>
             </ul>
         </div>
         <div>
-            <slot :name="activeTab"></slot>
+            <slot />
         </div>
     </div>
 </template>
 
 <script>
+import { provide, ref } from 'vue';
 export default {
-    props: {
-        tabs: { required: true },
-        activeTab: { required: true },
-    },
+    setup(props, { slots }) {
+        const tabTitle = ref(slots.default().map((tab) => tab.props.title))
+        const selectedTitle = ref(tabTitle.value[0])
+
+        provide("selectedTitle", selectedTitle)
+        return {
+            tabTitle,
+            selectedTitle
+        }
+    }
 }
 </script>

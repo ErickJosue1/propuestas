@@ -13,7 +13,7 @@ class UpdateAnnouncementsRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class UpdateAnnouncementsRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name'        => "required|string|max:50",
+            'description'        => "required|integer|max:50",
+            'num_announcement'        => "required|integer|max:50",
+            'y_announcement'        => "required|integer|max:50",
+            'status'        => "required|integer|max:50",
+            'institutions_id' => "required|string|max:45|exist:institutions,id",
         ];
     }
 }

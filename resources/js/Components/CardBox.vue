@@ -8,6 +8,9 @@ const props = defineProps({
     type: String,
     default: "rounded-2xl",
   },
+  enctype: {
+    type: String,
+  },
   flex: {
     type: String,
     default: "flex-col",
@@ -45,12 +48,8 @@ const submit = (event) => {
 </script>
 
 <template>
-  <component
-    :is="isForm ? 'form' : 'div'"
-    :class="componentClass"
-    class="bg-white flex"
-    @submit="submit"
-  >
+  <component :is="isForm ? 'form' : 'div'" :class="componentClass" class="bg-white flex" :enctype="enctype"
+    @submit="submit">
     <slot v-if="hasComponentLayout" />
     <template v-else>
       <CardBoxComponentBody :no-padding="hasTable">

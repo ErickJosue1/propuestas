@@ -13,7 +13,7 @@ class UpdateCalendarRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,11 @@ class UpdateCalendarRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'date_start'        => "required|string|max:50",
+            'date_end'        => "required|string|max:50",
+            'id_announcements'        => "required|string|max:50",
+            'id_events'        => "required|string|max:50",
+            'observations'        => "required|string|max:50",
         ];
     }
 }

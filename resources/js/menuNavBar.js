@@ -15,22 +15,22 @@ import {
 export default [
   {
     icon: mdiMenu,
-    label: "Sample menu",
+    label: "Información",
     menu: [
       {
         icon: mdiClockOutline,
-        label: "Item One",
+        label: "Calendario",
       },
       {
         icon: mdiCloud,
-        label: "Item Two",
+        label: "Cloud",
       },
       {
         isDivider: true,
       },
       {
-        icon: mdiCrop,
-        label: "Item Last",
+        icon: mdiGithub,
+        label: "Github",
       },
     ],
   },

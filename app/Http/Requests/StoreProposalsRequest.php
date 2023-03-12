@@ -40,9 +40,10 @@ class StoreProposalsRequest extends FormRequest
             'benefits' => "required|string|max:45",
             'products_generated' => "required|string|max:45",
             'ownership_proposal' => "required|string|max:45",
-            'announcement_id' => "required|string|max:45|exist:announcements,id",
-            'area_knowledge_id' => "required|string|max:45|exist:areas_knowledge,id",
-            'user_id' => "required|string|max:45|exist:users,id",
+            'announcement_id' => "required|string|max:45",
+            'area_knowledge_id' => "required|string|max:45",
+            'user_id' => "required|string|max:45",
+            'myFiles' => "exclude",
         ];
     }
 }

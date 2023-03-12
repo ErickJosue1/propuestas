@@ -1,5 +1,5 @@
 <script>
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
@@ -14,7 +14,13 @@ import Tab from '@/components/Tab.vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import TodoList from '@/components/TodoList.vue';
 import FormFilePicker from "@/components/FormFilePicker.vue";
-
+import axios from 'axios';
+import FormValidationErrors from "@/components/FormValidationErrors.vue";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
+import Swal from "sweetalert2";
+import { computed, ref } from "vue";
+import NotificationBarInCard from "@/components/NotificationBarInCard.vue";
 
 
 
@@ -38,31 +44,110 @@ export default {
         Tab,
         ToggleSwitch,
         TodoList,
-        FormFilePicker
+        FormFilePicker,
+        FormValidationErrors,
+        NotificationBarInCard
     },
-    setup() {
+    methods: {
+        onchange(e) {
+            const name = e.target.name
+            const fileA = e.target.files[0]
+            this.file.push({ name: name, file: fileA })
+            console.log(this.file)
+        }
+    },
+    setup(props) {
         const submit = () => {
-            form.post(route('announcements.store'));
+            if (file.length < 3) {
+                Swal.fire({
+                    title: "Documentos obligatorios!",
+                    text: "Es necesario subir los " + props.convocatoria.documents_supporting.length + " documentos",
+                    icon: "warning",
+                    timer: 10000,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Ok!",
+                });
+            }
+            else {
+                const config = {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                }
+
+                const formData = new FormData();
+
+                for (let index = 0; index < file.length; index++) {
+                    formData.append('myFiles[' + index + ']', file[index].file, file[index].name + ".pdf")
+                }
+
+                Object.entries(form.data()).forEach(([key, value]) => {
+                    formData.append(key, value)
+                    console.log(key, value)
+                })
+
+                axios.post(route('proposals.store'), formData, config).then((response) => {
+                    console.log(response)
+                })
+                    .catch(function (error) {
+                        if (error.response) {
+
+                            Object.entries(error.response.data.errors).forEach(([key, value]) => {
+                                errors.value.push(value)
+                            })
+
+                            console.log(error.response.data);
+                            console.log(error.response.status);
+                            console.log(error.response.headers);
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                            // http.ClientRequest in node.js
+                            console.log(error.request);
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                        }
+                        console.log(error.config);
+                    });
+            }
+
+
+
+
         };
 
+        const file = []
+
         const form = useForm({
-            name: '',
-            num_announcement: '',
-            status: '',
-            y_announcement: '',
-            institutions_id: '',
-            assesstments: [],
-            file: null
-        });
+            title: '',
+            line_research: '',
+            abstract: '',
+            problem_statement: '',
+            justification: '',
+            background: '',
+            technical_manager_experience: '',
+            capcities: '',
+            general_objective: '',
+            specific_objective: '',
+            expected_results: '',
+            expected_results_review: '',
+            differentiators: '',
+            benefits: '',
+            products_generated: '',
+            ownership_proposal: '',
+            announcement_id: props.convocatoria.id,
+            area_knowledge_id: '1',
+            user_id: usePage().props.auth.user.id,
+        })
 
-        const linea = [ 'Linea 1', 'Linea 2', 'Linea 3' ]
+        const linea = ['Linea 1', 'Linea 2', 'Linea 3']
 
-        const tabs = [{ name: 'Gestion de documentacion', tab: 'Tab1' }, { name: 'Gestion de propuestas', tab: 'Tab2' }, { name: 'Criterios de Evaluacion', tab: 'Tab3', enable: false }];
-        const activeTab = 'Tab1';
+        const errors = ref([]);
 
+        const hasErrors = computed(() => errors.value.length > 0);
 
-        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, tabs, activeTab, linea }
+        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors }
     },
+
 
 }
 </script>
@@ -77,56 +162,132 @@ export default {
                 </svg></a>
         </SectionTitleLineWithButton>
 
-        <CardBox form @submit.prevent="submit">
+        <CardBox>
+            <NotificationBarInCard v-if="hasErrors" color="danger">
+                <b>Whoops! Algo salio mal!.</b>
+                <span v-for="(error, key) in errors" :key="key">{{ error }}</span>
+            </NotificationBarInCard>
 
-
-            <Tabs :tabs="tabs" :activeTab="activeTab">
-                <template v-slot:Tab1>
-                    <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel"
-                        aria-labelledby="profile-tab">
-                        <FormField label="Titulo y Status">
-                            <FormFilePicker label="Upload" />
+            <Tabs>
+                <Tab title="Gestion de documentacion">
+                    <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
+                        <FormField :label="item.name">
+                            <FormFilePicker :name="item.name" @change="onchange" label="Subir" />
                         </FormField>
                     </div>
-                </template>
 
-                <template v-slot:Tab2>
+                    <base-divider></base-divider>
+                    <BaseButtons>
+                        <BaseButton @click="submit" type="submit" color="info" label="Subir" />
+                        <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
+                            label="Cancelar" />
+                    </BaseButtons>
+                </Tab>
+
+                <Tab title="Gestion de propuestas">
+
                     <FormField label="Titulo de la propuestas" help="Max 255 caracteres">
-                        <FormControl v-model="form.phone" type="tel" placeholder="Asigne el nombre de identificacion para el proyecto" />
+                        <FormControl v-model="form.title" type="tel"
+                            placeholder="Asigne el nombre de identificacion para el proyecto" />
                     </FormField>
 
                     <FormField label="Linea de investigacion" help="Seleccione una linea de investigacion">
-                        <FormControl :options="linea" />
+                        <FormControl v-model="form.line_research" :options="linea" />
                     </FormField>
 
-                    <FormField label="Resumen" help="Descripcion general de la convocatoria. Max 4000 caracteres">
-                        <FormControl type="textarea" placeholder="Explica brevemente la Propuesta" />
+                    <FormField label="Resumen"
+                        help="Descripcion general de la convocatoria. Min 1000 caracteres. Max 4000 caracteres">
+                        <FormControl v-model="form.abstract" type="textarea"
+                            placeholder="Explica brevemente la Propuesta" />
                     </FormField>
+
                     <FormField label="Planteamiento del problema"
-                        help="Describle la problematica que se abordara. Max 3000 caracteres">
-                        <FormControl type="textarea" placeholder="Explica una o mas problematicas" />
+                        help="Describle la problematica que se abordara. Min 500 caracteres. Max 3000 caracteres">
+                        <FormControl v-model="form.problem_statement" type="textarea"
+                            placeholder="Explica una o mas problematicas" />
                     </FormField>
-                    <FormField label="Justificacion" help="Justifica la realizacion del proyecto. Max 3000 caracteres">
-                        <FormControl type="textarea"
+
+                    <FormField label="Justificacion"
+                        help="Justifica la realizacion del proyecto. Min 500 caracteres. Max 3000 caracteres">
+                        <FormControl v-model="form.justification" type="textarea"
                             placeholder="Describe las dimensiones, necesidades y oportunidades de la Propuesta" />
                     </FormField>
 
-                    <FormField label="Antecedentes de la propuestas" help="Si la propuesta es la continuacion de una investigacion previamente apoyada, favor de mencionarlo. Max 3000 caracteres">
-                        <FormControl type="textarea"
+                    <FormField label="Antecedentes de la propuestas"
+                        help="Si la propuesta es la continuacion de una investigacion previamente apoyada, favor de mencionarlo. Min 500 caracteres. Max 3000 caracteres">
+                        <FormControl v-model="form.background" type="textarea"
                             placeholder="Describe los estudios previos, vacios del conocimiento, resultados contradictorios en otras investigaciones" />
                     </FormField>
-                    <FormField label="Experiencia de los responsables" help="Max 3000 caracteres">
-                        <FormControl type="textarea"
+                    <FormField label="Experiencia de los responsables" help="Min 500 caracteres. Max 4000 caracteres">
+                        <FormControl v-model="form.technical_manager_experience" type="textarea"
                             placeholder="Describe la experienca similar en proyectos previos del responsable tecnico y el personal clabe de la Propuesta" />
                     </FormField>
-                    <FormField label="Capacidades de los responsables" help="Max 4000 caracteres">
-                        <FormControl type="textarea"
+
+
+                    <FormField label="Capacidades de los responsables" help="Min 500 caracteres. Max 4000 caracteres">
+                        <FormControl v-model="form.capcities" type="textarea"
                             placeholder="Describe las capacidades con las que cuenta para desarrollar el proyecto de investigacion" />
                     </FormField>
-                </template>
-                <template v-slot:Tab3>
 
-                </template>
+                    <FormField label="Objetivo general" help="Min 100 caracteres. Max 1000 caracteres">
+                        <FormControl v-model="form.general_objective" type="textarea"
+                            placeholder="Describe claro y preciso, la finalidad de la investigación, qué se " />
+                    </FormField>
+
+                    <FormField label="Objetivos específicos" help="Min 100 caracteres. Max 2000 caracteres">
+                        <FormControl v-model="form.specific_objective" type="textarea"
+                            placeholder="Describe las metas, medibles y alcanzables durante el desarrollo del proyecto, deben ser presentadas de manera clara, concreta y concisa." />
+                    </FormField>
+
+                    <FormField label="Revisión de la literatura" help="Min 1000 caracteres. Max 4000 caracteres">
+                        <FormControl type="textarea"
+                            placeholder="Describe los resultados obtenidos de otros estudios similares previos" />
+                    </FormField>
+
+                    <FormField label="Grado de novedad científica" help="Min 500 caracteres. Max 4000 caracteres">
+                        <FormControl v-model="form.differentiators" type="textarea"
+                            placeholder="Enumera los puntos modulares que evidencien el grado de novedad científica, contenido innovador, originalidad y relevancia científica" />
+                    </FormField>
+
+                    <FormField label="Beneficios de la propuesta" help="Min 500 caracteres. Max 3000 caracteres">
+                        <FormControl v-model="form.benefits" type="textarea"
+                            placeholder="Describe al menos uno de los elementos que se beneficiarán con la implementación del proyecto de innovación" />
+                    </FormField>
+
+                    <FormField label="Principales resultados esperados" help="Min 500 caracteres. Max 3000 caracteres">
+                        <FormControl v-model="form.expected_results" type="textarea"
+                            placeholder="Describe el conocimiento de frontero esperado, Indicar los resultados novedosos" />
+                    </FormField>
+
+                    <FormField label="Entregables comprometidos" help="Min 100 caracteres. Max 2000 caracteres">
+                        <FormControl type="textarea" v-model="form.expected_results_review"
+                            placeholder="Especifica cuales son los entregables comprometidos como resultado del proyecto de investigación" />
+                    </FormField>
+
+                    <FormField label="Producto que se compromete a entregar">
+                        <FormControl :options="linea" />
+                    </FormField>
+
+                    <FormField label="Propiedad intelectual" help="Min 500 caracteres. Max 4000 caracteres">
+                        <FormControl v-model="form.ownership_proposal" type="textarea"
+                            placeholder="Descripción de los porcentajes de Uularidad de lo propiedad intelectual y de la propuesto de explotación de los derechos en caso de existir" />
+                    </FormField>
+
+                    <FormField label="Referencias" help="Min 500 caracteres. Max 4000 caracteres">
+                        <FormControl v-model="form.products_generated" type="textarea" placeholder="Referencias..." />
+                    </FormField>
+
+                    <base-divider></base-divider>
+
+                    <BaseButtons>
+                        <BaseButton @click="submit" type="submit" color="info" label="Subir" />
+                        <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
+                            label="Cancelar" />
+                    </BaseButtons>
+
+                </Tab>
+
+
             </Tabs>
 
         </CardBox>

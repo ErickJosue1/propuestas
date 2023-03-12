@@ -5,10 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Announcements;
 use App\Http\Requests\StoreAnnouncementsRequest;
 use App\Http\Requests\UpdateAnnouncementsRequest;
+use App\Models\Assestment_Criteria;
+use App\Models\Document_Supporting;
 use App\Models\Institutions;
+use Database\Seeders\AssestmentCriteriaSeeder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class AnnouncementsController extends Controller
@@ -40,7 +45,7 @@ class AnnouncementsController extends Controller
             if ($search != '') {
                 $query->where('name',          'LIKE', "%$search%");
             }
-        })->paginate(4)->withQueryString();
+        })->get();
 
         return Inertia::render("Anouncement/Index", [
             'titulo'      => 'Convocatorias',
@@ -60,7 +65,9 @@ class AnnouncementsController extends Controller
         return Inertia::render("Anouncement/Create", [
             'titulo'      => 'Crear una convocatoria',
             'routeName'      => $this->routeName,
-            'institutions' => Institutions::all()
+            'institutions' => Institutions::all(),
+            'assesstments' =>   Assestment_Criteria::all(),
+            'documents'    => Document_Supporting::all()
         ]);
     }
 
@@ -72,7 +79,45 @@ class AnnouncementsController extends Controller
      */
     public function store(StoreAnnouncementsRequest $request)
     {
-        //
+        if (empty($request->assesstments)) {
+            return redirect()->back()->withErrors(['Seleccione al menos un criterio para la convocatoria!']);
+        } else if (empty($request->documents)) {
+            return redirect()->back()->withErrors(['Seleccione al menos un documento para la convocatoria!']);
+        } else {
+            $record = $this->model::create($request->validated());
+            $criteria = new Assestment_Criteria();
+            $docuemnt = new Document_Supporting();
+
+            foreach ($request->documents as $value) {
+                if (isset($value['id'])) {
+                    $record->documents_supporting()->attach($value['id']);
+                } else {
+                    $docuemnt = Document_Supporting::create(
+                        [
+                            'name' => $value['name'],
+                        ]
+                    );
+                    $record->documents_supporting()->attach($docuemnt->id);
+                }
+            }
+
+
+            foreach ($request->assesstments as $value) {
+                if (isset($value['id'])) {
+                    $record->assesstment_criterias()->attach($value['id']);
+                } else {
+                    $criteria = Assestment_Criteria::create(
+                        [
+                            'name' => $value['name'],
+                            'value' => $value['value'],
+                        ]
+                    );
+                    $record->assesstment_criterias()->attach($criteria->id);
+                }
+            }
+        }
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Convocatoria guardada con éxito!');
     }
 
     /**

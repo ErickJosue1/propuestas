@@ -9,7 +9,12 @@ class Announcements extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'num_announcement', 'y_announcement', 'status', 'institutions_id'];
+    protected $fillable = ['name', 'description' ,'num_announcement', 'y_announcement', 'status', 'institutions_id'];
+
+
+    public function calendars(){
+        return $this->hasMany(Calendar::class);
+    }
 
     public function institutions()
     {
@@ -21,4 +26,12 @@ class Announcements extends Model
         $table = 'announcement_document_supporting';
         return $this->belongsToMany(Document_Supporting::class, $table, 'announcements_id', 'document_supporting_id');
     }
+
+    public function assesstment_criterias()
+    {
+        $table = 'announcement_assesstment_criteria';
+        return $this->belongsToMany(Assestment_Criteria::class, $table, 'announcements_id', 'assessment_criteria_id');
+    }
+
+    
 }

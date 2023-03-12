@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCalendarRequest extends FormRequest
+class UpdateProceedingsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class StoreCalendarRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,11 +24,7 @@ class StoreCalendarRequest extends FormRequest
     public function rules()
     {
         return [
-            'date_start'        => "required|string|max:50",
-            'date_end'        => "required|string|max:50",
-            'id_announcements'        => "required|integer|max:50",
-            'id_events'        => "required|integer|max:50",
-            'observations'        => "required|string|max:50",
+            //
         ];
     }
 }

@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Calendar;
 use App\Http\Requests\StoreCalendarRequest;
 use App\Http\Requests\UpdateCalendarRequest;
+use App\Models\Announcements;
+use App\Models\Events;
+use Inertia\Inertia;
+use Illuminate\Http\Request;
+
 
 class CalendarController extends Controller
 {
@@ -13,9 +18,33 @@ class CalendarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    private Calendar $model;
+    private string $source;
+    private string $routeName;
+    private string $module = 'calendar';
+
+    //Para proteger nuestras rutas
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->source = 'Calendar/';
+        $this->model = new Calendar();
+        $this->routeName = 'calendar.';
+
+        $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
+        $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
+        $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
+        $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']);
+    }
+
     public function index()
     {
-        //
+        return Inertia::render("{$this->source}Index", [
+            'titulo'          => 'Calendario de enventos y convocatorias',
+            'records'        => $this->model::with('announcements', 'events')->paginate(10),
+            'routeName'      => $this->routeName,
+        ]);
     }
 
     /**
@@ -25,7 +54,12 @@ class CalendarController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render("{$this->source}Create", [
+            'titulo' => 'Agregar Eventos',
+            'routeName' => $this->routeName,
+            'events'         => Events::all(),
+            'announcements'  => Announcements::all(),
+        ]);
     }
 
     /**
@@ -36,7 +70,9 @@ class CalendarController extends Controller
      */
     public function store(StoreCalendarRequest $request)
     {
-        //
+        $this->model::create($request->validated());
+        return redirect()->route(`{$this->routeName}index`)->with('success', 'Fecha guardad con éxito!');
+
     }
 
     /**

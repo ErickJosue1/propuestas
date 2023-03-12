@@ -25,7 +25,7 @@ class UpdateAssestment_CriteriaRequest extends FormRequest
     {
         return [
             'name'        => "required|string",
-            'value'        => "required|string"
+            'value'        => "required|integer"
         ];
     }
 }

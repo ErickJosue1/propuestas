@@ -6,7 +6,9 @@ use App\Models\Proposals;
 use App\Http\Requests\StoreProposalsRequest;
 use App\Http\Requests\UpdateProposalsRequest;
 use App\Models\Announcements;
+use App\Models\Assestment_Criteria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,7 +48,7 @@ class ProposalsController extends Controller
             'titulo'      => 'Tus Propuestas',
             'records'    => $records,
             'routeName'      => $this->routeName,
-            'loadingResults' => false
+            'loadingResults' => false,
         ]);
     }
 
@@ -57,22 +59,26 @@ class ProposalsController extends Controller
      */
     public function create(Announcements $record)
     {
-        return Inertia::render("Proposals/Create", [
-            'titulo'      => 'Propuesta',
-            'convocatoria' => $record,
-            'routeName'      => $this->routeName,
-        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreProposalsRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreProposalsRequest $request)
     {
-        //
+
+        $this->model::create($request->validated());
+
+        foreach ($request->myFiles as $files) {
+          /*   mimes:jpg,bmp,png */
+          
+            $files->storeAs(Auth::user()->name . 'Expediente', $files->getClientOriginalName(), 'public');
+        }
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Su propuesta ha sido guardada con éxito!');
     }
 
     /**
@@ -81,9 +87,15 @@ class ProposalsController extends Controller
      * @param  \App\Models\Proposals  $proposals
      * @return \Illuminate\Http\Response
      */
-    public function show(Proposals $proposals)
+    public function show(Announcements $proposal)
     {
-        //
+
+        return Inertia::render("Proposals/Create", [
+            'titulo'      => 'Propuesta',
+            'convocatoria' => $proposal->load(['assesstment_criterias', 'documents_supporting']),
+            'routeName'      => $this->routeName,
+        ]);
+        
     }
 
     /**

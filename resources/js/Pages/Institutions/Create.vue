@@ -33,7 +33,7 @@ export default {
 
         const form = useForm({
             name: '',
-            status: ''
+            status: 1
         });
 
         return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub }
@@ -54,7 +54,6 @@ export default {
         <CardBox form @submit.prevent="submit">
             <FormField label="Nombre">
                 <FormControl placeholder="Nombre" v-model="form.name" :icon="mdiAccount" />
-                <FormControl v-model="form.status" placeholder="Status" />
             </FormField>
             <template #footer>
                 <BaseButtons>

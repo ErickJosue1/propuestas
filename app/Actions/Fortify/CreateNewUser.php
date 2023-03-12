@@ -19,7 +19,7 @@ class CreateNewUser implements CreatesNewUsers
      *
      * @param  array<string, string>  $input
      */
-    public function create(array $input): User
+    public function create( $input): User
     {
         Validator::make($input, [
             'curp' => ['required', 'string', 'max:18', 'unique:users'],

@@ -33,6 +33,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'perfiles.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'perfiles.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
 
+        Permission::create(['name' => 'calendar.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'calendar.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'calendar.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'calendar.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
+
         Permission::create(['name' => 'users.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'users.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'users.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
