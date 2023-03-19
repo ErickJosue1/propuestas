@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('line_research');
             $table->string('abstract');
+            $table->foreignId('state_id')->nullable();
             $table->string('problem_statement');
             $table->string('justification');
             $table->string('background');

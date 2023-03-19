@@ -91,7 +91,7 @@ const upload = (event) => {
     <label class="inline-flex">
       <BaseButton
         as="a"
-        :class="{ 'w-12 h-12': isRoundIcon, 'rounded-r-none': showFilename }"
+        :class="{ 'w-24 h-12': isRoundIcon, 'rounded-r-none': showFilename }"
         :icon-size="isRoundIcon ? 24 : undefined"
         :label="isRoundIcon ? null : label"
         :icon="icon"
@@ -109,7 +109,7 @@ const upload = (event) => {
     </label>
     <div
       v-if="showFilename"
-      class="px-4 py-2 bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700 border rounded-r"
+      class="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700 border rounded-r"
     >
       <span class="text-ellipsis line-clamp-1">
         {{ file.name }}

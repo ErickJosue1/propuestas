@@ -85,7 +85,7 @@ export default {
                 </svg>
             </a>
         </SectionTitleLineWithButton>
-
+ 
         <CardBox v-if="records.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>

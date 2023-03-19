@@ -19,8 +19,8 @@ class AdminSeeder extends Seeder
         $perfil = Role::where('name', 'Admin')->first();
         $user = Role::where('name', 'Postulante')->first();
 
-/*         $cap = Role::where('name', 'Captura')->first();
- */
+        
+
         // Cobertura de visibilidad completa
         $user->givePermissionTo(Permission::where('name','announcements.index')->get());
         $perfil->givePermissionTo(Permission::where('module_key', 'modulo')->get());

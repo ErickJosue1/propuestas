@@ -29,12 +29,19 @@ class Proposals extends Model
         'announcement_id',
         'area_knowledge_id',
         'user_id',
+        'state_id'
     ];
 
     public function announcement()
     {
         return $this->belongsTo(Announcements::class, 'announcement_id');
     }
+
+    public function state()
+    {
+        return $this->belongsTo(ProposalStates::class, 'state_id');
+    }
+
 
     public function area_knowledge()
     {

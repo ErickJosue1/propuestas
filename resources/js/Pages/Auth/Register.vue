@@ -92,7 +92,7 @@ export default {
     const getData = () => {
       isLoading.value = true;
       axios
-        .get(route("renapo.show", form.curp))
+        .get(route("renapo.show", form.curp.toUpperCase()))
         .then((response) => {
           isLoading.value = false;
           form.name = response['data']['nombres']

@@ -27,7 +27,7 @@ export default [
     label: "Dashboard",
     role: "Admin"
   },
-  
+
   /*  {
      href: "/tables",
      to: "/tables",
@@ -71,8 +71,8 @@ export default [
      label: "Error",
      icon: mdiAlertCircle,
    }, */
-   {
-    href:"/announcements",
+  {
+    href: "/announcements",
     label: "Convocatorias",
     icon: mdiClockCheck,
     role: "Admin"
@@ -98,7 +98,7 @@ export default [
       {
         permission: 'institutions.index',
         label: "Instituciones",
-        href: "/institutions",  
+        href: "/institutions",
         to: "/institutions",
       },
       {
@@ -123,7 +123,7 @@ export default [
   },
 
   {
-    href:"/announcements",
+    href: "/announcements",
     icon: mdiMonitor,
     label: "Convocatorias",
     role: "Postulante"
@@ -134,7 +134,13 @@ export default [
     icon: mdiBookshelf,
     role: "Postulante"
   },
-  
+  {
+    href: "/proposals",
+    label: "Propuestas",
+    icon: mdiBookshelf,
+    role: "Evaluador"
+  },
+
   /* {
     href:"/announcements",
     label: "Convocatorias",

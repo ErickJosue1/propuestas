@@ -101,6 +101,7 @@ class EventsController extends Controller
             'titulo'      => 'Editar Instituciones',
             'event'    => $event,
             'routeName'      => $this->routeName,
+            
         ]);
     }
 

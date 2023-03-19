@@ -22,15 +22,12 @@ import Swal from "sweetalert2";
 import { computed, ref } from "vue";
 import NotificationBarInCard from "@/components/NotificationBarInCard.vue";
 
-
-
-
 export default {
     props: {
         titulo: { type: String, required: true },
         routeName: { type: String, required: true },
         convocatoria: { type: Object, required: true },
-        state: { type: Object, required: true }
+        proposal: { type: Object, required: true },
     },
     components: {
         LayoutMain,
@@ -47,7 +44,8 @@ export default {
         TodoList,
         FormFilePicker,
         FormValidationErrors,
-        NotificationBarInCard
+        NotificationBarInCard,
+
     },
     methods: {
         onchange(e) {
@@ -55,6 +53,20 @@ export default {
             const fileA = e.target.files[0]
             this.file.push({ name: name, file: fileA })
             console.log(this.file)
+        },
+        getPdf(filename) {
+            axios({
+                url: '/download-pdf/' + (filename + '.pdf'),
+                method: 'GET',
+                responseType: 'blob', // This is important
+            }).then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', filename + '.pdf');
+                document.body.appendChild(link);
+                link.click();
+            });
         }
     },
     setup(props) {
@@ -85,7 +97,7 @@ export default {
                     console.log(key, value)
                 })
 
-                axios.post(route('proposals.store'), formData, config).then((response) => {
+                axios.post(route('proposals.update'), formData, config).then((response) => {
                     console.log(response)
                 })
                     .catch(function (error) {
@@ -99,47 +111,24 @@ export default {
                             console.log(error.response.status);
                             console.log(error.response.headers);
                         } else if (error.request) {
-                            // The request was made but no response was received
-                            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                            // http.ClientRequest in node.js
+
                             console.log(error.request);
                         } else {
-                            // Something happened in setting up the request that triggered an Error
                             console.log('Error', error.message);
                         }
                         console.log(error.config);
                     });
             }
 
-
-
-
         };
+
 
         const file = []
 
         const form = useForm({
-            title: '',
-            line_research: '',
-            abstract: '',
-            problem_statement: '',
-            justification: '',
-            background: '',
-            technical_manager_experience: '',
-            capcities: '',
-            general_objective: '',
-            specific_objective: '',
-            expected_results: '',
-            expected_results_review: '',
-            differentiators: '',
-            benefits: '',
-            products_generated: '',
-            ownership_proposal: '',
-            announcement_id: props.convocatoria.id,
-            area_knowledge_id: '1',
-            user_id: usePage().props.auth.user.id,
-            state_id: props.state.id
+            ...props.proposal
         })
+
 
         const linea = ['Linea 1', 'Linea 2', 'Linea 3']
 
@@ -147,9 +136,8 @@ export default {
 
         const hasErrors = computed(() => errors.value.length > 0);
 
-        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors }
+        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors, file }
     },
-
 
 }
 </script>
@@ -174,7 +162,15 @@ export default {
                 <Tab title="Gestion de documentacion">
                     <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
                         <FormField :label="item.name">
-                            <FormFilePicker :name="item.name" @change="onchange" label="Subir" />
+                            <FormFilePicker accept="application/pdf" :name="item.name" @change="onchange" label="Subir nuevo archivo" />
+                            <button @click="getPdf(item.name)"
+                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                                <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20">
+                                    <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
+                                </svg>
+                                <span>Descar su archivo '{{ item.name }}' anterior</span>
+                            </button>
                         </FormField>
                     </div>
 
@@ -286,6 +282,7 @@ export default {
                         <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
                             label="Cancelar" />
                     </BaseButtons>
+
                 </Tab>
 
 

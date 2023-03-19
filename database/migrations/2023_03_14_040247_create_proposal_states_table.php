@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('proceedings', function (Blueprint $table) {
+        Schema::create('proposal_states', function (Blueprint $table) {
             $table->id();
-            $table->string('path');
-            $table->foreignId('proposal_id')->nullable();
-            $table->foreignId('user_id')->nullable();
+            $table->string('state');
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('proceedings');
+        Schema::dropIfExists('proposal_states');
     }
 };

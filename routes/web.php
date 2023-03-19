@@ -73,6 +73,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/download-pdf/{filename}', [ProposalsController::class, 'downloadPdf'])->name('download-pdf');
+    
+    Route::get('/proposals/{proposal}/review', [ProposalsController::class, 'review'])->name('proposals.review');
 
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
     Route::resource('announcements', AnnouncementsController::class)->names('announcements');
