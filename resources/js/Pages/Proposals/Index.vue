@@ -104,7 +104,9 @@ export default {
                         <th>Nombre</th>
                         <th>Status</th>
                         <th>Fecha Captura</th>
-                        <th>Fecha Aprobado</th>
+                        <th v-if="records.data.state_id != 3">Fecha Aprobado / Rechazado</th>
+                        <th v-else>Fecha Rechazado</th>
+
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -124,10 +126,10 @@ export default {
                             {{ state[item.state_id - 1].state }}
                         </td>
                         <td v-if="item.state_id == 1" data-label="Fecha Aprobado">
-                            Date Approve
+                            {{ item.updated_at }} 
                         </td>
-                        <td v-if="item.state_id == 3" data-label="Fecha Aprobado">
-                            Date Refused
+                        <td v-if="item.state_id == 3" data-label="Fecha Rechazado">
+                            {{ item.updated_at }} 
                         </td>
 
 
@@ -138,10 +140,11 @@ export default {
                                 <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                             </BaseButtons>
                             <BaseButtons v-else type="justify-center lg:justify-end" no-wrap>
-                                <button :href="route(`${routeName}review`, item.id)"
-                                    class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                                    Revisar
-                                </button>
+                                <a :href="route(`${routeName}review`, item.id)"> <button
+                                        class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                                        Revisar
+                                    </button>
+                                </a>
                             </BaseButtons>
                         </td>
 

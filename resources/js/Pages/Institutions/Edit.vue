@@ -1,5 +1,5 @@
 <script>
-import {  Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
@@ -40,7 +40,9 @@ export default {
 </script>
 
 <template>
+
     <LayoutMain :title="titulo">
+
         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
             <a :href="route(`${routeName}index`)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                     fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
@@ -57,8 +59,7 @@ export default {
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="guardar" type="submit" color="info" label="Actualizar" />
-                    <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
-                        label="Cancelar" />
+                    <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline label="Cancelar" />
                 </BaseButtons>
             </template>
         </CardBox>

@@ -43,6 +43,7 @@ class StoreProposalsRequest extends FormRequest
             'announcement_id' => "required|string|max:255",
             'area_knowledge_id' => "required|string|max:255",
             'user_id' => "required|string|max:255",
+            'state_id' => "required|string|max:255",
             'myFiles' => "exclude",
         ];
     }

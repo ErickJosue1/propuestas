@@ -7,8 +7,10 @@ use App\Http\Requests\StoreProposalsRequest;
 use App\Http\Requests\UpdateProposalsRequest;
 use App\Models\Announcements;
 use App\Models\Assestment_Criteria;
+use App\Models\Criterias;
 use App\Models\Proceedings;
 use App\Models\ProposalStates;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -71,15 +73,14 @@ class ProposalsController extends Controller
     public function store(StoreProposalsRequest $request)
     {
 
-        $proposal = $this->model::create($request->validated())->get();
+        $this->model::create($request->validated());
 
-        $path = public_path() . '/' . Auth::user()->name . 'Expediente';
 
-        Proceedings::create([
+        /*  Proceedings::create([
             'path' => $path,
             'proposal_id' => $proposal->id,
             'user_id'  => $request->user_id
-        ]);
+        ]); */
 
 
         foreach ($request->myFiles as $files) {
@@ -118,11 +119,7 @@ class ProposalsController extends Controller
 
         $records = Announcements::find($proposal->announcement_id);
         $records->load(['assesstment_criterias', 'documents_supporting']);
-        /*  $files = [];
-
-        foreach ($records->documents_supporting as $file) {
-            array_push($files, Storage::disk('public')->get("JOSE ROBERTOExpediente/$file->name.pdf"));
-        } */
+        $criterias = Criterias::where('proposal_id', '=', "$proposal->id")->get();
 
 
         return Inertia::render("Proposals/Edit", [
@@ -130,7 +127,7 @@ class ProposalsController extends Controller
             'proposal'    => $proposal,
             'convocatoria' => $records,
             'routeName'      => $this->routeName,
-            'path' => public_path(Auth::user()->name . 'expediente')
+            'criterias' => $criterias->load(['assesstment_criterias',])
         ]);
     }
 
@@ -144,11 +141,10 @@ class ProposalsController extends Controller
         $records->load(['assesstment_criterias', 'documents_supporting']);
 
         return Inertia::render("Proposals/Review", [
-            'titulo'      => 'Editar Propuesta',
+            'titulo'      => 'Revision de propuesta ' . '"' . $proposal->title . '"',
             'proposal'    => $proposal,
             'convocatoria' => $records,
             'routeName'      => $this->routeName,
-            'path' => public_path(Auth::user()->name . 'expediente')
         ]);
     }
 
@@ -157,11 +153,22 @@ class ProposalsController extends Controller
         Send the specified Proposal file to the view
     */
 
-    public function downloadPdf($filename)
+    public function downloadPdf($filename, $user)
     {
-        $pathToFile = storage_path('app/public/' . Auth::user()->name . 'Expediente/' . $filename);
+        $pathToFile = storage_path('app/public/' . User::find($user)->name . 'Expediente/' . $filename);
 
         return response()->download($pathToFile);
+    }
+
+    /* 
+        Update the specified resource in storage after setting being reviewed.
+     */
+
+    public function updateReview(UpdateProposalsRequest $request, Proposals $proposal)
+    {
+        $proposal->update($request->validated());
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
     }
 
 
@@ -172,9 +179,17 @@ class ProposalsController extends Controller
      * @param  \App\Models\Proposals  $proposals
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProposalsRequest $request, Proposals $proposals)
+    public function update(UpdateProposalsRequest $request, Proposals $proposal)
     {
-        //
+        $proposal->update($request->validated());
+
+        if (!empty($request->myFiles)) {
+            foreach ($request->myFiles as $files) {
+                $files->storeAs(Auth::user()->name . 'Expediente', $files->getClientOriginalName(), 'public');
+            }
+        }
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta editada correctamente!');
     }
 
     /**
@@ -186,6 +201,7 @@ class ProposalsController extends Controller
     public function destroy(Proposals $proposal)
     {
         $proposal->delete();
+
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta eliminada con éxito');
     }
 }

@@ -28,6 +28,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  disabled: {
+    type: Boolean,
+    default: null,
+  },
   icon: {
     type: String,
     default: null,
@@ -154,6 +158,7 @@ if (props.ctrlKFocus) {
       :maxlength="maxlength"
       :placeholder="placeholder"
       :required="required"
+      :disabled="disabled"
     />
     <input
       v-else

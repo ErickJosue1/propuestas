@@ -4,6 +4,7 @@ use App\Http\Controllers\AnnouncementsController;
 use App\Http\Controllers\AssestmentCriteriaController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ColonyController;
+use App\Http\Controllers\CriteriasController;
 use App\Http\Controllers\DocumentSupportingController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\InstitutionsController;
@@ -36,7 +37,7 @@ Route::get('/', function () {
 });
 
 Route::resource('renapo', RenapoController::class)->names('renapo');
-Route::resource('colony', ColonyController  ::class)->names('colony');
+Route::resource('colony', ColonyController::class)->names('colony');
 
 Route::get('/dashboard', function () {
     return Inertia::render('HomeView');
@@ -64,7 +65,7 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('ErrorView');
     });
 
-  /*   Route::get('/', function () {
+    /*   Route::get('/', function () {
         return Inertia::render('StyleView');
     });  */
 
@@ -73,8 +74,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/download-pdf/{filename}', [ProposalsController::class, 'downloadPdf'])->name('download-pdf');
-    
+    Route::get('/download-pdf/{filename}/{user}', [ProposalsController::class, 'downloadPdf'])->name('download-pdf');
+
+    Route::put('/proposals/{proposal}', [ProposalsController::class, 'updateReview'])->name('proposals.updateReview');
+
     Route::get('/proposals/{proposal}/review', [ProposalsController::class, 'review'])->name('proposals.review');
 
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
@@ -85,8 +88,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('documents', DocumentSupportingController::class)->names('documents');
     Route::resource('proposals', ProposalsController::class)->names('proposals');
     Route::resource('calendar', CalendarController::class)->names('calendar');
-
-
+    Route::resource('criterias', CriteriasController::class)->names('criterias');
 });
 
 require __DIR__ . '/auth.php';

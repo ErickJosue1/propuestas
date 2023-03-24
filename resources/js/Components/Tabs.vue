@@ -20,7 +20,7 @@
 import { provide, ref } from 'vue';
 export default {
     setup(props, { slots }) {
-        const tabTitle = ref(slots.default().map((tab) => tab.props.title))
+        const tabTitle = ref(slots.default().map((tab) => { if (!tab.props.criteria) { return tab.props.title }  }))
         const selectedTitle = ref(tabTitle.value[0])
 
         provide("selectedTitle", selectedTitle)

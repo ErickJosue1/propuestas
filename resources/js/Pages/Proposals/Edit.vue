@@ -28,6 +28,7 @@ export default {
         routeName: { type: String, required: true },
         convocatoria: { type: Object, required: true },
         proposal: { type: Object, required: true },
+        criterias: { type: Object, required: true },
     },
     components: {
         LayoutMain,
@@ -56,7 +57,7 @@ export default {
         },
         getPdf(filename) {
             axios({
-                url: '/download-pdf/' + (filename + '.pdf'),
+                url: '/download-pdf/' + (filename + '.pdf') + '/' + this.proposal.user_id,
                 method: 'GET',
                 responseType: 'blob', // This is important
             }).then(response => {
@@ -71,15 +72,19 @@ export default {
     },
     setup(props) {
         const submit = () => {
-            if (file.length < 3) {
+            if (file.length <= 0) {
                 Swal.fire({
-                    title: "Documentos obligatorios!",
-                    text: "Es necesario subir los " + props.convocatoria.documents_supporting.length + " documentos",
+                    title: "No se actualizaron los documentos",
+                    text: "Se conservaran los" + props.convocatoria.documents_supporting.length + " documentos anteriomente subidos, ¿Esta seguro?",
                     icon: "warning",
-                    timer: 10000,
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: "Ok!",
-                });
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        form.put(route('proposals.update', props.proposal.id))
+
+                    }
+                });;
             }
             else {
                 const config = {
@@ -92,19 +97,21 @@ export default {
                     formData.append('myFiles[' + index + ']', file[index].file, file[index].name + ".pdf")
                 }
 
+                formData.append("_method", "put");
+
+
                 Object.entries(form.data()).forEach(([key, value]) => {
                     formData.append(key, value)
-                    console.log(key, value)
                 })
 
-                axios.post(route('proposals.update'), formData, config).then((response) => {
-                    console.log(response)
-                })
+                axios.post(route('proposals.update', props.proposal.id),
+                    formData, config
+                )
                     .catch(function (error) {
                         if (error.response) {
 
                             Object.entries(error.response.data.errors).forEach(([key, value]) => {
-                                errors.value.push(value)
+                                errors.value.push(value[0])
                             })
 
                             console.log(error.response.data);
@@ -123,6 +130,8 @@ export default {
         };
 
 
+        const n_criterias = ref([]);
+
         const file = []
 
         const form = useForm({
@@ -134,10 +143,25 @@ export default {
 
         const errors = ref([]);
 
+
         const hasErrors = computed(() => errors.value.length > 0);
 
-        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors, file }
+        return { n_criterias, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors, file }
     },
+    mounted() {
+        let checkedArray = this.convocatoria.assesstment_criterias
+        const isClientName = row => client => row.assessment_criteria_id === client.id;
+        const remove = (arr, cb) => arr.filter(item => !cb(item));
+
+        for (let index = 0; index < this.criterias.length; index++) {
+            const isNameChecked = isClientName(this.criterias[index]);
+            checkedArray = remove(checkedArray, isNameChecked);
+            console.log(checkedArray)
+        }
+
+        this.n_criterias.value = checkedArray
+
+    }
 
 }
 </script>
@@ -152,6 +176,7 @@ export default {
                 </svg></a>
         </SectionTitleLineWithButton>
 
+
         <CardBox>
             <NotificationBarInCard v-if="hasErrors" color="danger">
                 <b>Whoops! Algo salio mal!.</b>
@@ -159,17 +184,19 @@ export default {
             </NotificationBarInCard>
 
             <Tabs>
-                <Tab title="Gestion de documentacion">
+                <Tab title="Gestion de documentacion" :criteria="false">
                     <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
                         <FormField :label="item.name">
-                            <FormFilePicker accept="application/pdf" :name="item.name" @change="onchange" label="Subir nuevo archivo" />
+                            <FormFilePicker accept="application/pdf" :name="item.name" @change="onchange"
+                                label="Subir nuevo archivo" />
+
                             <button @click="getPdf(item.name)"
                                 class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
                                 <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 20 20">
                                     <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
                                 </svg>
-                                <span>Descar su archivo '{{ item.name }}' anterior</span>
+                                <span>Descargar su archivo '{{ item.name }}' anterior</span>
                             </button>
                         </FormField>
                     </div>
@@ -182,7 +209,7 @@ export default {
                     </BaseButtons>
                 </Tab>
 
-                <Tab title="Gestion de propuestas">
+                <Tab title="Gestion de propuestas" :criteria="false">
 
                     <FormField label="Titulo de la propuestas" help="Max 255 caracteres">
                         <FormControl v-model="form.title" type="tel"
@@ -284,7 +311,39 @@ export default {
                     </BaseButtons>
 
                 </Tab>
+                <Tab :criteria="(proposal.state_id == 2 || proposal.state_id == 1)" title="Criterios Evaluados">
 
+                    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Evaluación de su propuesta con
+                        respecto a los criterios de la convocatoria:</h2>
+                    <h3 class="mb-2 text-md font-semibold text-gray-900 dark:text-white">Aprobados</h3>
+
+                    <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+                        <li v-for="item in n_criterias.value" :key="item.id" class="flex items-center">
+                            <svg class="w-4 h-4 mr-1.5 text-green-500 dark:text-green-400 flex-shrink-0" fill="currentColor"
+                                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            {{ item.name }}
+                        </li>
+                    </ul>
+                    <h3 class="pt-6 mb-2 text-md font-semibold text-gray-900 dark:text-white">Rechazados</h3>
+                    <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+                        <li v-for="item in criterias" :key="item.id" class="flex items-center">
+                            <svg class="w-4 h-4 mr-1.5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            {{ item.assesstment_criterias.name }}
+                            <h3 class="p-2 text-md font-semibold text-gray-900 dark:text-white">observaciones:</h3>
+                            {{ item.observations }}
+                        </li>
+                    </ul>
+
+                </Tab>
 
             </Tabs>
 

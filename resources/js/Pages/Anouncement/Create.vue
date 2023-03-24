@@ -85,6 +85,8 @@ export default {
         const checked = (isChecked, client, type) => {
             let checkedArray = type ? checkedRows.value : checkedDocs.value;
             const isNameChecked = isClientName(client);
+            console.log(isNameChecked)
+
 
             if (isChecked) {
                 checkedArray.push(client);
