@@ -45,7 +45,6 @@ class UpdateProposalsRequest extends FormRequest
             'user_id' => "required|integer|max:255",
             'state_id' => "required|integer|max:255",
             'myFiles' => "exclude",
-
         ];
     }
 }

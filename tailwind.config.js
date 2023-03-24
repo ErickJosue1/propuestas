@@ -18,7 +18,7 @@ module.exports = {
     },
     extend: {
       zIndex: {
-        "-1": "-1",
+        "-1": "-1", 
       },
       flexGrow: {
         5: "5",
@@ -58,7 +58,7 @@ module.exports = {
             const color = value === "light" ? "gray" : value;
 
             return {
-              scrollbarWidth: "thin",
+              scrollbarWidth: "thi  n",
               scrollbarColor: `${theme(`colors.${color}.${thumb}`)} ${theme(
                 `colors.${color}.${track}`
               )}`,

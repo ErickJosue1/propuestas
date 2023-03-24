@@ -71,8 +71,7 @@ class CalendarController extends Controller
     public function store(StoreCalendarRequest $request)
     {
         $this->model::create($request->validated());
-        return redirect()->route(`{$this->routeName}index`)->with('success', 'Fecha guardad con éxito!');
-
+        return redirect()->route(`{$this->routeName}index`)->with('success', 'Fecha guardada con éxito!');
     }
 
     /**
@@ -117,6 +116,8 @@ class CalendarController extends Controller
      */
     public function destroy(Calendar $calendar)
     {
-        //
+        $calendar->delete();
+        return redirect()->route("{$this->routeName}index")
+            ->with('success', 'Calendario eliminado correctamente');
     }
 }
