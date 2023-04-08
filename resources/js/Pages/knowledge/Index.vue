@@ -12,7 +12,6 @@ import {
 } from "@mdi/js";
 import TableSampleClients from "@/components/TableSampleClients.vue";
 import CardBox from "@/components/CardBox.vue";
-import { useNFmt } from '@/Hooks/useFormato.js';
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import BaseLevel from "@/components/BaseLevel.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -21,10 +20,11 @@ import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
 
 
+
 export default {
     props: {
         titulo: { type: String, required: true },
-        events: {
+        knowledges: {
             type: Object,
             required: true
         },
@@ -46,7 +46,8 @@ export default {
     },
     setup() {
         const form = useForm({
-            name: ''
+            name: '',
+            status: ''
         });
         const eliminar = (id) => {
             Swal.fire({
@@ -59,7 +60,7 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("events.destroy", id));
+                    form.delete(route("knowledges.destroy", id));
                 }
             });
         };
@@ -93,7 +94,7 @@ export default {
             {{ $page.props.flash.success }}
         </NotificationBar>
 
-        <CardBox v-if="events.data.length < 1">
+        <CardBox v-if="knowledges.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
 
@@ -103,11 +104,12 @@ export default {
                     <tr>
                         <th />
                         <th>Nombre</th>
+                        <th>Status</th>
                         <th />
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in events.data" :key="item.id">
+                    <tr v-for="item in knowledges.data" :key="item.id">
                         <td class="align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-book-half" viewBox="0 0 16 16">
@@ -118,7 +120,9 @@ export default {
                         <td data-label="Nombre">
                             {{ item.name }}
                         </td>
-
+                        <td data-label="Status">
+                            {{ item.status }}
+                        </td>
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
@@ -134,8 +138,8 @@ export default {
 
 
 
-            <Pagination :currentPage="events.current_page" :links="events.links" :total="events.links.length - 2">
-            </Pagination>
+            <Pagination :currentPage="knowledges.current_page" :links="knowledges.links"
+                :total="knowledges.links.length - 2"></Pagination>
         </CardBox>
 
     </LayoutMain>

@@ -28,6 +28,7 @@ class PermissionController extends Controller
         $this->middleware("permission:{$this->module}.update")->only(['edit', 'update']);
         $this->middleware("permission:{$this->module}.delete")->only(['destroy']);
     }
+    
     public function index(Request $request): Response
     {
         $records = $this->model;

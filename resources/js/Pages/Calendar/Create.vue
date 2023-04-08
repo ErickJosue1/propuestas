@@ -16,9 +16,6 @@ import { computed } from 'vue';
 import FormValidationErrors from "@/components/FormValidationErrors.vue";
 
 
-
-
-
 export default {
     props: {
         titulo: { type: String, required: true },
@@ -58,7 +55,7 @@ export default {
             var date = new Date();
             date = dateRefer;
             date = date.getUTCFullYear() + '-' +
-                ('00' + (date.getUTCMonth() + 1)).slice(-2) + '-' +
+                ('00' + (date.getUTCMonth() + 1)).slice(-2  ) + '-' +
                 ('00' + date.getUTCDate()).slice(-2) + ' ' +
                 ('00' + date.getUTCHours()).slice(-2) + ':' +
                 ('00' + date.getUTCMinutes()).slice(-2) + ':' +

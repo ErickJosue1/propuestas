@@ -17,6 +17,7 @@ import DocList from '@/components/DocList.vue';
 import { ref, computed, reactive } from 'vue';
 import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
 import FormValidationErrors from '@/components/FormValidationErrors.vue'
+import NotificationBar from "@/components/NotificationBar.vue";
 
 
 export default {
@@ -43,14 +44,27 @@ export default {
         TodoList,
         TableCheckboxCell,
         DocList,
-        FormValidationErrors
+        FormValidationErrors,
+        NotificationBar
     },
     methods: {
         todo: function (data) {
-            this.assesstments.push(data[0]);
+            if (this.assesstments.some(e => e.name === data[0].name)) {
+                this.again = true
+                this.errors = 'No puede incluir un criterio con el mismo titulo!'
+            }
+            else {
+                this.assesstments.push(data[0]);
+            }
         },
         docs: function (data) {
-            this.documents.push(data[0]);
+            if (this.documents.some(e => e.name === data[0].name)) {
+                this.again = true
+                this.errors = 'No puede incluir un documentos con el mismo titulo!'
+            }
+            else {
+                this.documents.push(data[0]);
+            }
         }
     },
     setup(props) {
@@ -85,8 +99,6 @@ export default {
         const checked = (isChecked, client, type) => {
             let checkedArray = type ? checkedRows.value : checkedDocs.value;
             const isNameChecked = isClientName(client);
-            console.log(isNameChecked)
-
 
             if (isChecked) {
                 checkedArray.push(client);
@@ -112,8 +124,13 @@ export default {
         }
 
 
+        const again = ref(false);
 
-        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
+        const errors = ref('');
+
+        const hasErrors = computed(() => errors.value != '');
+
+        return { again ,errors, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
     },
 }
 </script>
@@ -128,8 +145,14 @@ export default {
                 </svg></a>
         </SectionTitleLineWithButton>
 
+
+
         <CardBox form @submit.prevent="submit">
             <FormValidationErrors />
+
+            <NotificationBar v-if="hasErrors" color="info" :again="again" :icon="mdiInformation" :outline="false">
+                {{ errors }}
+            </NotificationBar>
 
             <Tabs>
                 <Tab title="General">
@@ -154,7 +177,7 @@ export default {
                     <div class="p-4 rounded-lg" id="profile">
                         <todo-list @tasks="todo" ref="TodoListRef"></todo-list>
 
-                        <div  v-if="assesstments.length > 0">
+                        <div v-if="assesstments.length > 0">
                             <SectionTitleLineWithButton class="pt-6" :icon="mdiBallotOutline" title="Criterios" main>
                                 <a :href="route('announcements.index')"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                                         height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">

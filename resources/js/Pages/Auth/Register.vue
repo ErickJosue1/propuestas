@@ -182,7 +182,7 @@ export default {
 
 <template>
   <LayoutGuest>
-    
+
     <div class="vl-parent">
       <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     </div>
@@ -214,16 +214,16 @@ export default {
         <form @submit.prevent="submit">
 
           <FormField label="Nombre" label-for="name" help="Porfavor introduce tu nombre">
-            <FormControl v-model="form.name" id="name" :icon="mdiAccount" autocomplete="name" type="text" required />
+            <FormControl v-model="form.name" id="name" :icon="mdiAccount" autocomplete="off" type="text" required />
           </FormField>
 
           <FormField label="Apellido Paterno" label-for="paternal" help="Porfavor introduce tu apellido paterno">
-            <FormControl v-model="form.paternal_surname" id="paternal" :icon="mdiAccount" autocomplete="name" type="text"
+            <FormControl v-model="form.paternal_surname" id="paternal" :icon="mdiAccount" autocomplete="off" type="text"
               required />
           </FormField>
 
           <FormField label="Apellido Materno" label-for="maternal" help="Porfavor introduce tu apellido materno">
-            <FormControl v-model="form.maternal_surname" id="maternal" :icon="mdiAccount" autocomplete="name" type="text"
+            <FormControl v-model="form.maternal_surname" id="maternal" :icon="mdiAccount" autocomplete="off" type="text"
               required />
           </FormField>
 

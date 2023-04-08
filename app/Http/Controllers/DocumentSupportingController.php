@@ -40,7 +40,7 @@ class DocumentSupportingController extends Controller
             if ($search != '') {
                 $query->where('name',          'LIKE', "%$search%");
             }
-        })->get();
+        })->paginate(5)->withQueryString();
 
         return Inertia::render("{$this->source}Index", [
             'titulo'          => 'Documentacion',

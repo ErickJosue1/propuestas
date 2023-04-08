@@ -22,7 +22,7 @@ const colorClass = computed(() => {
 
   switch (props.bg) {
     case "purplePink":
-      return gradientBgPurplePink;
+      return 'bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-white via-sky-100 to-sky-100';
     case "pinkRed":
       return gradientBgPinkRed;
   }
@@ -33,7 +33,7 @@ const colorClass = computed(() => {
 
 <template>
   <div
-    class="flex min-h-screen items-center justify-center"
+    class="flex min-h-screen items-center justify-center "
     :class="colorClass"
   >
     <slot card-class="w-11/12 md:w-7/12 lg:w-6/12 xl:w-5/12 shadow-2xl" />

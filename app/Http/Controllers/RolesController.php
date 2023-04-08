@@ -2,20 +2,49 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Roles;
+use Spatie\Permission\Models\Role;
 use App\Http\Requests\StoreRolesRequest;
 use App\Http\Requests\UpdateRolesRequest;
+use Inertia\Response;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class RolesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    protected string $routeName;
+    protected string $source;
+    protected string $module = 'roles';
+    protected Role $model;
+
+    public function __construct()
     {
-        //
+        $this->routeName = "roles.";
+        $this->source    = "Roles/";
+        $this->model     = new Role();
+
+        /*        $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
+        $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
+        $this->middleware("permission:{$this->module}.update")->only(['edit', 'update']);
+        $this->middleware("permission:{$this->module}.delete")->only(['destroy']); */
+    }
+
+    public function index(Request $request): Response
+    {
+        $records = $this->model;
+        $records = $records->when($request->search, function ($query, $search) {
+            if ($search != '') {
+                $query->where('name',          'LIKE', "%$search%");
+            }
+        })->paginate(10)->withQueryString();
+
+        return Inertia::render("{$this->source}Index", [
+            'titulo'          => 'Catálogo de Roles',
+            'records'        => $records,
+            'routeName'      => $this->routeName,
+            'loadingResults' => false,
+            'search'         => $request->search ?? '',
+        ]);
     }
 
     /**
@@ -25,7 +54,10 @@ class RolesController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render("{$this->source}Create", [
+            'titulo' => 'Agregar Roles',
+            'routeName' => $this->routeName,
+        ]);
     }
 
     /**
@@ -36,7 +68,8 @@ class RolesController extends Controller
      */
     public function store(StoreRolesRequest $request)
     {
-        //
+        $this->model::create($request->validated());
+        return redirect()->route("{$this->routeName}index")->with('success', 'Rol guardado con éxito!');
     }
 
     /**
@@ -45,9 +78,9 @@ class RolesController extends Controller
      * @param  \App\Models\Roles  $roles
      * @return \Illuminate\Http\Response
      */
-    public function show(Roles $roles)
+    public function show(Role $roles)
     {
-        //
+        abort(405);
     }
 
     /**
@@ -56,9 +89,13 @@ class RolesController extends Controller
      * @param  \App\Models\Roles  $roles
      * @return \Illuminate\Http\Response
      */
-    public function edit(Roles $roles)
+    public function edit(Role $role)
     {
-        //
+        return Inertia::render("{$this->source}Edit", [
+            'titulo'          => 'Editar Rol',
+            'routeName'      => $this->routeName,
+            'role' => $role,
+        ]);
     }
 
     /**
@@ -68,9 +105,11 @@ class RolesController extends Controller
      * @param  \App\Models\Roles  $roles
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRolesRequest $request, Roles $roles)
+    public function update(UpdateRolesRequest $request, Role $role)
     {
-        //
+        $role->update($request->validated());
+        return redirect()->route("{$this->routeName}index")
+            ->with('success', 'Rol editado correctamente');
     }
 
     /**
@@ -79,8 +118,9 @@ class RolesController extends Controller
      * @param  \App\Models\Roles  $roles
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Roles $roles)
+    public function destroy(Role $role)
     {
-        //
+        $role->delete();
+        return redirect()->route("{$this->routeName}index")->with('success', 'Rol eliminado con éxito');
     }
 }

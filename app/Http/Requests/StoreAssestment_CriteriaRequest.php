@@ -25,7 +25,7 @@ class StoreAssestment_CriteriaRequest extends FormRequest
     {
         return [
             'name'        => "required|string|max:50",
-            'value'        => "required|integer|max:50",
+            'value'        => "required|integer|max:100",
         ];
     }
 }

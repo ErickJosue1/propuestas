@@ -27,6 +27,7 @@ export default [
     label: "Dashboard",
     role: "Admin"
   },
+  
 
   /*  {
      href: "/tables",
@@ -118,6 +119,18 @@ export default [
         href: "/permissions",
         to: "/permissions",
         permission: 'permissions.index',
+      },
+      {
+        label: "Roles",
+        href: "/roles",
+        to: "/roles",
+        role: "Admin",
+      },
+      {
+        label: "Tematicas",
+        href: "/knowledges",
+        to: "/knowledges",
+        permission: "thematics.index",
       },
     ],
   },

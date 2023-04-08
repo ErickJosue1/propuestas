@@ -73,15 +73,13 @@ class ProposalsController extends Controller
     public function store(StoreProposalsRequest $request)
     {
 
-        $this->model::create($request->validated());
-
+        $proposal = $this->model::create($request->validated())->get();
 
         /*  Proceedings::create([
             'path' => $path,
             'proposal_id' => $proposal->id,
             'user_id'  => $request->user_id
         ]); */
-
 
         foreach ($request->myFiles as $files) {
             $files->storeAs(Auth::user()->name . 'Expediente', $files->getClientOriginalName(), 'public');
@@ -100,12 +98,16 @@ class ProposalsController extends Controller
     public function show(Announcements $proposal)
     {
 
-        return Inertia::render("Proposals/Create", [
-            'titulo'      => 'Propuesta',
-            'convocatoria' => $proposal->load(['assesstment_criterias', 'documents_supporting']),
-            'state'        => ProposalStates::find(2),
-            'routeName'      => $this->routeName,
-        ]);
+        if (Proposals::where('announcement_id', '=', $proposal->id)->exists()) {
+            return redirect()->route("announcements.index")->with('success', 'Ya te has postulado para esta convocatoria!');
+        } else {
+            return Inertia::render("Proposals/Create", [
+                'titulo'      => 'Propuesta',
+                'convocatoria' => $proposal->load(['assesstment_criterias', 'documents_supporting']),
+                'state'        => ProposalStates::find(2),
+                'routeName'      => $this->routeName,
+            ]);
+        }
     }
 
     /**
@@ -126,6 +128,7 @@ class ProposalsController extends Controller
             'titulo'      => 'Editar Propuesta',
             'proposal'    => $proposal,
             'convocatoria' => $records,
+            'state'        => ProposalStates::find(2),
             'routeName'      => $this->routeName,
             'criterias' => $criterias->load(['assesstment_criterias',])
         ]);

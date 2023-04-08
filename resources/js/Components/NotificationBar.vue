@@ -16,6 +16,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  again: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const componentClass = computed(() =>
@@ -23,9 +27,11 @@ const componentClass = computed(() =>
 );
 
 const isDismissed = ref(false);
+const isAgain = ref(props.again)
 
 const dismiss = () => {
   isDismissed.value = true;
+  isAgain.value = false
 };
 
 const slots = useSlots();
@@ -35,7 +41,7 @@ const hasRightSlot = computed(() => slots.right);
 
 <template>
   <div
-    v-if="!isDismissed"
+    v-if="!isDismissed || isAgain"
     :class="componentClass"
     class="px-3 py-6 md:py-3 mb-6 last:mb-0 border rounded-lg transition-colors duration-150"
   >

@@ -10,6 +10,7 @@ import {
     mdiGithub,
     mdiEye, mdiTrashCan
 } from "@mdi/js";
+import PillTag from "@/components/PillTag.vue";
 import TableSampleClients from "@/components/TableSampleClients.vue";
 import CardBox from "@/components/CardBox.vue";
 import { useNFmt } from '@/Hooks/useFormato.js';
@@ -20,6 +21,7 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import { useRole } from '@/Hooks/usePermissions';
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
+import NotificationBar from "@/components/NotificationBar.vue";
 
 
 export default {
@@ -48,7 +50,9 @@ export default {
         BaseButton,
         CardBoxComponentEmpty,
         Pagination,
-        SectionTitle
+        SectionTitle,
+        PillTag,
+        NotificationBar
     },
     setup() {
         const form = useForm({
@@ -90,6 +94,10 @@ export default {
 
         </SectionTitleLineWithButton>
 
+        <NotificationBar v-if="$page.props.flash.success" color="info" :icon="mdiInformation" :outline="false">
+            {{ $page.props.flash.success }}
+        </NotificationBar>
+
 
 
         <CardBox v-if="records.data.length < 1">
@@ -116,8 +124,16 @@ export default {
                         <td data-label="Nombre">
                             {{ item.title }}
                         </td>
-                        <td data-label="Status">
+                        <td v-if="item.state_id == 2" data-label="Status">
                             {{ state[item.state_id - 1].state }}
+                        </td>
+                        <td v-if="item.state_id == 1" data-label="Status">
+                            <PillTag color="success" label="Aprobado" :small="pillsSmall" :outline="pillsOutline"
+                                :icon="pillsIcon" />
+                        </td>
+                        <td v-if="item.state_id == 3" data-label="Status">
+                            <PillTag color="danger" label="Rechazado" :small="pillsSmall" :outline="pillsOutline"
+                                :icon="pillsIcon" />
                         </td>
                         <td data-label="Fecha Captura">
                             {{ item.created_at }}
@@ -126,25 +142,32 @@ export default {
                             {{ state[item.state_id - 1].state }}
                         </td>
                         <td v-if="item.state_id == 1" data-label="Fecha Aprobado">
-                            {{ item.updated_at }} 
+                            {{ item.updated_at }}
                         </td>
                         <td v-if="item.state_id == 3" data-label="Fecha Rechazado">
-                            {{ item.updated_at }} 
+                            {{ item.updated_at }}
                         </td>
 
 
 
                         <td class=" lg:w-1 whitespace-nowrap">
-                            <BaseButtons v-if="useRole('Postulante')" type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="info" :icon="mdiEye" small :href="route(`${routeName}edit`, item.id)" />
-                                <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
+                            <BaseButtons v-if="useRole('Postulante')" type="justify-start lg:justify-center" no-wrap>
+                                <div v-if="item.state_id == 2">
+                                    <BaseButton color="info" :icon="mdiEye" small
+                                        :href="route(`${routeName}edit`, item.id)" />
+                                    <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
+                                </div>
+                                <div v-else>-</div>
                             </BaseButtons>
                             <BaseButtons v-else type="justify-center lg:justify-end" no-wrap>
-                                <a :href="route(`${routeName}review`, item.id)"> <button
+                                <a v-if="!(item.state_id != 2)" :href="route(`${routeName}review`, item.id)"> <button
                                         class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                                         Revisar
                                     </button>
                                 </a>
+                                <span v-else>
+                                    Ya ha revisado esta propuestas
+                                </span>
                             </BaseButtons>
                         </td>
 

@@ -40,7 +40,27 @@ class CriteriasController extends Controller
     public function store(Request $request)
     {
 
-        if (!empty($request->datos)) {
+        $delete = false;
+
+        foreach ($request->datos as $key => $value) {
+            if (Criterias::where('proposal_id', '=', $value['proposal_id'])->exists()) {
+                $delete = true;
+                break;
+            }
+        }
+
+
+        if (!$delete) {
+            foreach ($request->datos as $key => $value) {
+                Criterias::create($value);
+            }
+        } else {
+            $elements = Criterias::where('proposal_id', '=', $request->datos[0]['proposal_id'])->get();
+
+            foreach ($elements as $key => $value) {
+                $value->delete();
+            }
+
             foreach ($request->datos as $key => $value) {
                 Criterias::create($value);
             }

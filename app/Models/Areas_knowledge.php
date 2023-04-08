@@ -9,6 +9,10 @@ class Areas_knowledge extends Model
 {
     use HasFactory;
 
-    protected $fillable = [ 'title', 'status'];
+    protected $attributes = [
+        'status' => '1',
+    ];
+
+    protected $fillable = [ 'name', 'status'];
 
 }

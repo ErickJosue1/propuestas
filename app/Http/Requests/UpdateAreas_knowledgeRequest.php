@@ -25,7 +25,6 @@ class UpdateAreas_knowledgeRequest extends FormRequest
     {
         return [
             'name' => "required|string|max:45",
-            'status' => "required|string|max:45",
         ];
     }
 }

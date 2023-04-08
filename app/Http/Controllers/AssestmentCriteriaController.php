@@ -41,7 +41,7 @@ class AssestmentCriteriaController extends Controller
                 $query->where('name',          'LIKE', "%$search%");
                 $query->orWhere('value', 'LIKE', "%$search%");
             }
-        })->get();
+        })->paginate(5)->withQueryString();
 
         return Inertia::render("{$this->source}Index", [
             'titulo'          => 'Criterios de evaluacion',
@@ -64,6 +64,7 @@ class AssestmentCriteriaController extends Controller
             'titulo' => 'Agregar Criterio de Evaluacion',
             'routeName' => $this->routeName,
         ]);
+        
     }
 
     /**

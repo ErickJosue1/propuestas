@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementsController;
+use App\Http\Controllers\AreasKnowledgeController;
 use App\Http\Controllers\AssestmentCriteriaController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ColonyController;
@@ -12,7 +13,9 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalsController;
 use App\Http\Controllers\RenapoController;
+use App\Http\Controllers\RolesController;
 use App\Models\Announcements;
+use App\Models\Areas_knowledge;
 use App\Models\Calendar;
 use App\Models\Proposals;
 use Illuminate\Foundation\Application;
@@ -83,12 +86,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
     Route::resource('announcements', AnnouncementsController::class)->names('announcements');
     Route::resource('permissions', PermissionController::class)->names('permissions');
+    Route::resource('roles', RolesController::class)->names('roles');
     Route::resource('events', EventsController::class)->names('events');
     Route::resource('assesstment', AssestmentCriteriaController::class)->names('assesstment');
     Route::resource('documents', DocumentSupportingController::class)->names('documents');
     Route::resource('proposals', ProposalsController::class)->names('proposals');
     Route::resource('calendar', CalendarController::class)->names('calendar');
     Route::resource('criterias', CriteriasController::class)->names('criterias');
+    Route::resource('knowledges', AreasKnowledgeController::class)->names('knowledges');
+
 });
 
 require __DIR__ . '/auth.php';

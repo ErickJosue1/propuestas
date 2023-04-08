@@ -8,7 +8,8 @@ import {
     mdiTableBorder,
     mdiTableOff,
     mdiGithub,
-    mdiEye, mdiTrashCan
+    mdiEye, mdiTrashCan,
+    mdiInformation
 } from "@mdi/js";
 import TableSampleClients from "@/components/TableSampleClients.vue";
 import CardBox from "@/components/CardBox.vue";
@@ -18,6 +19,7 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
+import NotificationBar from "@/components/NotificationBar.vue";
 
 
 
@@ -41,7 +43,8 @@ export default {
         BaseButtons,
         BaseButton,
         CardBoxComponentEmpty,
-        Pagination
+        Pagination,
+        NotificationBar
     },
     setup() {
         const form = useForm({
@@ -70,13 +73,10 @@ export default {
             mdiTableOff,
             mdiGithub,
             mdiEye, mdiTrashCan,
-            useRole
+            useRole,
+            mdiInformation
         }
     },
-    mounted() {
-        console.log(this.$props.records)
-    }
-
 }
 </script>
 
@@ -93,6 +93,9 @@ export default {
             </a>
         </SectionTitleLineWithButton>
 
+        <NotificationBar v-if="$page.props.flash.success" color="info" :icon="mdiInformation" :outline="false">
+            {{ $page.props.flash.success }}
+        </NotificationBar>
 
         <CardBox v-if="records.length < 1">
             <CardBoxComponentEmpty />
@@ -133,7 +136,7 @@ export default {
 
 
             <!--     <Pagination :currentPage="records.current_page" :links="records.links"
-                    :total="records.links.length - 2"></Pagination> -->
+                        :total="records.links.length - 2"></Pagination> -->
         </section>
 
     </LayoutMain>

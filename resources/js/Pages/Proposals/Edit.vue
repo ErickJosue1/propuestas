@@ -29,6 +29,7 @@ export default {
         convocatoria: { type: Object, required: true },
         proposal: { type: Object, required: true },
         criterias: { type: Object, required: true },
+        state: { type: Object, required: true },
     },
     components: {
         LayoutMain,
@@ -84,7 +85,7 @@ export default {
                         form.put(route('proposals.update', props.proposal.id))
 
                     }
-                });;
+                });
             }
             else {
                 const config = {
@@ -149,9 +150,10 @@ export default {
         return { n_criterias, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors, file }
     },
     mounted() {
+        this.form.state_id = this.state.id
         let checkedArray = this.convocatoria.assesstment_criterias
-        const isClientName = row => client => row.assessment_criteria_id === client.id;
-        const remove = (arr, cb) => arr.filter(item => !cb(item));
+        const isClientName = row => client => row.assessment_criteria_id === client.id
+        const remove = (arr, cb) => arr.filter(item => !cb(item))
 
         for (let index = 0; index < this.criterias.length; index++) {
             const isNameChecked = isClientName(this.criterias[index]);

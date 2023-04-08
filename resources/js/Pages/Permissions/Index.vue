@@ -18,6 +18,7 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import { reactive, toRefs, ref } from 'vue';
+import NotificationBar from "@/components/NotificationBar.vue";
 
 
 export default {
@@ -42,7 +43,8 @@ export default {
         BaseButtons,
         BaseButton,
         CardBoxComponentEmpty,
-        Pagination
+        Pagination,
+        NotificationBar
     },
 
     setup(props) {
@@ -113,6 +115,10 @@ export default {
                 </svg>
             </a>
         </SectionTitleLineWithButton>
+
+        <NotificationBar v-if="$page.props.flash.success" color="info" :icon="mdiInformation" :outline="false">
+            {{ $page.props.flash.success }}
+        </NotificationBar>
 
         <CardBox v-if="records.data.length < 1">
             <CardBoxComponentEmpty />
