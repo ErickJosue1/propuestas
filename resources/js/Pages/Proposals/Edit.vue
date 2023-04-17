@@ -58,7 +58,7 @@ export default {
         },
         getPdf(filename) {
             axios({
-                url: '/download-pdf/' + (filename + '.pdf') + '/' + this.proposal.user_id,
+                url: '/download-pdf/' + (filename + '.pdf') + '/' + this.proposal.user_id + '/' + this.proposal.announcement_id,
                 method: 'GET',
                 responseType: 'blob', // This is important
             }).then(response => {

@@ -41,15 +41,15 @@ const submit = () => {
         <FormValidationErrors />
 
         <NotificationBarInCard v-if="verificationLinkSent" color="info">
-          A new verification link has been sent to the email address you
-          provided during registration.
+          Se ha enviado un nuevo enlace de verificación a la dirección de correo electrónico que
+          proporcionada durante el registro.
         </NotificationBarInCard>
 
         <FormField>
           <div class="mb-4 text-sm text-gray-600">
-            Thanks for signing up! Before getting started, could you verify your
-            email address by clicking on the link we just emailed to you? If you
-            didn't receive the email, we will gladly send you another.
+            Gracias por registrarte! Antes de comenzar, ¿podría verificar su
+            dirección de correo electrónico haciendo clic en el enlace que le acabamos de enviar por correo electrónico? Si usted
+            no recibiste el correo, con gusto te enviaremos otro.
           </div>
         </FormField>
 
@@ -59,7 +59,7 @@ const submit = () => {
           <BaseButton type="submit" color="info" label="Resend Verification Email"
             :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
           <Link :href="route('logout')" method="post" as="button">
-          Logout
+          Cerrar sesión
           </Link>
         </BaseLevel>
       </CardBox>

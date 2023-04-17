@@ -30,7 +30,8 @@ export default {
         titulo: { type: String, required: true },
         routeName: { type: String, required: true },
         convocatoria: { type: Object, required: true },
-        state: { type: Object, required: true }
+        state: { type: Object, required: true },
+        areas: { type: Object, required: true },
     },
     components: {
         LayoutMain,
@@ -86,7 +87,7 @@ export default {
                 })
 
                 axios.post(route('proposals.store'), formData, config).then((response) => {
-                    console.log(response)
+                    window.location = route('proposals.index')
                 })
                     .catch(function (error) {
                         if (error.response) {
@@ -136,7 +137,7 @@ export default {
             products_generated: '',
             ownership_proposal: '',
             announcement_id: props.convocatoria.id,
-            area_knowledge_id: '1',
+            area_knowledge_id: '',
             user_id: usePage().props.auth.user.id,
             state_id: props.state.id
         })
@@ -194,9 +195,13 @@ export default {
                             placeholder="Asigne el nombre de identificacion para el proyecto" />
                     </FormField>
 
+                    <FormField label="Area del conocimiento" help="Seleccione un area del conocimiento">
+                        <FormControl v-model="form.area_knowledge_id" :options="areas" />
+                    </FormField>
+
                     <FormField label="Linea de investigacion" help="Seleccione una linea de investigacion">
                         <FormControl v-model="form.line_research" :options="linea" />
-                    </FormField>
+                    </FormField>                    
 
                     <FormField label="Resumen"
                         help="Descripcion general de la convocatoria. Min 1000 caracteres. Max 4000 caracteres">

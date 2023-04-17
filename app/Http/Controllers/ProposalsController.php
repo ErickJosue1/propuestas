@@ -6,6 +6,7 @@ use App\Models\Proposals;
 use App\Http\Requests\StoreProposalsRequest;
 use App\Http\Requests\UpdateProposalsRequest;
 use App\Models\Announcements;
+use App\Models\Areas_knowledge;
 use App\Models\Assestment_Criteria;
 use App\Models\Criterias;
 use App\Models\Proceedings;
@@ -73,7 +74,7 @@ class ProposalsController extends Controller
     public function store(StoreProposalsRequest $request)
     {
 
-        $proposal = $this->model::create($request->validated())->get();
+        $proposal = $this->model::create($request->validated());
 
         /*  Proceedings::create([
             'path' => $path,
@@ -82,7 +83,7 @@ class ProposalsController extends Controller
         ]); */
 
         foreach ($request->myFiles as $files) {
-            $files->storeAs(Auth::user()->name . 'Expediente', $files->getClientOriginalName(), 'public');
+            $files->storeAs(Auth::user()->name . 'Expediente'  . $proposal->id, $files->getClientOriginalName(), 'public');
         }
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Su propuesta ha sido guardada con éxito!');
@@ -106,6 +107,7 @@ class ProposalsController extends Controller
                 'convocatoria' => $proposal->load(['assesstment_criterias', 'documents_supporting']),
                 'state'        => ProposalStates::find(2),
                 'routeName'      => $this->routeName,
+                'areas'        => Areas_knowledge::all()
             ]);
         }
     }
@@ -156,9 +158,9 @@ class ProposalsController extends Controller
         Send the specified Proposal file to the view
     */
 
-    public function downloadPdf($filename, $user)
+    public function downloadPdf($filename, $user, $announcement)
     {
-        $pathToFile = storage_path('app/public/' . User::find($user)->name . 'Expediente/' . $filename);
+        $pathToFile = storage_path('app/public/' . User::find($user)->name . 'Expediente' . $announcement . '/' . $filename);
 
         return response()->download($pathToFile);
     }
@@ -188,7 +190,7 @@ class ProposalsController extends Controller
 
         if (!empty($request->myFiles)) {
             foreach ($request->myFiles as $files) {
-                $files->storeAs(Auth::user()->name . 'Expediente', $files->getClientOriginalName(), 'public');
+                $files->storeAs(Auth::user()->name . 'Expediente' . $proposal->id, $files->getClientOriginalName(), 'public');
             }
         }
 
