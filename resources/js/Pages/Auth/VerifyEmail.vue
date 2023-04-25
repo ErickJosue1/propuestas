@@ -56,7 +56,7 @@ const submit = () => {
         <BaseDivider />
 
         <BaseLevel>
-          <BaseButton type="submit" color="info" label="Resend Verification Email"
+          <BaseButton type="submit" color="info" label="Reenviar Correo de Verificación"
             :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
           <Link :href="route('logout')" method="post" as="button">
           Cerrar sesión

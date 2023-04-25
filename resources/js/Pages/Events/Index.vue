@@ -89,8 +89,12 @@ export default {
             </a>
         </SectionTitleLineWithButton>
 
-        <NotificationBar v-if="$page.props.flash.success" color="info" :icon="mdiInformation" :outline="false">
+        <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.success }}
+        </NotificationBar>
+
+        <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
+            {{ $page.props.flash.error }}
         </NotificationBar>
 
         <CardBox v-if="events.data.length < 1">

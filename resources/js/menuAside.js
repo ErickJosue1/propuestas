@@ -85,6 +85,12 @@ export default [
     role: "Admin"
   },
   {
+    label: "Asignar Revisores",
+    href: "/proposals",
+    icon: mdiSquareEditOutline,
+    role: "Admin"
+  },
+  {
     label: "Eventos",
     href: "/events",
     to: "/events",

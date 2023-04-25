@@ -29,7 +29,8 @@ class Proposals extends Model
         'announcement_id',
         'area_knowledge_id',
         'user_id',
-        'state_id'
+        'state_id',
+        'evaluador_id'
     ];
 
     public function announcement()

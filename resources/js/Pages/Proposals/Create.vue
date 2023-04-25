@@ -93,7 +93,7 @@ export default {
                         if (error.response) {
 
                             Object.entries(error.response.data.errors).forEach(([key, value]) => {
-                                errors.value.push(value)
+                                errors.value.push(value[0])
                             })
 
                             console.log(error.response.data);
@@ -150,7 +150,7 @@ export default {
 
         return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors }
     },
-    
+
 
 
 }
@@ -167,6 +167,7 @@ export default {
         </SectionTitleLineWithButton>
 
         <CardBox>
+
             <NotificationBarInCard v-if="hasErrors" color="danger">
                 <b>Whoops! Algo salio mal!.</b>
                 <span v-for="(error, key) in errors" :key="key">{{ error }}</span>
@@ -176,7 +177,11 @@ export default {
                 <Tab title="Gestion de documentacion">
                     <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
                         <FormField :label="item.name">
-                            <FormFilePicker :name="item.name" @change="onchange" label="Subir" />
+                            <!--                             <FormFilePicker :name="item.name" @change="onchange" label="Subir" />
+             --> <label for="file-input" class="sr-only">Choose file</label>
+                            <input type="file" :name="item.name"  id="file-input" @change="onchange" accept="application/pdf"
+                                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0
+                                                      file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
                         </FormField>
                     </div>
 
@@ -201,7 +206,7 @@ export default {
 
                     <FormField label="Linea de investigacion" help="Seleccione una linea de investigacion">
                         <FormControl v-model="form.line_research" :options="linea" />
-                    </FormField>                    
+                    </FormField>
 
                     <FormField label="Resumen"
                         help="Descripcion general de la convocatoria. Min 1000 caracteres. Max 4000 caracteres">

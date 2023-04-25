@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Proposals;
 use App\Http\Requests\StoreProposalsRequest;
 use App\Http\Requests\UpdateProposalsRequest;
+use App\Models\announcement_assestment_criteria;
 use App\Models\Announcements;
+use App\Models\announcements_document_supporting;
 use App\Models\Areas_knowledge;
 use App\Models\Assestment_Criteria;
 use App\Models\Criterias;
+use App\Models\Document_Supporting;
 use App\Models\Proceedings;
 use App\Models\ProposalStates;
 use App\Models\User;
@@ -17,6 +20,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use File;
+
 
 class ProposalsController extends Controller
 {
@@ -45,15 +50,26 @@ class ProposalsController extends Controller
     {
         $records = new Proposals();
         $user = Auth::user();
-        $records = $user->hasRole('Postulante') ? $records->where('user_id', $user->id)->paginate(4)->withQueryString() : $records->paginate(4)->withQueryString();
 
-        return Inertia::render("Proposals/Index", [
-            'titulo'      => 'Tus Propuestas',
-            'records'    => $records,
-            'routeName'      => $this->routeName,
-            'state'      => ProposalStates::all(),
-            'loadingResults' => false,
-        ]);
+        if ($user->hasRole('Admin')) {
+            return Inertia::render("Proposals/Index", [
+                'titulo'      => 'Propuestas',
+                'records'    => $records->whereNull('evaluador_id')->paginate(4)->withQueryString(),
+                'routeName'      => $this->routeName,
+                'state'      => ProposalStates::all(),
+                'loadingResults' => false,
+            ]);
+        } else {
+            $records = $user->hasRole('Postulante') ? $records->where('user_id', $user->id)->paginate(4)->withQueryString() : $records->where('evaluador_id', $user->id)->paginate(4)->withQueryString();
+
+            return Inertia::render("Proposals/Index", [
+                'titulo'      => 'Tus Propuestas',
+                'records'    => $records,
+                'routeName'      => $this->routeName,
+                'state'      => ProposalStates::all(),
+                'loadingResults' => false,
+            ]);
+        }
     }
 
     /**
@@ -98,9 +114,8 @@ class ProposalsController extends Controller
 
     public function show(Announcements $proposal)
     {
-
         if (Proposals::where('announcement_id', '=', $proposal->id)->exists()) {
-            return redirect()->route("announcements.index")->with('success', 'Ya te has postulado para esta convocatoria!');
+            return redirect()->route("announcements.index")->with('error', 'Ya te has postulado para esta convocatoria!');
         } else {
             return Inertia::render("Proposals/Create", [
                 'titulo'      => 'Propuesta',
@@ -153,6 +168,27 @@ class ProposalsController extends Controller
         ]);
     }
 
+    /*
+        Assign the proposal to the reviewers
+    */
+
+    public function assignment(Proposals $proposal)
+    {
+        $records = User::whereHas(
+            'roles',
+            function ($q) {
+                $q->where('name', 'Evaluador');
+            }
+        )->get();
+
+        return Inertia::render("Assignment/Assign", [
+            'titulo'      => 'Asignar evaluadores a la propuesta ' . '"' . $proposal->title . '"',
+            'proposal'    => $proposal,
+            'records' => $records,
+            'routeName'      => $this->routeName,
+        ]);
+    }
+
 
     /* 
         Send the specified Proposal file to the view
@@ -163,6 +199,20 @@ class ProposalsController extends Controller
         $pathToFile = storage_path('app/public/' . User::find($user)->name . 'Expediente' . $announcement . '/' . $filename);
 
         return response()->download($pathToFile);
+    }
+
+    /* 
+        Give the specified Proposal file path to the view
+    */
+
+    public function viewPdf($filename, $user, $announcement)
+    {
+        $pathToFile = storage_path('app/public/' . User::find($user)->name . 'Expediente' . $announcement . '/' . $filename);
+
+        return response()->make(file_get_contents($pathToFile), 200, [
+            'Content-Type'        => mime_content_type($pathToFile),
+            'Content-Disposition' => 'inline; filename="' . $filename . '"'
+        ]);
     }
 
     /* 
@@ -205,6 +255,14 @@ class ProposalsController extends Controller
      */
     public function destroy(Proposals $proposal)
     {
+        $files = glob('storage' . '/' . Auth::user()->name . 'Expediente' . $proposal->id . '/*');
+
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+
         $proposal->delete();
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta eliminada con éxito');

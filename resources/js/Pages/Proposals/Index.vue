@@ -8,7 +8,8 @@ import {
     mdiTableBorder,
     mdiTableOff,
     mdiGithub,
-    mdiEye, mdiTrashCan
+    mdiEye, mdiTrashCan,
+    mdiInformation
 } from "@mdi/js";
 import PillTag from "@/components/PillTag.vue";
 import TableSampleClients from "@/components/TableSampleClients.vue";
@@ -81,7 +82,8 @@ export default {
             mdiTableOff,
             mdiGithub,
             mdiEye, mdiTrashCan,
-            useRole
+            useRole,
+            mdiInformation
         }
     }
 
@@ -94,8 +96,12 @@ export default {
 
         </SectionTitleLineWithButton>
 
-        <NotificationBar v-if="$page.props.flash.success" color="info" :icon="mdiInformation" :outline="false">
+        <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.success }}
+        </NotificationBar>
+
+        <NotificationBar v-if="$page.props.flash.error" color="danger" :icon="mdiInformation" :outline="false">
+            {{ $page.props.flash.error }}
         </NotificationBar>
 
 
@@ -159,7 +165,7 @@ export default {
                                 </div>
                                 <div v-else>-</div>
                             </BaseButtons>
-                            <BaseButtons v-else type="justify-center lg:justify-end" no-wrap>
+                            <BaseButtons v-else-if="useRole('Evaluador')" type="justify-center lg:justify-end" no-wrap>
                                 <a v-if="!(item.state_id != 2)" :href="route(`${routeName}review`, item.id)"> <button
                                         class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                                         Revisar
@@ -168,6 +174,13 @@ export default {
                                 <span v-else>
                                     Ya ha revisado esta propuestas
                                 </span>
+                            </BaseButtons>
+                            <BaseButtons v-else-if="useRole('Admin')" type="justify-center lg:justify-end" no-wrap>
+                                <a :href="route(`${routeName}assignment`, item.id)"> <button
+                                        class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                                        Asignar Revisor
+                                    </button>
+                                </a>
                             </BaseButtons>
                         </td>
 

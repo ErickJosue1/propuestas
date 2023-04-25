@@ -58,7 +58,7 @@ export default {
         },
         getPdf(filename) {
             axios({
-                url: '/download-pdf/' + (filename + '.pdf') + '/' + this.proposal.user_id + '/' + this.proposal.announcement_id,
+                url: '/download-pdf/' + (filename + '.pdf') + '/' + this.proposal.user_id + '/' + this.proposal.id,
                 method: 'GET',
                 responseType: 'blob', // This is important
             }).then(response => {
@@ -185,20 +185,27 @@ export default {
                 <span v-for="(error, key) in errors" :key="key">{{ error }}</span>
             </NotificationBarInCard>
 
+
             <Tabs>
                 <Tab title="Gestion de documentacion" :criteria="false">
                     <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
                         <FormField :label="item.name">
-                            <FormFilePicker accept="application/pdf" :name="item.name" @change="onchange"
-                                label="Subir nuevo archivo" />
+                            <!--   <FormFilePicker accept="application/pdf" :name="item.name" @change="onchange"
+                                            label="Subir nuevo archivo" /> -->
+
+                            <label for="file-input" class="sr-only">Choose file</label>
+                            <input type="file" :name="item.name" id="file-input" @change="onchange"  accept="application/pdf"
+                                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0
+                                          file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
+
 
                             <button @click="getPdf(item.name)"
-                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                                class="bg-gray-300 dark:bg-slate-900 dark:text-gray-400 border dark:border-gray-700  hover:bg-gray-900 text-gray-800 py-2 px-4 rounded inline-flex items-center">
                                 <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 20 20">
                                     <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
                                 </svg>
-                                <span>Descargar su archivo '{{ item.name }}' anterior</span>
+                                <span>Descargar su archivo {{ item.name }} anterior</span>
                             </button>
                         </FormField>
                     </div>

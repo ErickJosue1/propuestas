@@ -12,28 +12,11 @@ import {
   mdiReact,
 } from "@mdi/js";
 
+import { usePage } from "@inertiajs/vue3";
+
+
 export default [
-  {
-    icon: mdiMenu,
-    label: "Información",
-    menu: [
-      {
-        icon: mdiClockOutline,
-        label: "Calendario",
-      },
-      {
-        icon: mdiCloud,
-        label: "Cloud",
-      },
-      {
-        isDivider: true,
-      },
-      {
-        icon: mdiGithub,
-        label: "Github",
-      },
-    ],
-  },
+
   {
     isCurrentUser: true,
     menu: [
@@ -56,6 +39,10 @@ export default [
         isLogout: true,
       },
     ],
+  },
+  {
+    icon: mdiAccount,
+    isRol: true,
   },
   {
     icon: mdiThemeLightDark,
