@@ -84,7 +84,7 @@ export default {
             }).then(response => {
                 const blob = new Blob([response.data], { type: 'application/pdf' });
                 this.documentUrl = URL.createObjectURL(blob);
-
+                this.pdfTitle = filename
             });
         }
     },
@@ -190,12 +190,14 @@ export default {
 
         const linea = ['Linea 1', 'Linea 2', 'Linea 3']
 
+        const pdfTitle = ref('')
+
         const errors = ref([]);
 
         const hasErrors = computed(() => errors.value.length > 0);
 
         return {
-            criterias, documentUrl, mdiEye, mdiArchiveArrowDown,
+            criterias, documentUrl, mdiEye, mdiArchiveArrowDown, pdfTitle,
             mdiTrashCan, checked, submit, isLoading, form, mdiBallotOutline, mdiInformation, mdiAccount, mdiMail, mdiOpenInNew, mdiGithub, linea, hasErrors, errors
         }
     },
@@ -220,12 +222,12 @@ export default {
     </div>
 
     <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
-            <a :href="route(`${routeName}index`)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                    fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                    <path
-                        d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                </svg></a>
-        </SectionTitleLineWithButton>
+        <a :href="route(`${routeName}index`)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                <path
+                    d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+            </svg></a>
+    </SectionTitleLineWithButton>
 
 
 
@@ -240,24 +242,31 @@ export default {
                 <Tab title="Documentacion">
 
                     <div v-if="documentUrl">
+                        <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="pdfTitle" main>
+                            <button @click="documentUrl = null"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                    <path
+                                        d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                </svg></button>
+                        </SectionTitleLineWithButton>
                         <iframe :src="documentUrl" class="w-full aspect-video" allowfullscreen></iframe>
                     </div>
                     <!-- 
-                            <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
-                                <FormField :label="item.name">
-                                    <BaseButton @click="viewPdf(item.name)" color="info" :label="'Abrir ' + item.name + '.pdf'"
-                                        :icon="mdiOpenInNew" />
+                                    <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
+                                        <FormField :label="item.name">
+                                            <BaseButton @click="viewPdf(item.name)" color="info" :label="'Abrir ' + item.name + '.pdf'"
+                                                :icon="mdiOpenInNew" />
 
-                                    <button @click="getPdf(item.name)"
-                                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex justify-center items-center">
-                                        <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20">
-                                            <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
-                                        </svg>
-                                        <span>Descargar '{{ item.name }}'.pdf </span>
-                                    </button>
-                                </FormField>
-                            </div> -->
+                                            <button @click="getPdf(item.name)"
+                                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex justify-center items-center">
+                                                <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 20 20">
+                                                    <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
+                                                </svg>
+                                                <span>Descargar '{{ item.name }}'.pdf </span>
+                                            </button>
+                                        </FormField>
+                                    </div> -->
 
                     <table>
                         <thead>
@@ -279,7 +288,8 @@ export default {
                                 <td class="before:hidden lg:w-1 whitespace-nowrap">
                                     <BaseButtons type="justify-start lg:justify-end" no-wrap>
                                         <BaseButton color="info" :icon="mdiEye" small @click="viewPdf(item.name)" />
-                                        <BaseButton color="success" :icon="mdiArchiveArrowDown" small @click="getPdf(item.name)" />
+                                        <BaseButton color="success" :icon="mdiArchiveArrowDown" small
+                                            @click="getPdf(item.name)" />
                                     </BaseButtons>
                                 </td>
                             </tr>
@@ -387,53 +397,53 @@ export default {
 
                     </ol>
                     <!-- 
-                                                                                                                                                                                                                                                                                                                <FormField label="Objetivo general" help="Min 100 caracteres. Max 1000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl v-model="form.general_objective" type="textarea"
-                                                                                                                                                                                                                                                                                                                        placeholder="Describe claro y preciso, la finalidad de la investigación, qué se " />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Objetivo general" help="Min 100 caracteres. Max 1000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl v-model="form.general_objective" type="textarea"
+                                                                                                                                                                                                                                                                                                                                placeholder="Describe claro y preciso, la finalidad de la investigación, qué se " />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Objetivos específicos" help="Min 100 caracteres. Max 2000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl v-model="form.specific_objective" type="textarea"
-                                                                                                                                                                                                                                                                                                                        placeholder="Describe las metas, medibles y alcanzables durante el desarrollo del proyecto, deben ser presentadas de manera clara, concreta y concisa." />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Objetivos específicos" help="Min 100 caracteres. Max 2000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl v-model="form.specific_objective" type="textarea"
+                                                                                                                                                                                                                                                                                                                                placeholder="Describe las metas, medibles y alcanzables durante el desarrollo del proyecto, deben ser presentadas de manera clara, concreta y concisa." />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Revisión de la literatura" help="Min 1000 caracteres. Max 4000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl type="textarea"
-                                                                                                                                                                                                                                                                                                                        placeholder="Describe los resultados obtenidos de otros estudios similares previos" />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Revisión de la literatura" help="Min 1000 caracteres. Max 4000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl type="textarea"
+                                                                                                                                                                                                                                                                                                                                placeholder="Describe los resultados obtenidos de otros estudios similares previos" />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Grado de novedad científica" help="Min 500 caracteres. Max 4000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl v-model="form.differentiators" type="textarea"
-                                                                                                                                                                                                                                                                                                                        placeholder="Enumera los puntos modulares que evidencien el grado de novedad científica, contenido innovador, originalidad y relevancia científica" />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Grado de novedad científica" help="Min 500 caracteres. Max 4000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl v-model="form.differentiators" type="textarea"
+                                                                                                                                                                                                                                                                                                                                placeholder="Enumera los puntos modulares que evidencien el grado de novedad científica, contenido innovador, originalidad y relevancia científica" />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Beneficios de la propuesta" help="Min 500 caracteres. Max 3000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl v-model="form.benefits" type="textarea"
-                                                                                                                                                                                                                                                                                                                        placeholder="Describe al menos uno de los elementos que se beneficiarán con la implementación del proyecto de innovación" />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Beneficios de la propuesta" help="Min 500 caracteres. Max 3000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl v-model="form.benefits" type="textarea"
+                                                                                                                                                                                                                                                                                                                                placeholder="Describe al menos uno de los elementos que se beneficiarán con la implementación del proyecto de innovación" />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Principales resultados esperados" help="Min 500 caracteres. Max 3000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl v-model="form.expected_results" type="textarea"
-                                                                                                                                                                                                                                                                                                                        placeholder="Describe el conocimiento de frontero esperado, Indicar los resultados novedosos" />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Principales resultados esperados" help="Min 500 caracteres. Max 3000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl v-model="form.expected_results" type="textarea"
+                                                                                                                                                                                                                                                                                                                                placeholder="Describe el conocimiento de frontero esperado, Indicar los resultados novedosos" />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Entregables comprometidos" help="Min 100 caracteres. Max 2000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl type="textarea" v-model="form.expected_results_review"
-                                                                                                                                                                                                                                                                                                                        placeholder="Especifica cuales son los entregables comprometidos como resultado del proyecto de investigación" />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Entregables comprometidos" help="Min 100 caracteres. Max 2000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl type="textarea" v-model="form.expected_results_review"
+                                                                                                                                                                                                                                                                                                                                placeholder="Especifica cuales son los entregables comprometidos como resultado del proyecto de investigación" />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Producto que se compromete a entregar">
-                                                                                                                                                                                                                                                                                                                    <FormControl :options="linea" />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Producto que se compromete a entregar">
+                                                                                                                                                                                                                                                                                                                            <FormControl :options="linea" />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Propiedad intelectual" help="Min 500 caracteres. Max 4000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl v-model="form.ownership_proposal" type="textarea"
-                                                                                                                                                                                                                                                                                                                        placeholder="Descripción de los porcentajes de Uularidad de lo propiedad intelectual y de la propuesto de explotación de los derechos en caso de existir" />
-                                                                                                                                                                                                                                                                                                                </FormField>
+                                                                                                                                                                                                                                                                                                                        <FormField label="Propiedad intelectual" help="Min 500 caracteres. Max 4000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl v-model="form.ownership_proposal" type="textarea"
+                                                                                                                                                                                                                                                                                                                                placeholder="Descripción de los porcentajes de Uularidad de lo propiedad intelectual y de la propuesto de explotación de los derechos en caso de existir" />
+                                                                                                                                                                                                                                                                                                                        </FormField>
 
-                                                                                                                                                                                                                                                                                                                <FormField label="Referencias" help="Min 500 caracteres. Max 4000 caracteres">
-                                                                                                                                                                                                                                                                                                                    <FormControl v-model="form.products_generated" type="textarea" placeholder="Referencias..." />
-                                                                                                                                                                                                                                                                                                                </FormField> -->
+                                                                                                                                                                                                                                                                                                                        <FormField label="Referencias" help="Min 500 caracteres. Max 4000 caracteres">
+                                                                                                                                                                                                                                                                                                                            <FormControl v-model="form.products_generated" type="textarea" placeholder="Referencias..." />
+                                                                                                                                                                                                                                                                                                                        </FormField> -->
                 </Tab>
 
                 <Tab title="Revisión de criterios">
