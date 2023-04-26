@@ -158,7 +158,7 @@ export default {
 
                         <td class=" lg:w-1 whitespace-nowrap">
                             <BaseButtons v-if="useRole('Postulante')" type="justify-start lg:justify-center" no-wrap>
-                                <div v-if="item.state_id == 2">
+                                <div v-if="item.state_id == 2 || item.state_id == 3">
                                     <BaseButton color="info" :icon="mdiEye" small
                                         :href="route(`${routeName}edit`, item.id)" />
                                     <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />

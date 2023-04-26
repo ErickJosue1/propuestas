@@ -18,6 +18,8 @@ import { ref, computed, reactive } from 'vue';
 import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
 import FormValidationErrors from '@/components/FormValidationErrors.vue'
 import NotificationBar from "@/components/NotificationBar.vue";
+import axios from 'axios';
+import Swal from "sweetalert2";
 
 
 export default {
@@ -65,18 +67,96 @@ export default {
             else {
                 this.documents.push(data[0]);
             }
+        },
+        onchange(e) {
+            if (this.file.some(val => val.name === e.target.name)) {
+                const i = this.file.findIndex(val => val.name === e.target.name)
+                const name = e.target.name
+                const fileA = e.target.files[0]
+                this.file[i] = { name: name, file: fileA }
+                console.log(this.file)
+            }
+            else {
+                const name = e.target.name
+                const fileA = e.target.files[0]
+                this.file.push({ name: name, file: fileA })
+                console.log(this.file)
+            }
         }
     },
     setup(props) {
         const submit = () => {
-            form.assesstments = checkedRows.value;
-            form.documents = checkedDocs.value;
-            form.post(route('announcements.store'));
-        };
+            if (file.length < 1) {
+                Swal.fire({
+                    title: "PDF de publicidad obligatorio!",
+                    text: "Es necesario el documento de publicidad!",
+                    icon: "warning",
+                    timer: 10000,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Ok!",
+                });
+            }
+            else {
+                const config = {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                }
+
+                const formData = new FormData();
+
+                for (let index = 0; index < file.length; index++) {
+                    formData.append('myFiles[' + index + ']', file[index].file, file[index].name + ".pdf")
+                }
+
+                Object.entries(form.data()).forEach(([key, value]) => {
+                    formData.append(key, value)
+                })
+
+                checkedRows.value.forEach((object, index) => {
+                    formData.append('assesstments[' + index + '][name]', object.name)
+                    formData.append('assesstments[' + index + '][value]', object.value)
+                })
+
+                checkedDocs.value.forEach((object, index) => {
+                    formData.append('documents[' + index + '][name]', object.name)
+                })
+
+
+                axios.post(route('announcements.store'), formData, config).then((response) => {
+                    window.location = route('announcements.index')/* .with('success', 'Su Convocatoria ha sido guardada con éxito!') */
+                })
+                    .catch(function (error) {
+                        if (error.response) {
+
+                            Object.entries(error.response.data.errors).forEach(([key, value]) => {
+                                errors.value.push(value[0])
+                            })
+
+                            console.log(error.response.data);
+                            console.log(error.response.status);
+                            console.log(error.response.headers);
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                            // http.ClientRequest in node.js
+                            console.log(error.request);
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                        }
+                        console.log(error.config);
+                    });
+
+
+
+            }
+
+/*             form.post(route('announcements.store'));
+ */        }
 
         const showTable = computed(() => {
             return props.assesstments.length > 0 ? true : false
         })
+
 
         const form = useForm({
             name: '',
@@ -89,6 +169,7 @@ export default {
             documents: []
         });
 
+        const file = []
         const checkedRows = ref([]);
         const checkedDocs = ref([]);
 
@@ -125,11 +206,12 @@ export default {
 
         const again = ref(false);
 
-        const errors = ref('');
 
-        const hasErrors = computed(() => errors.value != '');
+        const errors = ref([]);
 
-        return { again, errors, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
+        const hasErrors = computed(() => errors.value.length > 0);
+
+        return { again, errors, file, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
     },
 }
 </script>
@@ -149,7 +231,7 @@ export default {
         <CardBox form @submit.prevent="submit">
             <FormValidationErrors />
 
-            <NotificationBar v-if="hasErrors" color="info" :again="again" :icon="mdiInformation" :outline="false">
+            <NotificationBar v-if="hasErrors" color="danger" :again="again" :icon="mdiInformation" :outline="false">
                 {{ errors }}
             </NotificationBar>
 
@@ -172,22 +254,10 @@ export default {
 
                         <label for="dropzone-file" class="block font-bold mb-2">Publicidad</label>
                         <div class="flex items-center justify-center w-full">
-
-                            <label for="dropzone-file"
-                                class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <svg aria-hidden="true" class="w-10 h-10 mb-3 text-gray-400" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
-                                        </path>
-                                    </svg>
-                                    <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span
-                                            class="font-semibold">Click para subir un archivo</span> o arrastra y suelta el archivo aquí</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Solo PDF (MAX 50 MB)</p>
-                                </div>
-                                <input id="dropzone-file" type="file" class="hidden" accept="application/pdf"/>
-                            </label>
+                            <input type="file" name="advertising" id="file-input" @change="onchange"
+                                accept="application/pdf"
+                                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0
+                                                                                                                              file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
                         </div>
 
                     </div>

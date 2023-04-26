@@ -10,6 +10,7 @@ use App\Models\Document_Supporting;
 use App\Models\Institutions;
 use Database\Seeders\AssestmentCriteriaSeeder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Validator;
@@ -114,6 +115,10 @@ class AnnouncementsController extends Controller
                     );
                     $record->assesstment_criterias()->attach($criteria->id);
                 }
+            }
+
+            foreach ($request->myFiles as $files) {
+                $files->storeAs($request->name . 'advertising', $files->getClientOriginalName(), 'public');
             }
         }
 

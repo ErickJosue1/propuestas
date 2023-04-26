@@ -71,7 +71,7 @@ class CalendarController extends Controller
     public function store(StoreCalendarRequest $request)
     {
         $this->model::create($request->validated());
-        return redirect()->route(`{$this->routeName}index`)->with('success', 'Fecha guardada con éxito!');
+        return redirect()->route(`{$this->source}Index`)->with('success', 'Fecha guardada con éxito!');
     }
 
     /**
