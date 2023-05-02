@@ -20,6 +20,7 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
+import axios from 'axios';
 
 
 
@@ -45,6 +46,34 @@ export default {
         CardBoxComponentEmpty,
         Pagination,
         NotificationBar
+    },
+    methods: {
+        getPdf(filename, announcement) {
+            axios({
+                url: '/download-AdPdf/' + (filename + '.pdf') + '/' + announcement,
+                method: 'GET',
+                responseType: 'blob', // This is important
+            }).then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                console.log(url)
+                link.href = url;
+                link.setAttribute('download', filename + '.pdf');
+                document.body.appendChild(link);
+                link.click();
+            });
+        },
+        viewPdf(filename, announcement) {
+            axios({
+                url: '/view-AdPdf/' + (filename + '.pdf') + '/' + announcement,
+                method: 'GET',
+                responseType: 'blob',
+            }).then(response => {
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                this.documentUrl = URL.createObjectURL(blob);
+                this.pdfTitle = filename
+            });
+        }
     },
     setup() {
         const form = useForm({
@@ -125,14 +154,15 @@ export default {
                                     <path d="M12 5l7 7-7 7"></path>
                                 </svg>
                             </a>
-                            <a href="" class="text-indigo-400 inline-flex items-center mt-4">
+                            <button @click="getPdf('advertising', item.name)"
+                                class="text-indigo-400 inline-flex items-center mt-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-arrow-down" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"
                                         d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
                                 </svg>
                                 Descargar
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -140,7 +170,7 @@ export default {
 
 
             <!--     <Pagination :currentPage="records.current_page" :links="records.links"
-                        :total="records.links.length - 2"></Pagination> -->
+                                        :total="records.links.length - 2"></Pagination> -->
         </section>
 
     </LayoutMain>

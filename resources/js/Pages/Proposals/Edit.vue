@@ -1,6 +1,8 @@
 <script>
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
+import {
+    mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, mdiTrashCan, mdiEye, mdiArchiveArrowDown
+} from "@mdi/js";
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
@@ -108,6 +110,9 @@ export default {
                 axios.post(route('proposals.update', props.proposal.id),
                     formData, config
                 )
+                    .then((response) => {
+                        window.location = route('proposals.index')
+                    })
                     .catch(function (error) {
                         if (error.response) {
 
@@ -147,7 +152,10 @@ export default {
 
         const hasErrors = computed(() => errors.value.length > 0);
 
-        return { n_criterias, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors, file }
+        return {
+            n_criterias, submit, form, mdiTrashCan, mdiBallotOutline, mdiEye,
+            mdiArchiveArrowDown, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors, file
+        }
     },
     mounted() {
         this.form.state_id = this.state.id
@@ -188,27 +196,47 @@ export default {
 
             <Tabs>
                 <Tab title="Gestion de documentacion" :criteria="false">
-                    <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
-                        <FormField :label="item.name">
-                            <!--   <FormFilePicker accept="application/pdf" :name="item.name" @change="onchange"
-                                            label="Subir nuevo archivo" /> -->
-
-                            <label for="file-input" class="sr-only">Choose file</label>
-                            <input type="file" :name="item.name" id="file-input" @change="onchange"  accept="application/pdf"
-                                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0
-                                          file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
 
 
-                            <button @click="getPdf(item.name)"
-                                class="bg-gray-300 dark:bg-slate-900 dark:text-gray-400 border dark:border-gray-700  hover:bg-gray-900 text-gray-800 py-2 px-4 rounded inline-flex items-center">
-                                <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20">
-                                    <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
-                                </svg>
-                                <span>Descargar su archivo {{ item.name }} anterior</span>
-                            </button>
-                        </FormField>
-                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>PDF</th>
+                                <th>Nombre</th>
+                                <th>Subir</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in convocatoria.documents_supporting" :key="index">
+                                <td class="border-b-0 lg:w-6 before:hidden">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                        class="bi bi-filetype-pdf" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM1.6 11.85H0v3.999h.791v-1.342h.803c.287 0 .531-.057.732-.173.203-.117.358-.275.463-.474a1.42 1.42 0 0 0 .161-.677c0-.25-.053-.476-.158-.677a1.176 1.176 0 0 0-.46-.477c-.2-.12-.443-.179-.732-.179Zm.545 1.333a.795.795 0 0 1-.085.38.574.574 0 0 1-.238.241.794.794 0 0 1-.375.082H.788V12.48h.66c.218 0 .389.06.512.181.123.122.185.296.185.522Zm1.217-1.333v3.999h1.46c.401 0 .734-.08.998-.237a1.45 1.45 0 0 0 .595-.689c.13-.3.196-.662.196-1.084 0-.42-.065-.778-.196-1.075a1.426 1.426 0 0 0-.589-.68c-.264-.156-.599-.234-1.005-.234H3.362Zm.791.645h.563c.248 0 .45.05.609.152a.89.89 0 0 1 .354.454c.079.201.118.452.118.753a2.3 2.3 0 0 1-.068.592 1.14 1.14 0 0 1-.196.422.8.8 0 0 1-.334.252 1.298 1.298 0 0 1-.483.082h-.563v-2.707Zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638H7.896Z" />
+                                    </svg>
+                                </td>
+                                <td data-label="Name">
+                                    {{ item.name }}
+                                </td>
+                                <td class="flex flex-row ">
+                                    <input type="file" :name="item.name" id="file-input" @change="onchange"
+                                        accept="application/pdf"
+                                        class="block mx-2 w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0 file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
+<!--                                     <BaseButton color="danger" class="mx-1 my-1" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
+ -->
+                                </td>
+
+                                <td class="before:hidden lg:w-1  whitespace-nowrap">
+                                    <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                                        <BaseButton color="info" :icon="mdiEye" small @click="viewPdf(item.name)" />
+                                        <BaseButton color="success" :icon="mdiArchiveArrowDown" small
+                                            @click="getPdf(item.name)" />
+                                    </BaseButtons>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
                     <base-divider></base-divider>
                     <BaseButtons>

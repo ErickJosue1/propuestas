@@ -13,7 +13,8 @@ import {
   mdiClockCheck,
   mdiBookshelf,
   mdiCalendarAccountOutline,
-  mdiClockTimeEleven
+  mdiClockTimeEleven,
+  mdiAccount
 
 } from "@mdi/js";
 
@@ -27,7 +28,13 @@ export default [
     label: "Dashboard",
     role: "Admin"
   },
-  
+  {
+    href: "/profile",
+    to: "/profile",
+    icon: mdiAccountCircle,
+    label: "Usuarios",
+    role: "Admin"
+  },
 
   /*  {
      href: "/tables",

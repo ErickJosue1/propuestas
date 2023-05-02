@@ -129,16 +129,7 @@ const transactionBarItems = computed(() => mainStore.history);
           <line-chart :data="chartData" class="h-96" />
         </div>
       </CardBox>
-
-      <SectionTitleLineWithButton :icon="mdiAccountMultiple" title="Clients" />
-
-      <NotificationBar color="info" :icon="mdiMonitorCellphone">
-        <b>Responsive table.</b> Collapses on mobile
-      </NotificationBar>
-
-      <CardBox has-table>
-        <TableSampleClients />
-      </CardBox>
+      
     </SectionMain>
   </LayoutAuthenticated>
 </template>

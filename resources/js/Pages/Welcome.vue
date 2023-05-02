@@ -18,7 +18,7 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import LayoutWelcome from '@/layouts/LayoutWelcome.vue';
-
+import axios from 'axios';
 
 
 export default {
@@ -41,9 +41,24 @@ export default {
         Pagination,
         LayoutWelcome
     },
+    methods: {
+        getPdf(filename, announcement) {
+            axios({
+                url: '/download-AdPdf/' + (filename + '.pdf') + '/' + announcement,
+                method: 'GET',
+                responseType: 'blob', // This is important
+            }).then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                console.log(url)
+                link.href = url;
+                link.setAttribute('download', filename + '.pdf');
+                document.body.appendChild(link);
+                link.click();
+            });
+        },
+    },
     setup() {
-
-
 
         return {
             mdiMonitorCellphone,
@@ -105,7 +120,7 @@ export default {
                                     </svg>
                                     <a :href="route('login')"> <span>Inscribirse</span></a>
                                 </div>
-                                <div class="flex cursor-pointer gap-2 items-center transition hover:text-slate-600">
+                                <button @click="getPdf('advertising', item.name)" class="flex cursor-pointer gap-2 items-center transition hover:text-slate-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         class=" bi bi-cloud-download" viewBox="0 0 16 16">
                                         <path
@@ -114,7 +129,7 @@ export default {
                                             d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z" />
                                     </svg>
                                     <span>Descargar</span>
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>

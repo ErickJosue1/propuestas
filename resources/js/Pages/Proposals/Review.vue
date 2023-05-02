@@ -31,7 +31,6 @@ import UserAvatar from "@/components/UserAvatar.vue";
 
 
 
-
 export default {
     props: {
         titulo: { type: String, required: true },

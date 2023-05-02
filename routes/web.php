@@ -46,6 +46,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('HomeView');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/download-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'downloadPdf'])->name('download-AdPdf');
 
 Route::middleware('auth')->group(function () {
 
@@ -72,13 +73,15 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('StyleView');
     });  */
 
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/{user}/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/download-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'downloadPdf'])->name('download-pdf');
     Route::get('/view-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'viewPdf'])->name('view-pdf');
+
+    Route::get('/view-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'viewPdf'])->name('view-AdPdf');
 
     Route::put('/proposals/{proposal}', [ProposalsController::class, 'updateReview'])->name('proposals.updateReview');
 

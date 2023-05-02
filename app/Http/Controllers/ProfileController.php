@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,39 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    protected string $routeName;
+    protected string $source; 
+    /* protected string $module = 'profile'; */
+    protected User $model;
+
+    public function __construct()
+    {
+        $this->routeName = "profile.";
+        $this->source    = "Profile/";
+        $this->model     = new User();
+      /*   $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
+        $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
+        $this->middleware("permission:{$this->module}.update")->only(['edit', 'update']);
+        $this->middleware("permission:{$this->module}.delete")->only(['destroy']); */
+    }
+    public function index(Request $request): Response
+    {
+        $records = $this->model;
+        $records = $records->when($request->search, function ($query, $search) {
+            if ($search != '') {
+                $query->where('name',          'LIKE', "%$search%");
+            }
+        })->paginate(10)->withQueryString();
+
+        return Inertia::render("{$this->source}Index", [
+            'titulo'          => 'Usuarios',
+            'records'        => $records,
+            'routeName'      => $this->routeName,
+            'loadingResults' => false,
+            'search'         => $request->search ?? '',
+        ]);
+    }
+
     /**
      * Display the user's profile form.
      */

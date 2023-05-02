@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateAnnouncementsRequest;
 use App\Models\Assestment_Criteria;
 use App\Models\Document_Supporting;
 use App\Models\Institutions;
+use App\Models\User;
 use Database\Seeders\AssestmentCriteriaSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -123,6 +124,31 @@ class AnnouncementsController extends Controller
         }
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Convocatoria guardada con éxito!');
+    }
+
+    /* 
+        Send the specified Proposal file to the view
+    */
+
+    public function downloadPdf($filename, $announcement)
+    {
+        $pathToFile = storage_path('app/public/' . $announcement . 'advertising' . '/' . $filename);
+
+        return response()->download($pathToFile);
+    }
+
+    /* 
+        Give the specified Proposal file path to the view
+    */
+
+    public function viewPdf($filename, $announcement)
+    {
+        $pathToFile =  storage_path('app/public/' . $announcement . 'advertising' . '/' . $filename);
+
+        return response()->make(file_get_contents($pathToFile), 200, [
+            'Content-Type'        => mime_content_type($pathToFile),
+            'Content-Disposition' => 'inline; filename="' . $filename . '"'
+        ]);
     }
 
     /**
