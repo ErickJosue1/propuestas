@@ -20,7 +20,9 @@ import FormValidationErrors from '@/components/FormValidationErrors.vue'
 import NotificationBar from "@/components/NotificationBar.vue";
 import axios from 'axios';
 import Swal from "sweetalert2";
-
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import { useStyleStore } from "@/stores/style.js";
 
 export default {
     props: {
@@ -29,6 +31,7 @@ export default {
         institutions: { type: Object, required: true },
         assesstments: { type: Object, required: true },
         documents: { type: Object, required: true },
+        events: { type: Object, required: true }
 
     },
     components: {
@@ -47,7 +50,8 @@ export default {
         TableCheckboxCell,
         DocList,
         FormValidationErrors,
-        NotificationBar
+        NotificationBar,
+        VueDatePicker
     },
     methods: {
         todo: function (data) {
@@ -82,14 +86,37 @@ export default {
                 this.file.push({ name: name, file: fileA })
                 console.log(this.file)
             }
+        },
+        dateChange(e, name, operation) {
+            if (this.date.some(val => val.name === name)) {
+                const i = this.date.findIndex(val => val.name === name)
+                operation ? this.date[i].date_start = e.target.value : this.date[i].date_end = e.target.value
+            }
+            else {
+                operation ? this.date.push({ name: name, date_start: e.target.value, date_end: null }) : this.date.push({ name: name, date_start: null, date_end: e.target.value })
+            }
+            console.log(this.date)
         }
     },
     setup(props) {
+
+        const date = [];
+
+
         const submit = () => {
             if (file.length < 1) {
                 Swal.fire({
                     title: "PDF de publicidad obligatorio!",
                     text: "Es necesario el documento de publicidad!",
+                    icon: "warning",
+                    timer: 10000,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Ok!",
+                });
+            } else if (date.length < props.events.length) {
+                Swal.fire({
+                    title: "Seleccione las fechas para todos los eventos!",
+                    text: "Es necesario establecer la fecha de los " + props.events.lenght + " eventos",
                     icon: "warning",
                     timer: 10000,
                     confirmButtonColor: "#3085d6",
@@ -106,6 +133,13 @@ export default {
                 for (let index = 0; index < file.length; index++) {
                     formData.append('myFiles[' + index + ']', file[index].file, file[index].name + ".pdf")
                 }
+
+                date.forEach((object, index) => {
+                    formData.append('dates[' + index + '][name]', object.name)
+                    formData.append('dates[' + index + '][date_start]', object.date_start)
+                    formData.append('dates[' + index + '][date_end]', object.date_end)
+                    formData.append('dates[' + index + '][date_end]', object.date_end)
+                })
 
                 Object.entries(form.data()).forEach(([key, value]) => {
                     formData.append(key, value)
@@ -203,15 +237,29 @@ export default {
             }
         }
 
+        const dateTransform = (dateRefer) => {
+            var date = new Date();
+            date = dateRefer;
+            date = date.getUTCFullYear() + '-' +
+                ('00' + (date.getUTCMonth() + 1)).slice(-2) + '-' +
+                ('00' + date.getUTCDate()).slice(-2) + ' ' +
+                ('00' + date.getUTCHours()).slice(-2) + ':' +
+                ('00' + date.getUTCMinutes()).slice(-2) + ':' +
+                ('00' + date.getUTCSeconds()).slice(-2);
+            return date;
+        }
+
 
         const again = ref(false);
 
+        const styleStore = useStyleStore();
+        const isDark = computed(() => styleStore.isDark())
 
         const errors = ref([]);
 
         const hasErrors = computed(() => errors.value.length > 0);
 
-        return { again, errors, file, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
+        return { again, date, isDark, errors, file, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
     },
 }
 </script>
@@ -262,7 +310,47 @@ export default {
 
                     </div>
                 </Tab>
+                <Tab title="Calendario">
+                    <div class="p-4 rounded-lg">
+                        <h1 class="text-2xl font-bold mb-4">Seleccione las fechas de los eventos de la convocatoria</h1>
 
+                        <div class="my-10 divide-y" v-for="item in events" :key="item.id">
+                            <FormField :label="'Fecha de inicio y final del evento -' + item.name + '-'">
+
+
+                                <div class="relative w-full">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <input type="date" @change="dateChange($event, item.name, true)"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Select date">
+                                </div>
+
+                                <div class="relative w-full">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <input type="date" @change="dateChange($event, item.name, false)"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Select date">
+                                </div>
+
+                            </FormField>
+
+                        </div>
+                    </div>
+                </Tab>
                 <Tab title="Criterios de Evaluacion">
                     <div class="p-4 rounded-lg" id="profile">
                         <todo-list @tasks="todo" ref="TodoListRef"></todo-list>

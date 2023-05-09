@@ -71,7 +71,7 @@ export default {
             });
         };
 
-        const isLoading = ref(false );
+        const isLoading = ref(false);
 
         const state = reactive({
             filters: {
@@ -101,8 +101,6 @@ export default {
 </script>
 
 <template>
-   
-    
     <LayoutMain>
 
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
@@ -161,8 +159,7 @@ export default {
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="info" :icon="mdiEye" small
-                                    :href="route(`${routeName}edit`, item.id)" />
+                                <BaseButton color="info" :icon="mdiEye" small :href="route(`${routeName}edit`, item.id)" />
                                 <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                             </BaseButtons>
                         </td>
@@ -173,7 +170,7 @@ export default {
 
 
 
-            <Pagination  :currentPage="records.current_page" :links="records.links" :total="records.links.length - 2">
+            <Pagination :currentPage="records.current_page" :links="records.links" :total="records.links.length - 2">
             </Pagination>
         </CardBox>
 

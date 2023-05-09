@@ -9,7 +9,7 @@ import {
     mdiTableOff,
     mdiGithub,
     mdiEye, mdiTrashCan,
-    mdiInformation,mdiApplicationEdit
+    mdiInformation, mdiApplicationEdit
 } from "@mdi/js";
 import PillTag from "@/components/PillTag.vue";
 import TableSampleClients from "@/components/TableSampleClients.vue";

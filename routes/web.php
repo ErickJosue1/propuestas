@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalsController;
 use App\Http\Controllers\RenapoController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\UserController;
 use App\Models\Announcements;
 use App\Models\Areas_knowledge;
 use App\Models\Calendar;
@@ -73,6 +74,10 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('StyleView');
     });  */
 
+    Route::get('/users/{user}/assign-roles-and-permissions', [UserController::class, 'assignRolesAndPermissionsView'])->name('users.assign-roles-and-permissions.view');
+    Route::post('/users/{user}/assign-roles-and-permissions', [UserController::class, 'assignRolesAndPermissions'])->name('users.assign-roles-and-permissions');
+
+
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/{user}/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -100,7 +105,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('calendar', CalendarController::class)->names('calendar');
     Route::resource('criterias', CriteriasController::class)->names('criterias');
     Route::resource('knowledges', AreasKnowledgeController::class)->names('knowledges');
-
 });
 
 require __DIR__ . '/auth.php';

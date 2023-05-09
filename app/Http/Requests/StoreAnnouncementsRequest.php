@@ -31,6 +31,7 @@ class StoreAnnouncementsRequest extends FormRequest
             'status'        => "required|integer|max:50",
             'institutions_id' => "required|integer|max:45",
             'myFiles' => "exclude",
+            'dates' => "exclude"
         ];
     }
 }

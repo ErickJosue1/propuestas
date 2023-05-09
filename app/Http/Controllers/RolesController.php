@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRolesRequest;
 use Inertia\Response;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Permission;
 
 class RolesController extends Controller
 {
@@ -57,6 +58,7 @@ class RolesController extends Controller
         return Inertia::render("{$this->source}Create", [
             'titulo' => 'Agregar Roles',
             'routeName' => $this->routeName,
+            'permissions' => Permission::all()
         ]);
     }
 

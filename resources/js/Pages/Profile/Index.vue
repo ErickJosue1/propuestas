@@ -68,7 +68,7 @@ export default {
             });
         };
 
-        const isLoading = ref(false );
+        const isLoading = ref(false);
 
         const state = reactive({
             filters: {
@@ -77,6 +77,7 @@ export default {
                 status: props.status ?? 1,
             },
         });
+
         const search = () => {
             props.loadingResults = true;
             Inertia.replace(route(`${props.routeName}index`, state.filters));
@@ -98,12 +99,10 @@ export default {
 </script>
 
 <template>
-   
-    
     <LayoutMain>
 
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-          
+
         </SectionTitleLineWithButton>
 
 
@@ -155,9 +154,14 @@ export default {
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                               <!--  <BaseButton color="info" :icon="mdiEye" small
+                                <!--  <BaseButton color="info" :icon="mdiEye" small
                                     :href="route(`${routeName}edit`, item.id)" /> -->
                                 <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
+                                <a :href="route('users.assign-roles-and-permissions.view', item.id)"> <button
+                                        class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                                        Asignar Rol
+                                    </button>
+                                </a>
                             </BaseButtons>
                         </td>
 
@@ -167,7 +171,7 @@ export default {
 
 
 
-            <Pagination  :currentPage="records.current_page" :links="records.links" :total="records.links.length - 2">
+            <Pagination :currentPage="records.current_page" :links="records.links" :total="records.links.length - 2">
             </Pagination>
         </CardBox>
 

@@ -120,7 +120,8 @@ export default {
                                     </svg>
                                     <a :href="route('login')"> <span>Inscribirse</span></a>
                                 </div>
-                                <button @click="getPdf('advertising', item.name)" class="flex cursor-pointer gap-2 items-center transition hover:text-slate-600">
+                                <button @click="getPdf('advertising', item.name)"
+                                    class="flex cursor-pointer gap-2 items-center transition hover:text-slate-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         class=" bi bi-cloud-download" viewBox="0 0 16 16">
                                         <path

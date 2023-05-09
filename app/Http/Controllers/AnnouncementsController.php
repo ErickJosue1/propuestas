@@ -6,10 +6,13 @@ use App\Models\Announcements;
 use App\Http\Requests\StoreAnnouncementsRequest;
 use App\Http\Requests\UpdateAnnouncementsRequest;
 use App\Models\Assestment_Criteria;
+use App\Models\calendar_announcement;
 use App\Models\Document_Supporting;
+use App\Models\Events;
 use App\Models\Institutions;
 use App\Models\User;
 use Database\Seeders\AssestmentCriteriaSeeder;
+use Illuminate\Console\Scheduling\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -69,7 +72,8 @@ class AnnouncementsController extends Controller
             'routeName'      => $this->routeName,
             'institutions' => Institutions::all(),
             'assesstments' =>   Assestment_Criteria::all(),
-            'documents'    => Document_Supporting::all()
+            'documents'    => Document_Supporting::all(),
+            'events' => Events::all()
         ]);
     }
 
@@ -89,6 +93,17 @@ class AnnouncementsController extends Controller
             $record = $this->model::create($request->validated());
             $criteria = new Assestment_Criteria();
             $docuemnt = new Document_Supporting();
+
+            foreach ($request->dates as $value) {
+                calendar_announcement::create(
+                    [
+                        'name' => $value['name'],
+                        'date_start' => $value['date_start'],
+                        'date_end' => $value['date_end'],
+                        'announcements_id' => $record->id,
+                    ]
+                );
+            }
 
             foreach ($request->documents as $value) {
                 if (isset($value['id'])) {

@@ -86,12 +86,6 @@ export default [
     role: "Admin"
   },
   {
-    label: "Calendario",
-    href: "/calendar",
-    icon: mdiCalendarAccountOutline,
-    role: "Admin"
-  },
-  {
     label: "Asignar Revisores",
     href: "/proposals",
     icon: mdiSquareEditOutline,
