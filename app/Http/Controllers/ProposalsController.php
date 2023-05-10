@@ -15,6 +15,7 @@ use App\Models\Document_Supporting;
 use App\Models\Proceedings;
 use App\Models\ProposalStates;
 use App\Models\User;
+use App\Notifications\WorkReviewed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -36,8 +37,8 @@ class ProposalsController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->model = new Proposals();
+/*         $this->middleware('auth');
+ */        $this->model = new Proposals();
         $this->routeName = 'proposals.';
 
         /*   $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
@@ -221,6 +222,9 @@ class ProposalsController extends Controller
 
     public function updateReview(UpdateProposalsRequest $request, Proposals $proposal)
     {
+        $user = User::find($proposal->user_id);
+        $user->notify(new WorkReviewed($user, $proposal));
+
         $proposal->update($request->validated());
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');

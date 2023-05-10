@@ -42,12 +42,13 @@ Route::get('/', function () {
 
 Route::resource('renapo', RenapoController::class)->names('renapo');
 Route::resource('colony', ColonyController::class)->names('colony');
+Route::get('/download-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'downloadPdf'])->name('download-AdPdf');
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('HomeView');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/download-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'downloadPdf'])->name('download-AdPdf');
 
 Route::middleware('auth')->group(function () {
 

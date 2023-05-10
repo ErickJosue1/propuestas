@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Colony;
+use App\Models\Events;
 use App\Models\Township;
 use App\Models\Workplace;
 use Illuminate\Database\Seeder;
@@ -34,7 +35,8 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             AdminSeeder::class,
             ProposalStatesSeeder::class,
-            AreasKnowledgeSeeder::class
+            AreasKnowledgeSeeder::class,
+            EventsSeeder::class
             /*             CodigosPostalesSeeder::class
  */
         ]);

@@ -146,11 +146,18 @@ export default {
                 })
 
                 checkedRows.value.forEach((object, index) => {
+                    if (object.id) {
+                        formData.append('assesstments[' + index + '][id]', object.id)
+                    }
                     formData.append('assesstments[' + index + '][name]', object.name)
                     formData.append('assesstments[' + index + '][value]', object.value)
                 })
 
                 checkedDocs.value.forEach((object, index) => {
+                    if (object.id) {
+                        formData.append('documents[' + index + '][id]', object.id)
+
+                    }
                     formData.append('documents[' + index + '][name]', object.name)
                 })
 

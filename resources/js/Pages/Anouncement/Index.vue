@@ -9,7 +9,7 @@ import {
     mdiTableOff,
     mdiGithub,
     mdiEye, mdiTrashCan,
-    mdiInformation
+    mdiInformation, mdiArchiveArrowDown, mdiApplicationEdit
 } from "@mdi/js";
 import TableSampleClients from "@/components/TableSampleClients.vue";
 import CardBox from "@/components/CardBox.vue";
@@ -91,7 +91,7 @@ export default {
                 confirmButtonText: "Si!, eliminar registro!",
             }).then((res) => {
                 if (res.isConfirmed) {
-                    form.delete(route("proposals.destroy", id));
+                    form.delete(route("announcements.destroy", id));
                 }
             });
         };
@@ -103,7 +103,8 @@ export default {
             mdiGithub,
             mdiEye, mdiTrashCan,
             useRole,
-            mdiInformation
+            mdiInformation, mdiArchiveArrowDown,
+            mdiApplicationEdit
         }
     },
 }
@@ -163,13 +164,18 @@ export default {
                         </td>
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
-                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="info" :icon="mdiEye" small :href="route(`${routeName}edit`, item.id)" />
+                            <BaseButtons v-if="useRole('Admin')" type="justify-start lg:justify-end" no-wrap>
+                                <BaseButton color="info" :icon="mdiApplicationEdit" small :href="route(`${routeName}edit`, item.id)" />
                                 <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
+                            </BaseButtons>
+                            <BaseButtons v-else type="justify-start lg:justify-end" no-wrap>
+                                <BaseButton color="info" :icon="mdiApplicationEdit" small :href="route('proposals.show', item.id)" />
+                                <BaseButton color="success" :icon="mdiArchiveArrowDown" small @click="getPdf('advertising', item.name)" />
                             </BaseButtons>
                         </td>
 
-                    </tr>
+
+                    </tr>   
                 </tbody>
             </table>
 

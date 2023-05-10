@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Announcements;
 use App\Http\Requests\StoreAnnouncementsRequest;
 use App\Http\Requests\UpdateAnnouncementsRequest;
+use App\Models\announcement_assestment_criteria;
+use App\Models\announcements_document_supporting;
 use App\Models\Assestment_Criteria;
 use App\Models\calendar_announcement;
 use App\Models\Document_Supporting;
@@ -38,9 +40,9 @@ class AnnouncementsController extends Controller
         $this->model = new Announcements();
         $this->routeName = 'announcements.';
 
-        $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
+     /*    $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
         $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
-        $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']);
+        $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']); */
     }
 
     public function index(Request $request): Response
@@ -206,8 +208,21 @@ class AnnouncementsController extends Controller
      * @param  \App\Models\Announcements  $announcements
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Announcements $announcements)
+    public function destroy(Announcements $announcement)
     {
-        //
+        $files = glob('storage' . '/' . $announcement . 'advertising' . '/*');
+
+        calendar_announcement::where('announcements_id', '=', $announcement->id)->delete();
+        announcement_assestment_criteria::where('announcements_id', '=', $announcement->id)->delete();
+        announcements_document_supporting::where('announcements_id', '=', $announcement->id)->delete();
+
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+
+        $announcement->delete();
+        return redirect()->route("{$this->routeName}index")->with('success', 'Convocatoria eliminada con éxito');
     }
 }

@@ -38,13 +38,13 @@ class WorkReviewed extends Notification
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail($notifiable, $reviewer, $proposal)
+    public function toMail($notifiable, $proposal)
     {
 
         return (new MailMessage)
             ->subject('Su propuesta ha sido revisada!')
             ->greeting("Hola {$notifiable->name},")
-            ->line("Su propuesta ha sido revisada por {$reviewer->name}")
+            ->line("Su propuesta ha sido revisada")
             ->action('Vea el resultado de su revision', url("proposals.edit", $proposal->id))
             ->line('Gracias por usar nuestra plataforma!');
     }
