@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class WorkReviewed extends Notification
+class ReviewerAssigned extends Notification
 {
     use Queueable;
 
@@ -45,10 +45,10 @@ class WorkReviewed extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Su propuesta ha sido revisada!')
+            ->subject('Se le ha asignado una propuesta!')
             ->greeting("Hola {$this->user->name},")
-            ->line("Su propuesta ha sido revisada")
-            ->action('Vea el resultado de su revision', url("proposals/{proposal}/edit", $this->proposal->id))
+            ->line("Tiene una nueva propuesta que revisar")
+            ->action('Vea la propuesta que le fue asignada', url("proposals/{proposal}/review", $this->proposal->id))
             ->line('Gracias por usar nuestra plataforma!');
     }
 

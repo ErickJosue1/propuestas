@@ -9,6 +9,7 @@ use App\Http\Controllers\CriteriasController;
 use App\Http\Controllers\DocumentSupportingController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\InstitutionsController;
+use App\Http\Controllers\PdfGenerate;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalsController;
@@ -75,9 +76,12 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('StyleView');
     });  */
 
+
+    Route::get('/generate-pdf/{proposal}', [PdfGenerate::class, 'recognitionPDF'])->name('recognitionPDF');
+    Route::get('/download-pdf/{proposal}', [PdfGenerate::class, 'downloadRecognitionPDF'])->name('downloadRecognitionPDF');
+    
     Route::get('/users/{user}/assign-roles-and-permissions', [UserController::class, 'assignRolesAndPermissionsView'])->name('users.assign-roles-and-permissions.view');
     Route::post('/users/{user}/assign-roles-and-permissions', [UserController::class, 'assignRolesAndPermissions'])->name('users.assign-roles-and-permissions');
-
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/{user}/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -86,13 +90,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/download-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'downloadPdf'])->name('download-pdf');
     Route::get('/view-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'viewPdf'])->name('view-pdf');
-
     Route::get('/view-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'viewPdf'])->name('view-AdPdf');
 
     Route::put('/proposals/{proposal}', [ProposalsController::class, 'updateReview'])->name('proposals.updateReview');
-
     Route::get('/proposals/{proposal}/assign', [ProposalsController::class, 'assignment'])->name('proposals.assignment');
-
     Route::get('/proposals/{proposal}/review', [ProposalsController::class, 'review'])->name('proposals.review');
 
     Route::resource('institutions', InstitutionsController::class)->names('institutions');

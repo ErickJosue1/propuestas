@@ -8,8 +8,8 @@ import {
     mdiTableBorder,
     mdiTableOff,
     mdiGithub,
-    mdiEye, mdiTrashCan,
-    mdiInformation, mdiApplicationEdit
+    mdiApplicationEdit, mdiTrashCan,
+    mdiInformation, mdiCloudDownload
 } from "@mdi/js";
 import PillTag from "@/components/PillTag.vue";
 import TableSampleClients from "@/components/TableSampleClients.vue";
@@ -23,6 +23,8 @@ import BaseButton from "@/components/BaseButton.vue";
 import { useRole } from '@/Hooks/usePermissions';
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
+import { usePage } from "@inertiajs/vue3";
+import axios from 'axios';
 
 
 export default {
@@ -39,7 +41,23 @@ export default {
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
-
+    methods: {
+        getPdf(proposal) {
+            axios({
+                url: route('downloadRecognitionPDF', proposal.id),
+                method: 'GET',
+                responseType: 'blob', // This is important
+            }).then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                console.log(url)
+                link.href = url;
+                link.setAttribute('download', proposal.id + usePage().props.auth.user.name + '.pdf');
+                document.body.appendChild(link);
+                link.click();
+            });
+        },
+    },
     components: {
         Link,
         LayoutMain,
@@ -83,7 +101,7 @@ export default {
             mdiGithub,
             mdiApplicationEdit, mdiTrashCan,
             useRole,
-            mdiInformation
+            mdiInformation, mdiCloudDownload,usePage
         }
     }
 
@@ -104,11 +122,10 @@ export default {
             {{ $page.props.flash.error }}
         </NotificationBar>
 
-
-
         <CardBox v-if="records.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
+
 
 
         <CardBox v-else class="mb-6" has-table>
@@ -118,9 +135,10 @@ export default {
                         <th>Nombre</th>
                         <th>Status</th>
                         <th>Fecha Captura</th>
+                        <th v-if="useRole('Postulante')">Descargar Constancia</th>
+                        <th v-if="useRole('Evaluador')">Habilitar Constancia</th>
                         <th v-if="records.data.state_id != 3">Fecha Aprobado / Rechazado</th>
                         <th v-else>Fecha Rechazado</th>
-
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -144,6 +162,25 @@ export default {
                         <td data-label="Fecha Captura">
                             {{ item.created_at }}
                         </td>
+
+                        <td data-label="Descargar Constancia" v-if="item.state_id == 1 && useRole('Postulante')"
+                            class=" lg:w-1 whitespace-nowrap">
+                            <BaseButtons type="justify-start lg:justify-center" no-wrap>
+                                <BaseButton @click="getPdf(item)" color="info" :icon="mdiCloudDownload" small />
+                            </BaseButtons>
+                        </td>
+
+                        <td data-label="Habilitar Constancia" v-if="item.state_id == 1 && useRole('Evaluador')"
+                            class=" lg:w-1 whitespace-nowrap">
+                            <BaseButtons type="justify-start lg:justify-center" no-wrap>
+                                <a :href="route('recognitionPDF', item.id)"> <button
+                                        class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold dark:hover:text-white hover:text-black py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                                        Habilitar
+                                    </button>
+                                </a>
+                            </BaseButtons>
+                        </td>
+
                         <td v-if="item.state_id == 2" data-label="Fecha Aprobado">
                             {{ state[item.state_id - 1].state }}
                         </td>

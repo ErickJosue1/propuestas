@@ -13,7 +13,7 @@ class Announcements extends Model
 
 
     public function calendars(){
-        return $this->hasMany(Calendar::class);
+        return $this->hasMany(calendar_announcement::class);
     }
 
     public function institutions()
@@ -26,6 +26,8 @@ class Announcements extends Model
         $table = 'announcement_document_supporting';
         return $this->belongsToMany(Document_Supporting::class, $table, 'announcements_id', 'document_supporting_id');
     }
+
+    
 
     public function assesstment_criterias()
     {

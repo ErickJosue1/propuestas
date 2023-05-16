@@ -8,7 +8,7 @@ import {
     mdiTableBorder,
     mdiTableOff,
     mdiGithub,
-    mdiEye, mdiTrashCan
+    mdiApplicationEdit, mdiTrashCan
 } from "@mdi/js";
 import TableSampleClients from "@/components/TableSampleClients.vue";
 import CardBox from "@/components/CardBox.vue";
@@ -70,7 +70,7 @@ export default {
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
-            mdiEye, mdiTrashCan,
+            mdiApplicationEdit, mdiTrashCan,
         }
     }
 
@@ -127,7 +127,7 @@ export default {
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="info" :icon="mdiEye" small :href="route(`${routeName}edit`, item.id)" />
+                                <BaseButton color="info" :icon="mdiApplicationEdit" small :href="route(`${routeName}edit`, item.id)" />
                                 <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                             </BaseButtons>
                         </td>

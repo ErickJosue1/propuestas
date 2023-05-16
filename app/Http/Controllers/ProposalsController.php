@@ -14,7 +14,9 @@ use App\Models\Criterias;
 use App\Models\Document_Supporting;
 use App\Models\Proceedings;
 use App\Models\ProposalStates;
+use App\Models\recognitions;
 use App\Models\User;
+use App\Notifications\ReviewerAssigned;
 use App\Notifications\WorkReviewed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,8 +39,9 @@ class ProposalsController extends Controller
 
     public function __construct()
     {
-/*         $this->middleware('auth');
- */        $this->model = new Proposals();
+        /*         $this->middleware('auth');
+ */
+        $this->model = new Proposals();
         $this->routeName = 'proposals.';
 
         /*   $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
@@ -222,10 +225,10 @@ class ProposalsController extends Controller
 
     public function updateReview(UpdateProposalsRequest $request, Proposals $proposal)
     {
+        $proposal->update($request->validated());
+
         $user = User::find($proposal->user_id);
         $user->notify(new WorkReviewed($user, $proposal));
-
-        $proposal->update($request->validated());
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
     }
@@ -242,9 +245,16 @@ class ProposalsController extends Controller
     {
         $proposal->update($request->validated());
 
-        if (!empty($request->myFiles)) {
-            foreach ($request->myFiles as $files) {
-                $files->storeAs(Auth::user()->name . 'Expediente' . $proposal->id, $files->getClientOriginalName(), 'public');
+        $user = User::find(Auth::user()->id);
+
+        if ($user->hasRole('Admin')) {
+            $user = User::find($request->evaluador_id);
+            empty($request->evaluador_id) ? null : $user->notify(new ReviewerAssigned($user, $proposal));
+        } else {
+            if (!empty($request->myFiles)) {
+                foreach ($request->myFiles as $files) {
+                    $files->storeAs(Auth::user()->name . 'Expediente' . $proposal->id, $files->getClientOriginalName(), 'public');
+                }
             }
         }
 
@@ -267,6 +277,7 @@ class ProposalsController extends Controller
             }
         }
 
+        recognitions::where('proposal_id', '=', $proposal->id)->delete();
         $proposal->delete();
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta eliminada con éxito');

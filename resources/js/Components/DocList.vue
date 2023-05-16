@@ -25,6 +25,7 @@ import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
 
 
 export default {
+   
     components: {
         FormField,
         FormControl,
@@ -44,7 +45,7 @@ export default {
         addTask() {
             this.tasks = []
             if (this.name.trim() !== '') {
-                this.tasks.push({ name: this.name});
+                this.tasks.push({ name: this.name });
                 this.name = '';
                 this.$emit("docs", this.tasks)
             }

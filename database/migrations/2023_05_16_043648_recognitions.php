@@ -13,17 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('calendar_announcements', function (Blueprint $table) {
+        Schema::create('recognitions', function (Blueprint $table) {
             $table->id();
+            $table->string('path');
+            $table->string('code');
             $table->unsignedBigInteger('announcements_id');
-            $table->string('name');
-            $table->date('date_start');
-            $table->date('date_end');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('proposal_id');
             $table->timestamps();
-            
             $table->foreign('announcements_id')->references('id')->on('announcements');
-
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('proposal_id')->references('id')->on('proposals');
         });
+
     }
 
     /**
@@ -33,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('calendar_announcements');
+        Schema::dropIfExists('recognitions');
     }
 };

@@ -1,20 +1,31 @@
-<script setup>
+<script>
 import { ref, watch } from "vue";
 
-defineProps({
-  type: {
-    type: String,
-    default: "td",
+export default {
+  props: {
+    type: {
+      type: String,
+      default: "td",
+    },
+    value: {
+      type: Boolean,
+      default: false
+    }
   },
-});
+  emits:['checked'],
+  setup(props,ctx) {
 
-const emit = defineEmits(["checked"]);
+    const checked = ref(props.value);
 
-const checked = ref(false);
+    watch(checked, (newVal) => {
+      ctx.emit("checked", newVal);
+    });
+    return {checked}
 
-watch(checked, (newVal) => {
-  emit("checked", newVal);
-});
+  }
+}
+
+
 </script>
 
 <template>

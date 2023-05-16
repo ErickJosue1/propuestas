@@ -49,7 +49,6 @@ class CriteriasController extends Controller
             }
         }
 
-
         if (!$delete) {
             foreach ($request->datos as $key => $value) {
                 Criterias::create($value);

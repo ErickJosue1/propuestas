@@ -40,7 +40,7 @@ class AnnouncementsController extends Controller
         $this->model = new Announcements();
         $this->routeName = 'announcements.';
 
-     /*    $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
+        /*    $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
         $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
         $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']); */
     }
@@ -185,9 +185,17 @@ class AnnouncementsController extends Controller
      * @param  \App\Models\Announcements  $announcements
      * @return \Illuminate\Http\Response
      */
-    public function edit(Announcements $announcements)
+    public function edit(Announcements $announcement)
     {
-        //
+        return Inertia::render("Anouncement/Edit", [
+            'titulo'      => 'Crear una convocatoria',
+            'routeName'      => $this->routeName,
+            'institutions' => Institutions::all(),
+            'assesstments' =>   Assestment_Criteria::all(),
+            'documents'    => Document_Supporting::all(),
+            'events' => Events::all(),
+            'announcement' => $announcement->load('assesstment_criterias', 'documents_supporting', 'calendars')
+        ]);
     }
 
     /**
@@ -197,9 +205,68 @@ class AnnouncementsController extends Controller
      * @param  \App\Models\Announcements  $announcements
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateAnnouncementsRequest $request, Announcements $announcements)
+    public function update(UpdateAnnouncementsRequest $request, Announcements $announcement)
     {
-        //
+        if (empty($request->assesstments)) {
+            return redirect()->back()->withErrors(['Seleccione al menos un criterio para la convocatoria!']);
+        } else if (empty($request->documents)) {
+            return redirect()->back()->withErrors(['Seleccione al menos un documento para la convocatoria!']);
+        } else {
+            $announcement->update($request->validated());
+            $criteria = new Assestment_Criteria();
+            $docuemnt = new Document_Supporting();
+
+            calendar_announcement::where('announcements_id', '=', $announcement->id)->delete();
+            announcement_assestment_criteria::where('announcements_id', '=', $announcement->id)->delete();
+            announcements_document_supporting::where('announcements_id', '=', $announcement->id)->delete();
+
+            foreach ($request->dates as $value) {
+                calendar_announcement::create(
+                    [
+                        'name' => $value['name'],
+                        'date_start' => $value['date_start'],
+                        'date_end' => $value['date_end'],
+                        'announcements_id' => $announcement->id,
+                    ]
+                );
+            }
+
+            foreach ($request->documents as $value) {
+                if (isset($value['id'])) {
+                    $announcement->documents_supporting()->attach($value['id']);
+                } else {
+                    $docuemnt = Document_Supporting::create(
+                        [
+                            'name' => $value['name'],
+                        ]
+                    );
+                    $announcement->documents_supporting()->attach($docuemnt->id);
+                }
+            }
+
+
+            foreach ($request->assesstments as $value) {
+                if (isset($value['id'])) {
+                    $announcement->assesstment_criterias()->attach($value['id']);
+                } else {
+                    $criteria = Assestment_Criteria::create(
+                        [
+                            'name' => $value['name'],
+                            'value' => $value['value'],
+                        ]
+                    );
+                    $announcement->assesstment_criterias()->attach($criteria->id);
+                }
+            }
+
+            if(isset($request->myFiles)){
+                foreach ($request->myFiles as $files) {
+                    $files->storeAs($request->name . 'advertising', $files->getClientOriginalName(), 'public');
+                }
+            }
+        }
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Convocatoria guardada con éxito!');
     }
 
     /**

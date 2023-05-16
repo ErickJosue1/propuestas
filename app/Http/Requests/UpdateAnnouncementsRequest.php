@@ -25,11 +25,13 @@ class UpdateAnnouncementsRequest extends FormRequest
     {
         return [
             'name'        => "required|string|max:50",
-            'description'        => "required|integer|max:50",
+            'description'        => "required|string|max:255",
             'num_announcement'        => "required|integer|max:50",
-            'y_announcement'        => "required|integer|max:50",
+            'y_announcement'        => "required|integer",
             'status'        => "required|integer|max:50",
-            'institutions_id' => "required|string|max:45|exist:institutions,id",
+            'institutions_id' => "required|integer|max:45",
+            'myFiles' => "exclude",
+            'dates' => "exclude"
         ];
     }
 }
