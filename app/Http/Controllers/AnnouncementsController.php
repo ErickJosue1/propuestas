@@ -58,7 +58,8 @@ class AnnouncementsController extends Controller
             'titulo'      => 'Convocatorias',
             'records'    => $records->load('assesstment_criterias', 'documents_supporting', 'calendars'),
             'routeName'      => $this->routeName,
-            'loadingResults' => false
+            'loadingResults' => false,
+            'events' => Events::all()
         ]);
     }
 
