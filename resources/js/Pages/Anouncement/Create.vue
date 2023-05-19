@@ -88,15 +88,60 @@ export default {
             }
         },
         dateChange(e, name, operation) {
-            if (this.date.some(val => val.name === name)) {
+            if (operation) {
+                if (this.date.some(val => val.name === name)) {
+                    const i = this.date.findIndex(val => val.name === name)
+                    if (e.target.value >= this.date[i].date_start) {
+                        Swal.fire({
+                            title: "La fecha de final es menor a la fecha inicial!",
+                            text: "Seleccione una  fecha final posterior a la fecha inicial para el evento " + name,
+                            icon: "warning",
+                            timer: 10000,
+                            confirmButtonColor: "#3085d6",
+                            confirmButtonText: "Ok!",
+                        });
+                        e.target.value = null
+                    }
+                    else{
+                        this.date[i].date_start = e.target.value
+                    }
+                }
+                else {
+                    this.date.push({ name: name, date_start: e.target.value, date_end: null })
+                }
+                console.log(this.date)
+            }
+            else if (this.date.some(val => val.name === name)) {
                 const i = this.date.findIndex(val => val.name === name)
-                operation ? this.date[i].date_start = e.target.value : this.date[i].date_end = e.target.value
+          
+                if (e.target.value <= this.date[i].date_start) {
+                    Swal.fire({
+                        title: "La fecha de final es menor a la fecha inicial!",
+                        text: "Seleccione una  fecha final posterior a la fecha inicial para el evento " + name,
+                        icon: "warning",
+                        timer: 10000,
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: "Ok!",
+                    });
+                    e.target.value = null
+                }
+                else {
+                    this.date[i].date_end = e.target.value
+                }
             }
             else {
-                operation ? this.date.push({ name: name, date_start: e.target.value, date_end: null }) : this.date.push({ name: name, date_start: null, date_end: e.target.value })
+                Swal.fire({
+                    title: "Seleccione primero la fecha de inicio!",
+                    text: "Luego de seleccionar la fecha de inicio de '" + name + "' podra seleccionar la fecha final!",
+                    icon: "warning",
+                    timer: 10000,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Ok!",
+                });
+                e.target.value = null
             }
-            console.log(this.date)
-        }
+        },
+
     },
     setup(props) {
 
@@ -323,7 +368,6 @@ export default {
 
                         <div class="my-10 divide-y" v-for="item in events" :key="item.id">
                             <FormField :label="'Fecha de inicio y final del evento -' + item.name + '-'">
-
 
                                 <div class="relative w-full">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

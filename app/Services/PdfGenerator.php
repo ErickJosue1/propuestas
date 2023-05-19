@@ -39,11 +39,9 @@ class PdfGenerator extends FPDF
 
         //QR
 
-/*         $text = 'Hello, World!';
-        $imagePath = public_path('codes/qrcode' . $username . '.png');
+        QrCode::format('png')->generate('dkjfbuhbfuhysdb', $dest . '/' . $name . 'QR' . '.png');
 
-    
-        $this->Image(public_path('codes/qrcode' . $username . '.png'), 0, 0); */
+        $this->Image(public_path($dest . '/' . $name . 'QR' . '.png'), 0, 0); 
 
         $this->Output('F', $dest . '/' . $name . '.pdf');
     }

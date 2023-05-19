@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
 
     /*   Route::get('/', function () {
         return Inertia::render('StyleView');
-    });  */
+    }); */
 
 
     Route::get('/generate-pdf/{proposal}', [PdfGenerate::class, 'recognitionPDF'])->name('recognitionPDF');

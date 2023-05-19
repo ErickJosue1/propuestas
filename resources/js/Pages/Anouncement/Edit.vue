@@ -88,14 +88,58 @@ export default {
             }
         },
         dateChange(e, name, operation) {
-            if (this.date.some(val => val.name === name)) {
+            if (operation) {
+                if (this.date.some(val => val.name === name)) {
+                    const i = this.date.findIndex(val => val.name === name)
+                    if (e.target.value >= this.date[i].date_start) {
+                        Swal.fire({
+                            title: "La fecha de final es menor a la fecha inicial!",
+                            text: "Seleccione una  fecha final posterior a la fecha inicial para el evento " + name,
+                            icon: "warning",
+                            timer: 10000,
+                            confirmButtonColor: "#3085d6",
+                            confirmButtonText: "Ok!",
+                        });
+                        e.target.value = null
+                    }
+                    else{
+                        this.date[i].date_start = e.target.value
+                    }
+                }
+                else {
+                    this.date.push({ name: name, date_start: e.target.value, date_end: null })
+                }
+                console.log(this.date)
+            }
+            else if (this.date.some(val => val.name === name)) {
                 const i = this.date.findIndex(val => val.name === name)
-                operation ? this.date[i].date_start = e.target.value : this.date[i].date_end = e.target.value
+          
+                if (e.target.value <= this.date[i].date_start) {
+                    Swal.fire({
+                        title: "La fecha de final es menor a la fecha inicial!",
+                        text: "Seleccione una  fecha final posterior a la fecha inicial para el evento " + name,
+                        icon: "warning",
+                        timer: 10000,
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: "Ok!",
+                    });
+                    e.target.value = null
+                }
+                else {
+                    this.date[i].date_end = e.target.value
+                }
             }
             else {
-                operation ? this.date.push({ name: name, date_start: e.target.value, date_end: null }) : this.date.push({ name: name, date_start: null, date_end: e.target.value })
+                Swal.fire({
+                    title: "Seleccione primero la fecha de inicio!",
+                    text: "Luego de seleccionar la fecha de inicio de '" + name + "' podra seleccionar la fecha final!",
+                    icon: "warning",
+                    timer: 10000,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Ok!",
+                });
+                e.target.value = null
             }
-            console.log(this.date)
         },
         selectCheck(name, option) {
             if (option) {
@@ -117,78 +161,85 @@ export default {
     },
     setup(props) {
 
-        const date = [];
-
 
         const submit = () => {
+            console.log(date.length)
 
-            const config = {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            }
-
-            const formData = new FormData();
-
-
-            for (let index = 0; index < file.length; index++) {
-                formData.append('myFiles[' + index + ']', file[index].file, file[index].name + ".pdf")
-            }
-
-            date.forEach((object, index) => {
-                formData.append('dates[' + index + '][name]', object.name)
-                formData.append('dates[' + index + '][date_start]', object.date_start)
-                formData.append('dates[' + index + '][date_end]', object.date_end)
-            })
-
-            Object.entries(form.data()).forEach(([key, value]) => {
-                formData.append(key, value)
-            })
-
-            checkedRows.value.forEach((object, index) => {
-                if (object.id) {
-                    formData.append('assesstments[' + index + '][id]', object.id)
-                }
-                formData.append('assesstments[' + index + '][name]', object.name)
-                formData.append('assesstments[' + index + '][value]', object.value)
-            })
-
-            checkedDocs.value.forEach((object, index) => {
-                if (object.id) {
-                    formData.append('documents[' + index + '][id]', object.id)
-
-                }
-                formData.append('documents[' + index + '][name]', object.name)
-            })
-
-            formData.append("_method", "put");
-
-
-            axios.post(route('announcements.update',props.announcement.id), formData, config).then((response) => {
-                window.location = route('announcements.index')/* .with('success', 'Su Convocatoria ha sido guardada con éxito!') */
-            })
-                .catch(function (error) {
-                    if (error.response) {
-
-                        Object.entries(error.response.data.errors).forEach(([key, value]) => {
-                            errors.value.push(value[0])
-                        })
-
-                        console.log(error.response.data);
-                        console.log(error.response.status);
-                        console.log(error.response.headers);
-                    } else if (error.request) {
-                        // The request was made but no response was received
-                        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                        // http.ClientRequest in node.js
-                        console.log(error.request);
-                    } else {
-                        // Something happened in setting up the request that triggered an Error
-                        console.log('Error', error.message);
-                    }
-                    console.log(error.config);
+            if (date.length < props.announcement.calendars.length) {
+                Swal.fire({
+                    title: "Seleccione todas las fechas!",
+                    text: "Seleccione una las "+ props.announcement.calendars.length +" para los eventos",
+                    icon: "warning",
+                    timer: 10000,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Ok!",
                 });
+            }
+            else {
+                const config = {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                }
+
+                const formData = new FormData();
+
+                for (let index = 0; index < file.length; index++) {
+                    formData.append('myFiles[' + index + ']', file[index].file, file[index].name + ".pdf")
+                }
+
+                date.forEach((object, index) => {
+                    formData.append('dates[' + index + '][name]', object.name)
+                    formData.append('dates[' + index + '][date_start]', object.date_start)
+                    formData.append('dates[' + index + '][date_end]', object.date_end)
+                })
+
+                Object.entries(form.data()).forEach(([key, value]) => {
+                    formData.append(key, value)
+                })
 
 
+                checkedRows.value.forEach((object, index) => {
+                    if (object.id) {
+                        formData.append('assesstments[' + index + '][id]', object.id)
+                    }
+                    formData.append('assesstments[' + index + '][name]', object.name)
+                    formData.append('assesstments[' + index + '][value]', object.value)
+                })
 
+                checkedDocs.value.forEach((object, index) => {
+                    if (object.id) {
+                        formData.append('documents[' + index + '][id]', object.id)
+
+                    }
+                    formData.append('documents[' + index + '][name]', object.name)
+                })
+
+                formData.append("_method", "put");
+
+                axios.post(route('announcements.update', props.announcement.id), formData, config).then((response) => {
+                    window.location = route('announcements.index')/* .with('success', 'Su Convocatoria ha sido guardada con éxito!') */
+                })
+                    .catch(function (error) {
+                        if (error.response) {
+
+                            Object.entries(error.response.data.errors).forEach(([key, value]) => {
+                                errors.value.push(value[0])
+                            })
+
+                            console.log(error.response.data);
+                            console.log(error.response.status);
+                            console.log(error.response.headers);
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                            // http.ClientRequest in node.js
+                            console.log(error.request);
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                        }
+                        console.log(error.config);
+                    });
+            }
 
         }
 
@@ -209,6 +260,7 @@ export default {
         });
 
         const file = []
+        const date = []
         const checkedRows = ref([]);
         const checkedDocs = ref([]);
 
@@ -257,6 +309,7 @@ export default {
         this.checkedRows = this.announcement.assesstment_criterias
         this.checkedDocs = this.announcement.documents_supporting
         this.date = this.announcement.calendars
+        console.log(this.date)
     }
 }
 </script>
@@ -271,7 +324,7 @@ export default {
                 </svg></a>
         </SectionTitleLineWithButton>
 
-        {{ date }}
+        {{ date.length }}
 
         <CardBox form @submit.prevent="submit">
             <FormValidationErrors />

@@ -170,6 +170,13 @@ export default {
                             </BaseButtons>
                         </td>
 
+                        <td data-label="Descargar Constancia" v-if="(item.state_id == 2 || item.state_id == 3 ) && useRole('Postulante')"
+                            class=" lg:w-1 whitespace-nowrap">
+                            <BaseButtons type="justify-start lg:justify-center" no-wrap>
+                                -
+                            </BaseButtons>
+                        </td>
+
                         <td data-label="Habilitar Constancia" v-if="item.state_id == 1 && useRole('Evaluador')"
                             class=" lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-center" no-wrap>
@@ -178,6 +185,13 @@ export default {
                                         Habilitar
                                     </button>
                                 </a>
+                            </BaseButtons>
+                        </td>
+
+                        <td data-label="Descargar Constancia" v-if="(item.state_id == 2 || item.state_id == 3 ) && useRole('Evaluador')"
+                            class=" lg:w-1 whitespace-nowrap">
+                            <BaseButtons type="justify-start lg:justify-center" no-wrap>
+                                -
                             </BaseButtons>
                         </td>
 

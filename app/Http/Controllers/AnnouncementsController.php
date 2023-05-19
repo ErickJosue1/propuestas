@@ -56,7 +56,7 @@ class AnnouncementsController extends Controller
 
         return Inertia::render("Anouncement/Index", [
             'titulo'      => 'Convocatorias',
-            'records'    => $records->load('institutions'),
+            'records'    => $records->load('assesstment_criterias', 'documents_supporting', 'calendars'),
             'routeName'      => $this->routeName,
             'loadingResults' => false
         ]);
