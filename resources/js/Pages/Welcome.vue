@@ -137,5 +137,6 @@ export default {
                 </div>
             </div>
         </div>
+        
     </LayoutWelcome>
 </template>
