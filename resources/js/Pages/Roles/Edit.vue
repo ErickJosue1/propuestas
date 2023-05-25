@@ -9,6 +9,8 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import CardBox from "@/components/CardBox.vue";
 import FormValidationErrors from "@/components/FormValidationErrors.vue";
+import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
+import { ref } from 'vue';
 
 
 export default {
@@ -16,6 +18,7 @@ export default {
         role: { type: Object, required: true },
         titulo: { type: String, required: true },
         routeName: { type: String, required: true },
+        permissions: { type: Object, required: true }
     },
     components: {
         LayoutMain,
@@ -26,9 +29,34 @@ export default {
         BaseButtons,
         CardBox,
         SectionTitleLineWithButton,
-        FormValidationErrors
+        FormValidationErrors,
+        TableCheckboxCell
+    },
+    methods: {
+       
     },
     setup(props) {
+
+
+        const permission = ref([]);
+
+        const remove = (arr, cb) => arr.filter(item => !cb(item));
+
+        const isClientName = row => client => row.name === client.name;
+
+        const checked = (isChecked, client) => {
+            let checkedArray = permission.value;
+            const isNameChecked = isClientName(client);
+
+            if (isChecked) {
+                checkedArray.push(client);
+            } else {
+                checkedArray = remove(checkedArray, isNameChecked);
+            }
+
+            permission.value = checkedArray
+        };
+
         const guardar = () => {
             form.put(route('roles.update', props.role.id));
         };
@@ -37,7 +65,7 @@ export default {
             ...props.role
         });
 
-        return { guardar, form }
+        return { guardar, form, permission,checked }
     }
 }
 </script>
@@ -63,11 +91,51 @@ export default {
                 <FormControl placeholder="Descripcion" v-model="form.description" :icon="mdiAccount" />
             </FormField>
 
+            <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="`Seleccione los permisos del rol ${'Admin'}`" main>
+
+            </SectionTitleLineWithButton>
+
+
+            <div v-if="permission.length" class="p-3 bg-gray-100/50 dark:bg-slate-800">
+                <span v-for="checkedRow in permission" :key="checkedRow.id"
+                    class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700">
+                    {{ checkedRow.name }}
+                </span>
+            </div>
+
+            <card-box has-table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th v-if="true" />
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                            <th>Guard Name</th>
+                            <th />
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in permissions" :key="item.id">
+                            <TableCheckboxCell @checked="checked($event, item)" />
+                            <td data-label="Nombre">
+                                {{ item.name }}
+                            </td>
+                            <td data-label="Descripcion">
+                                {{ item.description }}
+                            </td>
+                            <td data-label="Guard Name">
+                                {{ item.guard_name }}
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </card-box>
+
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="guardar" type="submit" color="info" label="Actualizar" />
-                    <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
-                        label="Cancelar" />
+                    <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline label="Cancelar" />
                 </BaseButtons>
             </template>
         </CardBox>

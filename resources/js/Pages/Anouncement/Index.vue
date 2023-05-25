@@ -151,8 +151,6 @@ export default {
             </SectionTitleLineWithButton>
 
 
-
-
             <div v-if="records">
                 <CardBox v-for="item in records" :key="item.id" class="mb-6" has-table>
                     <table

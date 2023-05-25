@@ -326,6 +326,7 @@ export default {
                 </svg></a>
         </SectionTitleLineWithButton>
 
+        {{ date.length }}
 
 
         <CardBox form @submit.prevent="submit">

@@ -58,7 +58,7 @@ class RolesController extends Controller
         return Inertia::render("{$this->source}Create", [
             'titulo' => 'Agregar Roles',
             'routeName' => $this->routeName,
-            'permissions' => Permission::all()
+            'permissions' => Permission::all(),
         ]);
     }
 
@@ -97,6 +97,7 @@ class RolesController extends Controller
             'titulo'          => 'Editar Rol',
             'routeName'      => $this->routeName,
             'role' => $role,
+            'permissions' => Permission::all()
         ]);
     }
 

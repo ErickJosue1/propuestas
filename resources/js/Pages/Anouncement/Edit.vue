@@ -162,10 +162,11 @@ export default {
     setup(props) {
 
 
-        const submit = () => {
-            console.log(date.length)
+        const submit = (date2) => {
+            console.log(date2)
 
-            if (date.length < props.announcement.calendars.length) {
+
+            if (date2.length < props.announcement.calendars.length) {
                 Swal.fire({
                     title: "Seleccione todas las fechas!",
                     text: "Seleccione una las "+ props.announcement.calendars.length +" para los eventos",
@@ -186,7 +187,7 @@ export default {
                     formData.append('myFiles[' + index + ']', file[index].file, file[index].name + ".pdf")
                 }
 
-                date.forEach((object, index) => {
+                date2.forEach((object, index) => {
                     formData.append('dates[' + index + '][name]', object.name)
                     formData.append('dates[' + index + '][date_start]', object.date_start)
                     formData.append('dates[' + index + '][date_end]', object.date_end)
@@ -309,7 +310,7 @@ export default {
         this.checkedRows = this.announcement.assesstment_criterias
         this.checkedDocs = this.announcement.documents_supporting
         this.date = this.announcement.calendars
-        console.log(this.date)
+        console.log(this.date.length)
     }
 }
 </script>
@@ -324,7 +325,7 @@ export default {
                 </svg></a>
         </SectionTitleLineWithButton>
 
-        {{ date.length }}
+    
 
         <CardBox form @submit.prevent="submit">
             <FormValidationErrors />
@@ -510,7 +511,7 @@ export default {
                         </div>
                         <base-divider></base-divider>
                         <BaseButtons>
-                            <BaseButton @click="submit" type="submit" color="info" label="Subir" />
+                            <BaseButton @click="submit(date)" type="submit" color="info" label="Subir" />
                             <BaseButton :href="route(`${routeName}index`)" type="reset" color="danger" outline
                                 label="Cancelar" />
                         </BaseButtons>
