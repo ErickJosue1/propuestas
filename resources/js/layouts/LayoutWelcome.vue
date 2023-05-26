@@ -52,7 +52,7 @@ const menuClick = (event, item) => {
   >
     <div
       :class="{ 'ml-60 lg:ml-0': isAsideMobileExpanded }"
-      class="xl:pl-36 pt-14 min-h-screen w-screen transition-position lg:w-auto bg-gray-50 dark:bg-slate-800 dark:text-slate-100"
+      class="pt-14 min-h-screen w-screen transition-position lg:w-auto bg-gray-50 dark:bg-slate-800 dark:text-slate-100"
     >
       <NavBar
         :class="layoutAsidePadding"

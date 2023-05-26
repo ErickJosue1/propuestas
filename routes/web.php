@@ -37,7 +37,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'records' => Announcements::paginate(4)->withQueryString()->load('institutions')
+        'records' => Announcements::paginate(4)->withQueryString()->load('institutions','assesstment_criterias', 'documents_supporting', 'calendars')
     ]);
 });
 

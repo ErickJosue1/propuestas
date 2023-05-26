@@ -19,6 +19,9 @@ import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import LayoutWelcome from '@/layouts/LayoutWelcome.vue';
 import axios from 'axios';
+import PillTag from "@/components/PillTag.vue";
+
+
 
 
 export default {
@@ -39,9 +42,21 @@ export default {
         BaseButton,
         CardBoxComponentEmpty,
         Pagination,
-        LayoutWelcome
+        LayoutWelcome,
+        PillTag
     },
     methods: {
+        getDate(date_start, date_end) {
+            const current = new Date();
+            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-30`;
+
+            if (date >= date_start && date <= date_end) {
+                return true
+            }
+            else {
+                return false
+            }
+        },
         getPdf(filename, announcement) {
             axios({
                 url: '/download-AdPdf/' + (filename + '.pdf') + '/' + announcement,
@@ -66,6 +81,7 @@ export default {
             mdiTableOff,
             mdiGithub,
             mdiEye, mdiTrashCan,
+            PillTag
         }
     }
 
@@ -78,65 +94,144 @@ export default {
             <CardBoxComponentEmpty />
         </CardBox>
 
-        <div v-else class="lg:flex flex-wrap max-lg:p-5 pt-2 p-2 gap-5">
-            <div v-for="item in records" :key="item.id" class='flex items-center max-lg:pt-4 xl:max-w-lg'>
-                <div class="rounded-xl border p-5 shadow-md  bg-white dark:bg-slate-900">
-                    <div class="flex w-full items-center justify-between border-b pb-3">
-                        <div class="flex items-center space-x-3">
-                            <div class="h-8 w-8 rounded-full bg-slate-400 bg-[url('https://i.pravatar.cc/32')]"></div>
-                            <div class="text-lg font-bold text-slate-700 dark:text-white">{{ item.name }}
+
+        <div v-else class="w-full">
+
+            <section class="py-16 bg-[#EFF0F4] lg:py-20 dark:bg-gray-800 font-poppins">
+                <div class="max-w-xl mx-auto">
+                    <div class="text-center ">
+                        <div class="flex flex-col items-center ">
+                            <p class="text-5xl font-bold leading-tight dark:text-white"> Convocatorias</p>
+                            <div class="flex w-24 mt-1 mb-6 overflow-hidden rounded">
+                                <div class="flex-1 h-2 bg-blue-200">
+                                </div>
+                                <div class="flex-1 h-2 bg-blue-400">
+                                </div>
+                                <div class="flex-1 h-2 bg-blue-600">
+                                </div>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-5">
-                            <button
-                                class="rounded-2xl border bg-blue-200 dark:bg-blue-500 px-3 py-1 text-xs font-semibold">{{
-                                    item.num_announcement
-                                }}</button>
-                            <button
-                                class="rounded-2xl border bg-neutral-100 dark:bg-slate-700 px-3 py-1 text-xs font-semibold">{{
-                                    item.institutions.name
-                                }}</button>
-                            <div class="text-xs text-neutral-500 dark:text-white">{{ item.y_announcement }}</div>
-                        </div>
+                        <p class="mb-16 text-base text-center text-gray-500">
+                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus magni eius eaque?
+                            Pariatur
+                            numquam, odio quod nobis ipsum ex cupiditate?
+                        </p>
                     </div>
+                </div>
+                <div class="flex flex-col justify-center ">
+                    <div class="w-full px-4 mx-auto">
+                        <div class="relative">
+                            <div class="space-y-2 lg:space-y-4">
+                                <div v-for="item in records" :key="item.id">
+                                    <div class="flex flex-col items-center">
+                                        <div class="flex items-center justify-start w-full mx-auto">
+                                            <div class="w-full">
+                                                <div
+                                                    class="relative flex-1 mb-10 bg-white rounded shadow lg:mb-8 dark:bg-gray-900">
 
-                    <div class="mt-4 mb-6">
-                        <div class="text-sm dark:text-white text-neutral-600">Aliquam a tristique sapien, nec bibendum
-                            urna.
-                            Maecenas
-                            convallis dignissim turpis, non suscipit mauris interdum at. Morbi sed gravida nisl, a
-                            pharetra nulla. Etiam tincidunt turpis leo, ut mollis ipsum consectetur quis. Etiam faucibus
-                            est risus, ac condimentum mauris consequat nec. Curabitur eget feugiat massa</div>
-                    </div>
+                                                    <div class="relative z-20 ">
+                                                        <div class="flex flex-wrap items-center">
+                                                            <div class="p-4 md:w-1/4 ">
+                                                                <span
+                                                                    class="text-lg text-gray-700 dark:text-gray-400">March</span>
+                                                                <p
+                                                                    class="text-2xl font-bold text-gray-700 dark:text-gray-400 text-bold">
+                                                                    11</p>
+                                                                <span class="text-lg text-gray-700 dark:text-gray-400">{{
+                                                                    item.y_announcement }}</span>
+                                                            </div>
+                                                            <div
+                                                                class="flex-1 p-4 pr-4 border-x border-gray-300 dark:border-gray-700">
+                                                                <p
+                                                                    class="mb-2 text-xl font-bold text-gray-600 dark:text-gray-400">
+                                                                    {{ item.name }}</p>
+                                                                <p class="text-gray-700 dark:text-gray-500">
+                                                                    {{ item.description }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="p-4 space-y-4 md:w-1/4 flex flex-col  ">
 
-                    <div>
-                        <div class="flex items-center justify-between text-slate-500 dark:text-white">
-                            <div class="flex space-x-4 md:space-x-8">
-                                <div class="flex cursor-pointer items-center transition hover:text-slate-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1.5 h-5 w-5" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                                    </svg>
-                                    <a :href="route('login')"> <span>Inscribirse</span></a>
+                                                                <a :href="route('proposals.show', item.id)" class="w-full">
+                                                                    <PillTag color="success" label="Inscribirse"
+                                                                        :small="pillsSmall" :outline="pillsOutline"
+                                                                        :icon="pillsIcon" />
+                                                                </a>
+                                                                <div @click="getPdf('advertising', item.name)" >
+                                                                    <PillTag color="info" label="Descargar"
+                                                                        :small="pillsSmall" :outline="pillsOutline"
+                                                                        :icon="pillsIcon" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Right section -->
+                                    <!--    <div>
+                                        <div class="flex flex-col items-center">
+                                            <div class="flex items-center justify-end w-full mx-auto">
+                                                <div class="w-full lg:w-1/2 lg:pl-8">
+                                                    <div
+                                                        class="relative flex-1 mb-10 bg-white rounded shadow lg:mb-8 dark:bg-gray-900">
+                                                        <div
+                                                            class="absolute inline-block w-4 overflow-hidden -translate-y-1/2 top-7 -left-4">
+                                                            <div
+                                                                class="hidden h-10 origin-top-right transform -rotate-45 bg-white dark:bg-gray-900 lg:block drop-shadow-lg">
+                                                            </div>
+                                                        </div>
+                                                        <div class="relative z-20 ">
+                                                            <div class="flex flex-wrap items-center">
+                                                                <div class="p-4 md:w-1/4 ">
+                                                                    <span
+                                                                        class="text-lg text-gray-700 dark:text-gray-400">April</span>
+                                                                    <p
+                                                                        class="text-2xl font-bold text-gray-700 dark:text-gray-400 text-bold">
+                                                                        21</p>
+                                                                    <span
+                                                                        class="text-lg text-gray-700 dark:text-gray-400">2022</span>
+                                                                </div>
+                                                                <div
+                                                                    class="flex-1 p-4 pr-4 border-l border-gray-300 dark:border-gray-700">
+                                                                    <p
+                                                                        class="mb-2 text-xl font-bold text-gray-600 dark:text-gray-400">
+                                                                        Launch Project</p>
+                                                                    <p class="text-gray-700 dark:text-gray-500">
+                                                                        Lorem ipsum dolor sit amet consectetur adipisicing
+                                                                        elit.
+                                                                        veniam libero facilis minus reprehenderit.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="absolute flex items-center justify-center w-8 h-8 transform -translate-x-1/2 -translate-y-4 bg-blue-500 rounded-full dark:bg-gray-700 left-1/2 lg:translate-y-[1px]">
+                                                <span class="text-gray-100 dark:text-gray-400">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="currentColor" class="w-4 h-4 bi bi-clock" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z">
+                                                        </path>
+                                                        <path
+                                                            d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div> -->
                                 </div>
-                                <button @click="getPdf('advertising', item.name)"
-                                    class="flex cursor-pointer gap-2 items-center transition hover:text-slate-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class=" bi bi-cloud-download" viewBox="0 0 16 16">
-                                        <path
-                                            d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z" />
-                                        <path
-                                            d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z" />
-                                    </svg>
-                                    <span>Descargar</span>
-                                </button>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-        
+
     </LayoutWelcome>
 </template>
