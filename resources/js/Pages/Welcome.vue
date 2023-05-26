@@ -151,12 +151,13 @@ export default {
                                                             </div>
                                                             <div class="p-4 space-y-4 md:w-1/4 flex flex-col  ">
 
-                                                                <a :href="route('proposals.show', item.id)" class="w-full">
+                                                                <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)"
+                                                                    :href="route('proposals.show', item.id)" class="w-full">
                                                                     <PillTag color="success" label="Inscribirse"
                                                                         :small="pillsSmall" :outline="pillsOutline"
                                                                         :icon="pillsIcon" />
                                                                 </a>
-                                                                <div @click="getPdf('advertising', item.name)" >
+                                                                <div @click="getPdf('advertising', item.name)">
                                                                     <PillTag color="info" label="Descargar"
                                                                         :small="pillsSmall" :outline="pillsOutline"
                                                                         :icon="pillsIcon" />
