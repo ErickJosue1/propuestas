@@ -9,7 +9,7 @@ import {
   mdiViewListOutline,
   mdiTelevisionGuide,
   mdiResponsive,
-  mdiPalette,
+  mdiSecurity,
   mdiClockCheck,
   mdiBookshelf,
   mdiCalendarAccountOutline,
@@ -28,14 +28,6 @@ export default [
     label: "Dashboard",
     role: "Admin"
   },
-  {
-    href: "/profile",
-    to: "/profile",
-    icon: mdiAccountCircle,
-    label: "Usuarios",
-    role: "Admin"
-  },
-
   /*  {
      href: "/tables",
      to: "/tables",
@@ -99,6 +91,31 @@ export default [
     role: "Admin"
   },
   {
+    label: "Seguridad",
+    icon: mdiSecurity,
+    role: "Admin",
+    menu: [
+      {
+        label: "Permisos",
+        href: "/permissions",
+        to: "/permissions",
+        permission: 'permissions.index',
+      },
+      {
+        label: "Roles",
+        href: "/roles",
+        to: "/roles",
+        role: "Admin",
+      },
+      {
+        href: "/profile",
+        to: "/profile",
+        label: "Usuarios",
+        role: "Admin"
+      },
+    ]
+  },
+  {
     label: "Catalogos",
     icon: mdiViewListOutline,
     role: "Admin",
@@ -120,18 +137,6 @@ export default [
         href: "/assesstment",
         to: "/assesstment",
         permission: 'assesstments.index',
-      },
-      {
-        label: "Permisos",
-        href: "/permissions",
-        to: "/permissions",
-        permission: 'permissions.index',
-      },
-      {
-        label: "Roles",
-        href: "/roles",
-        to: "/roles",
-        role: "Admin",
       },
       {
         label: "Tematicas",

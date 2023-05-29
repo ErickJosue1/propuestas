@@ -20,6 +20,7 @@ import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import LayoutWelcome from '@/layouts/LayoutWelcome.vue';
 import axios from 'axios';
 import PillTag from "@/components/PillTag.vue";
+import moment from 'moment';
 
 
 
@@ -72,9 +73,17 @@ export default {
                 link.click();
             });
         },
+        convertTimeFormatDay(time) {
+            const formattedDate = moment(time).format('DD');
+            return formattedDate;
+        },
+        convertTimeFormatMonth(time) {
+            const formattedDate = moment(time).format('MMMM');
+            return formattedDate;
+        }
+
     },
     setup() {
-
         return {
             mdiMonitorCellphone,
             mdiTableBorder,
@@ -96,7 +105,8 @@ export default {
 
 
         <div v-else class="w-full">
-
+            <!--             {{ dateTransform(records[0].created_at) }}
+ -->
             <section class="py-16 bg-[#EFF0F4] lg:py-20 dark:bg-gray-800 font-poppins">
                 <div class="max-w-xl mx-auto">
                     <div class="text-center ">
@@ -112,9 +122,9 @@ export default {
                             </div>
                         </div>
                         <p class="mb-16 text-base text-center text-gray-500">
-                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus magni eius eaque?
-                            Pariatur
-                            numquam, odio quod nobis ipsum ex cupiditate?
+                            Para el Cenidet, es de suma importancia contar con una plataforma que le
+                            permita gestionar las Jornadas de Ciencia y Tecnología Aplicada que se
+                            llevan a cabo dos veces al año.
                         </p>
                     </div>
                 </div>
@@ -128,15 +138,17 @@ export default {
                                             <div class="w-full">
                                                 <div
                                                     class="relative flex-1 mb-10 bg-white rounded shadow lg:mb-8 dark:bg-gray-900">
-
                                                     <div class="relative z-20 ">
                                                         <div class="flex flex-wrap items-center">
                                                             <div class="p-4 md:w-1/4 ">
-                                                                <span
-                                                                    class="text-lg text-gray-700 dark:text-gray-400">March</span>
+                                                                <span class="text-lg text-gray-700 dark:text-gray-400">
+                                                                    {{
+                                                                        convertTimeFormatMonth(item.created_at) }}
+                                                                </span>
                                                                 <p
                                                                     class="text-2xl font-bold text-gray-700 dark:text-gray-400 text-bold">
-                                                                    11</p>
+                                                                    {{
+                                                                        convertTimeFormatDay(item.created_at) }}</p>
                                                                 <span class="text-lg text-gray-700 dark:text-gray-400">{{
                                                                     item.y_announcement }}</span>
                                                             </div>
@@ -151,9 +163,23 @@ export default {
                                                             </div>
                                                             <div class="p-4 space-y-4 md:w-1/4 flex flex-col  ">
 
-                                                                <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)"
+                                                                <div
+                                                                    v-if="getDate(item.calendars[0].date_start, item.calendars[0].date_end)">
+                                                                </div>
+                                                                <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end) && getDate(item.calendars[0].date_start, item.calendars[0].date_end)"
                                                                     :href="route('proposals.show', item.id)" class="w-full">
                                                                     <PillTag color="success" label="Inscribirse"
+                                                                        :small="pillsSmall" :outline="pillsOutline"
+                                                                        :icon="pillsIcon" />
+                                                                </a>
+                                                                <a
+                                                                    v-else-if="getDate(item.calendars[2].date_start, item.calendars[2].date_end)">
+                                                                    <PillTag color="warning"
+                                                                        label="Propuestas en evaluacion" :small="pillsSmall"
+                                                                        :outline="pillsOutline" :icon="pillsIcon" />
+                                                                </a>
+                                                                <a v-else>
+                                                                    <PillTag color="danger" label="Convocatoria Cerrada"
                                                                         :small="pillsSmall" :outline="pillsOutline"
                                                                         :icon="pillsIcon" />
                                                                 </a>

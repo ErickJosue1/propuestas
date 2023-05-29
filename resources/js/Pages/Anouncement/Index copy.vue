@@ -138,10 +138,10 @@ export default {
         </NotificationBar>
 
 
-        <div>
-            <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-                <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                        class="bi bi-plus-square" viewBox="0 0 16 16">
+        <div v-for="calendar in events" :key="calendar.id">
+            <SectionTitleLineWithButton :icon="mdiTableBorder" :title="calendar.name" main>
+                <a v-if="useRole('Admin') && calendar.id == 1" :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                         <path
                             d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
                         <path
@@ -152,8 +152,9 @@ export default {
 
 
             <div v-if="records">
-                <CardBox class="mb-6" has-table>
-                    <table>
+                <CardBox v-for="item in records" :key="item.id" class="mb-6" has-table>
+                    <table
+                        v-if="getDate(item.calendars[calendar.id - 1].date_start, item.calendars[calendar.id - 1].date_end)">
                         <thead>
                             <tr>
                                 <th />
@@ -163,7 +164,7 @@ export default {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in records" :key="item.id">
+                            <tr>
                                 <td class="align-items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         class="bi bi-book-half" viewBox="0 0 16 16">
@@ -190,7 +191,7 @@ export default {
                                         <BaseButton color="success" :icon="mdiArchiveArrowDown" small
                                             @click="getPdf('advertising', item.name)" />
                                     </BaseButtons>
-                                    <!--   <BaseButtons v-else type="justify-start lg:justify-end" no-wrap>
+                                  <!--   <BaseButtons v-else type="justify-start lg:justify-end" no-wrap>
                                         <BaseButtons type="justify-start lg:justify-center" no-wrap>
                                             -
                                         </BaseButtons>
@@ -201,8 +202,13 @@ export default {
                             </tr>
                         </tbody>
                     </table>
+
+                    <CardBox v-else>
+                        <CardBoxComponentEmpty />
+                    </CardBox>
                 </CardBox>
             </div>
+
             <CardBox v-else>
                 <CardBoxComponentEmpty />
             </CardBox>

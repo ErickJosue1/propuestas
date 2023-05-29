@@ -36,7 +36,8 @@ class AnnouncementsController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        /*         $this->middleware('auth');
+ */
         $this->model = new Announcements();
         $this->routeName = 'announcements.';
 
@@ -260,7 +261,7 @@ class AnnouncementsController extends Controller
                 }
             }
 
-            if(isset($request->myFiles)){
+            if (isset($request->myFiles)) {
                 foreach ($request->myFiles as $files) {
                     $files->storeAs($request->name . 'advertising', $files->getClientOriginalName(), 'public');
                 }
