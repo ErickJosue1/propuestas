@@ -184,7 +184,7 @@ export default {
                                             :href="route(`${routeName}edit`, item.id)" />
                                         <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                                     </BaseButtons>
-                                    <BaseButtons v-else-if="calendar.id == 2" type="justify-start lg:justify-end" no-wrap>
+                                    <BaseButtons v-else-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)" type="justify-start lg:justify-end" no-wrap>
                                         <BaseButton color="info" :icon="mdiApplicationEdit" small
                                             :href="route('proposals.show', item.id)" />
                                         <BaseButton color="success" :icon="mdiArchiveArrowDown" small
