@@ -58,7 +58,7 @@ class ProposalsController extends Controller
         if ($user->hasRole('Admin')) {
             return Inertia::render("Proposals/Index", [
                 'titulo'      => 'Propuestas',
-                'records'    => $records->whereNull('evaluador_id')->paginate(4)->withQueryString(),
+                'records'    => $records->paginate(4)->withQueryString(),
                 'routeName'      => $this->routeName,
                 'state'      => ProposalStates::all(),
                 'loadingResults' => false,
