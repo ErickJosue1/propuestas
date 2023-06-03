@@ -13,6 +13,7 @@ use App\Models\Assestment_Criteria;
 use App\Models\Criterias;
 use App\Models\Document_Supporting;
 use App\Models\Proceedings;
+use App\Models\proposals_user;
 use App\Models\ProposalStates;
 use App\Models\recognitions;
 use App\Models\User;
@@ -58,7 +59,7 @@ class ProposalsController extends Controller
         if ($user->hasRole('Admin')) {
             return Inertia::render("Proposals/Index", [
                 'titulo'      => 'Propuestas',
-                'records'    => $records->paginate(4)->withQueryString(),
+                'records'    => $records->with('users')->paginate(4)->withQueryString(),
                 'routeName'      => $this->routeName,
                 'state'      => ProposalStates::all(),
                 'loadingResults' => false,
@@ -233,6 +234,22 @@ class ProposalsController extends Controller
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
     }
 
+    /* 
+        Sync reviewrs to the proposals
+    */
+
+    public function syncReviewrs(Request $request)
+    {
+        $proposal = Proposals::find($request->proposal);
+
+        foreach ($request->reviewrs as $item) {
+            $proposal->users()->sync($item['id']);
+            $user = User::find($item['id']);
+            $user->notify(new ReviewerAssigned($user, $proposal));
+        }
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Revisores asignados correctamente!');
+    }
 
     /**
      * Update the specified resource in storage.

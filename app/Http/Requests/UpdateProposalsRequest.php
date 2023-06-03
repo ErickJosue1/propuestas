@@ -42,7 +42,6 @@ class UpdateProposalsRequest extends FormRequest
             'ownership_proposal' => "required|string|max:255",
             'announcement_id' => "required|integer|max:255",
             'area_knowledge_id' => "required|integer|max:255",
-            'evaluador_id' => "integer|max:255",
             'user_id' => "required|integer|max:255",
             'state_id' => "required|integer|max:255",
             'myFiles' => "exclude",

@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
 
         DB::table('users')->insert(['curp' => 'GOPE011110HNEMNRA8', 'name' => 'ERICK JOSUE', 'paternal_surname' => 'GOMEZ', 'maternal_surname' => 'PINEDA', 'email' => 'ashgomez4@gmail.com', 'email_verified_at' => '2023-03-14 04:50:32', 'password' => Hash::make('Password'), 'colony_id' => '1', 'workplace_id' => '2',]);
+        DB::table('users')->insert(['curp' => 'NUOR001129HGRXRBA4', 'name' => 'JOSE ROBERTO', 'paternal_surname' => 'NUÑEZ', 'maternal_surname' => 'ORTIZ', 'email' => 'josuezerod@gmail.com', 'email_verified_at' => '2023-03-14 04:50:32', 'password' => Hash::make('28219436'), 'colony_id' => '1', 'workplace_id' => '2',]);
+        DB::table('users')->insert(['curp' => 'PIGD690806MNENML05', 'name' => 'DILIA DEL CARMEN', 'paternal_surname' => 'PINEDA', 'maternal_surname' => 'DE GOMEZ', 'email' => 'lalatinajapon4@gmail.com', 'email_verified_at' => '2023-03-14 04:50:32', 'password' => Hash::make('28219436'), 'colony_id' => '1', 'workplace_id' => '2',]);
 
         $this->call([
             RoleSeeder::class,
@@ -42,5 +44,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::find(1)->assignRole('Admin');
+        User::find(2)->assignRole('Postulante');
+        User::find(3)->assignRole('Evaluador');
+
     }
 }

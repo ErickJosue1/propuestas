@@ -101,7 +101,7 @@ export default {
             mdiGithub,
             mdiApplicationEdit, mdiTrashCan,
             useRole,
-            mdiInformation, mdiCloudDownload,usePage
+            mdiInformation, mdiCloudDownload, usePage
         }
     }
 
@@ -128,6 +128,7 @@ export default {
 
 
 
+
         <CardBox v-else class="mb-6" has-table>
             <table>
                 <thead>
@@ -139,7 +140,8 @@ export default {
                         <th v-if="useRole('Evaluador')">Habilitar Constancia</th>
                         <th v-if="records.data.state_id != 3">Fecha Aprobado / Rechazado</th>
                         <th v-else>Fecha Rechazado</th>
-                        <th>Acciones</th>
+                        <th v-if="!useRole('Admin')">Acciones</th>
+                        <th v-else>Revisores</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -170,7 +172,8 @@ export default {
                             </BaseButtons>
                         </td>
 
-                        <td data-label="Descargar Constancia" v-if="(item.state_id == 2 || item.state_id == 3 ) && useRole('Postulante')"
+                        <td data-label="Descargar Constancia"
+                            v-if="(item.state_id == 2 || item.state_id == 3) && useRole('Postulante')"
                             class=" lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-center" no-wrap>
                                 -
@@ -188,7 +191,8 @@ export default {
                             </BaseButtons>
                         </td>
 
-                        <td data-label="Descargar Constancia" v-if="(item.state_id == 2 || item.state_id == 3 ) && useRole('Evaluador')"
+                        <td data-label="Descargar Constancia"
+                            v-if="(item.state_id == 2 || item.state_id == 3) && useRole('Evaluador')"
                             class=" lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-center" no-wrap>
                                 -
@@ -227,13 +231,19 @@ export default {
                                 </span>
                             </BaseButtons>
                             <BaseButtons v-else-if="useRole('Admin')" type="justify-center lg:justify-end" no-wrap>
-                                <a  v-if="item.evaluador_id == null" :href="route(`${routeName}assignment`, item.id)"> <button
+                                <a v-if="item.users == null" :href="route(`${routeName}assignment`, item.id)"> <button
                                         class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                                         Asignar Revisor
                                     </button>
                                 </a>
                                 <div v-else>
-                                    Ya asignado
+                                    <ul class="text-center list-inside list-disc">
+                                        <a :href="route('profile.index')">
+                                            <li class="hover:underline" v-for="user in item.users" :key="user.id">{{
+                                                user.name
+                                            }}</li>
+                                        </a>
+                                    </ul>
                                 </div>
                             </BaseButtons>
                         </td>

@@ -30,8 +30,17 @@ class Proposals extends Model
         'area_knowledge_id',
         'user_id',
         'state_id',
-        'evaluador_id'
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'proposals_user', 'proposals_id', 'user_id');
+    }
+
+    public function review()
+    {
+        return $this->belongsToMany(review::class, 'reviews');
+    }
 
     public function announcement()
     {

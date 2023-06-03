@@ -76,26 +76,36 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('StyleView');
     }); */
 
-
+    //Views and downloads of proposal's recognition
     Route::get('/generate-pdf/{proposal}', [PdfGenerate::class, 'recognitionPDF'])->name('recognitionPDF');
     Route::get('/download-pdf/{proposal}', [PdfGenerate::class, 'downloadRecognitionPDF'])->name('downloadRecognitionPDF');
     
+
+    //Sync reviewrs
+    Route::post('/proposals/sync', [ProposalsController::class, 'syncReviewrs'])->name('proposals.sync');
+
+    //Assign roles
     Route::get('/users/{user}/assign-roles-and-permissions', [UserController::class, 'assignRolesAndPermissionsView'])->name('users.assign-roles-and-permissions.view');
     Route::post('/users/{user}/assign-roles-and-permissions', [UserController::class, 'assignRolesAndPermissions'])->name('users.assign-roles-and-permissions');
 
+    //Admin user management
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/{user}/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    //Views and downloads of proposal's documents
     Route::get('/download-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'downloadPdf'])->name('download-pdf');
     Route::get('/view-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'viewPdf'])->name('view-pdf');
     Route::get('/view-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'viewPdf'])->name('view-AdPdf');
 
+    //Non resource porposal routes 
     Route::put('/proposals/{proposal}', [ProposalsController::class, 'updateReview'])->name('proposals.updateReview');
     Route::get('/proposals/{proposal}/assign', [ProposalsController::class, 'assignment'])->name('proposals.assignment');
     Route::get('/proposals/{proposal}/review', [ProposalsController::class, 'review'])->name('proposals.review');
 
+
+    //Main routes
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
     Route::resource('announcements', AnnouncementsController::class)->names('announcements');
     Route::resource('permissions', PermissionController::class)->names('permissions');

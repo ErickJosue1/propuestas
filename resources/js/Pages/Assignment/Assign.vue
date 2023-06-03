@@ -19,6 +19,9 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
+import { ref } from 'vue';
+import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
+import axios from 'axios';
 
 
 export default {
@@ -45,16 +48,20 @@ export default {
         BaseButton,
         CardBoxComponentEmpty,
         Pagination,
-        NotificationBar
+        NotificationBar,
+        TableCheckboxCell
     },
     setup(props) {
+
         const form = useForm({
-            ...props.proposal
-        })
+            reviewrs: [],
+            proposal: props.proposal.id
+        });
 
         const guardar = () => {
-            if (form.evaluador_id != null) {
-                form.put(route("proposals.update", props.proposal.id));
+            if (reviewrs.value.length != 0) {
+                form.reviewrs = reviewrs.value
+                form.post(route('proposals.sync'))
             }
             else {
                 Swal.fire({
@@ -67,13 +74,34 @@ export default {
             }
         };
 
+        const reviewrs = ref([]);
+
+        const remove = (arr, cb) => arr.filter(item => !cb(item));
+
+        const isClientName = row => client => row.name === client.name;
+
+        const checked = (isChecked, client) => {
+            let checkedArray = reviewrs.value;
+            const isNameChecked = isClientName(client);
+
+            if (isChecked) {
+                checkedArray.push(client);
+            } else {
+                checkedArray = remove(checkedArray, isNameChecked);
+            }
+
+            reviewrs.value = checkedArray
+            console.log(reviewrs.value)
+        };
+
         return {
-            form, mdiMonitorCellphone,
+            mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
             mdiEye, mdiTrashCan,
-            guardar
+            guardar,
+            checked
         }
     }
 
@@ -94,14 +122,14 @@ export default {
             {{ $page.props.flash.error }}
         </NotificationBar>
 
-        <CardBox form @submit.prevent="guardar">
+        <CardBox form has-table @submit.prevent="guardar">
             <table>
                 <thead>
                     <tr>
                         <th>Nombre</th>
                         <th>Status</th>
                         <th>Fecha Captura</th>
-                        <th>Acciones</th>
+                        <th>Asignar revisores</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -117,12 +145,29 @@ export default {
                         </td>
 
                         <td>
-                            <select v-model="form.evaluador_id"
+                            <!--                      <select v-model="form.evaluador_id"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option selected disabled>Selecciona un evaluador</option>
                                 <option v-for="item in records" :value="item.id" :key="item.id">{{ item.name }}</option>
-
                             </select>
+ -->
+                            <card-box has-table>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th v-if="true" />
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in records" :key="item.id">
+                                            <TableCheckboxCell @checked="checked($event, item)" />
+                                            <td data-label="Nombre">
+                                                {{ item.name }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </card-box>
 
                         </td>
 

@@ -80,7 +80,9 @@ export default {
         },
         getDate(date_start, date_end) {
             const current = new Date();
-            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-30`;
+            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-${current.getDate()}`;
+
+            console.log(date)
 
             if (date >= date_start && date <= date_end) {
                 return true
@@ -112,6 +114,7 @@ export default {
             });
         };
 
+
         return {
             form, eliminar, mdiMonitorCellphone,
             mdiTableBorder,
@@ -139,9 +142,9 @@ export default {
 
 
         <div>
-            <SectionTitleLineWithButton icon="mdiTableBorder" :title="titulo" main>
-                <a v-if="useRole('Admin')"  :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                        class="bi bi-plus-square" viewBox="0 0 16 16">
+            <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
+                <a v-if="useRole('Admin')" :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                         <path
                             d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
                         <path
@@ -151,7 +154,7 @@ export default {
             </SectionTitleLineWithButton>
 
 
-            <div v-if="records">
+            <div v-if="records.length >= 1">
                 <CardBox class="mb-6" has-table>
                     <table>
                         <thead>
@@ -184,7 +187,9 @@ export default {
                                             :href="route(`${routeName}edit`, item.id)" />
                                         <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                                     </BaseButtons>
-                                    <BaseButtons v-else-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)" type="justify-start lg:justify-end" no-wrap>
+                                    <BaseButtons
+                                        v-else-if="getDate(item.calendars[2].date_start, item.calendars[2].date_end)"
+                                        type="justify-start lg:justify-end" no-wrap>
                                         <BaseButton color="info" :icon="mdiApplicationEdit" small
                                             :href="route('proposals.show', item.id)" />
                                         <BaseButton color="success" :icon="mdiArchiveArrowDown" small
@@ -203,12 +208,12 @@ export default {
                     </table>
                 </CardBox>
             </div>
+
             <CardBox v-else>
                 <CardBoxComponentEmpty />
             </CardBox>
+
         </div>
-
-
 
 
     </LayoutMain>

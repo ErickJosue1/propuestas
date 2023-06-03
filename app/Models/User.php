@@ -47,7 +47,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
         'two_factor_recovery_codes',
-        'two_factor_secret', 
+        'two_factor_secret',
     ];
 
     /**
@@ -79,6 +79,12 @@ class User extends Authenticatable implements MustVerifyEmail
             return [$role['name'] => true];
         });
     }
+
+    public function proposals()
+    {
+        return $this->belongsToMany(Proposals::class, 'proposals_user', 'user_id', 'proposals_id');
+    }
+
 
     public function getPermissionArray(): Collection
     {

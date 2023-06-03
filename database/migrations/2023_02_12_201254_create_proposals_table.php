@@ -34,7 +34,6 @@ return new class extends Migration
             $table->string('ownership_proposal');
             $table->foreignId('announcement_id')->nullable();
             $table->foreignId('area_knowledge_id')->nullable();
-            $table->foreignId('evaluador_id')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });
