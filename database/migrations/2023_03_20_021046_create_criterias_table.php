@@ -17,7 +17,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('assessment_criteria_id')->nullable();
             $table->foreignId('proposal_id')->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->string('observations');
+
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

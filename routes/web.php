@@ -14,12 +14,14 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalsController;
 use App\Http\Controllers\RenapoController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use App\Models\Announcements;
 use App\Models\Areas_knowledge;
 use App\Models\Calendar;
 use App\Models\Proposals;
+use App\Models\review;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -103,9 +105,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/proposals/{proposal}', [ProposalsController::class, 'updateReview'])->name('proposals.updateReview');
     Route::get('/proposals/{proposal}/assign', [ProposalsController::class, 'assignment'])->name('proposals.assignment');
     Route::get('/proposals/{proposal}/review', [ProposalsController::class, 'review'])->name('proposals.review');
+    Route::get('/proposals/{proposal}/state', [ProposalsController::class, 'getState'])->name('proposals.getState');
 
 
     //Main routes
+    Route::resource('reviews',ReviewController::class)->names('reviews');
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
     Route::resource('announcements', AnnouncementsController::class)->names('announcements');
     Route::resource('permissions', PermissionController::class)->names('permissions');

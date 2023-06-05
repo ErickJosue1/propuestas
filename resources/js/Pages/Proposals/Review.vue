@@ -30,7 +30,6 @@ import NotificationBar from "@/components/NotificationBar.vue";
 import UserAvatar from "@/components/UserAvatar.vue";
 
 
-
 export default {
     props: {
         titulo: { type: String, required: true },
@@ -107,7 +106,7 @@ export default {
                 }).then((res) => {
                     if (res.isConfirmed) {
                         isLoading.value = true;
-                        post()
+                        post(1)
                     }
                 });
             }
@@ -129,26 +128,66 @@ export default {
                             datos: [],
                         })
 
+                        let canPost = true
+
                         for (let i = 0; i < criterias.value.length; i++) {
-                            formData.datos[i] = ({ assessment_criteria_id: criterias.value[i].criteria, proposal_id: props.proposal.id, observations: document.getElementById(criterias.value[i].observation).value })
+                            if (!document.getElementById(criterias.value[i].observation).value) {
+                                isLoading.value = false;
+                                Swal.fire({
+                                    title: "Debe agregar una observacion a los criterios rechazados",
+                                    text: "Al no seleccionar un criterio u observación general, la propuestas sera marcada como 'Rechazada'",
+                                    icon: "warning",
+                                    showCancelButton: true,
+                                    cancelButtonColor: "#d33",
+                                    cancelButtonText: "Cancelar",
+                                    confirmButtonColor: "#3085d6",
+                                    confirmButtonText: "Ok!",
+                                })
+                                canPost = false
+                                break
+                            }
+                            else {
+                                formData.datos[i] = ({
+                                    assessment_criteria_id: criterias.value[i].criteria, proposal_id: props.proposal.id, observations: document.getElementById(criterias.value[i].observation).value, user_id: usePage().props.auth.user.id
+                                })
+                            }
                         }
 
-                        axios.post(route('criterias.store', formData.data()))
-                            .then(function (response) {
-                                console.log(response)
-                                post()
-                            })
+                        if (canPost) {
+                            axios.post(route('criterias.store', formData.data()))
+                                .then(function (response) {
+                                    console.log(response)
+                                    post(3)
+                                })
+                        }
                     }
                 });
             }
 
         };
 
-        const post = () => {
+        const post = (stateId) => {
+            reviewPost(stateId)
+            axios.get(route('proposals.getState', props.proposal.id))
+                .then((response) => {
+                    if (response.data != 2) {
+                        form.state_id = response.data
+                        form.put(route('proposals.updateReview', props.proposal.id))
+                    }
+                    else {
+                        window.location = route('proposals.index')
+                    }
 
-            form.state_id = criterias.value.length ? 3 : 1
-            form.put(route('proposals.updateReview', props.proposal.id))
+                })
+        }
 
+        const reviewPost = (stateId) => {
+            const reviewForm = useForm({
+                proposals_id: props.proposal.id,
+                user_id: usePage().props.auth.user.id,
+                state_id: stateId
+            })
+            reviewForm.post(route('reviews.store'))
         }
 
         const remove = (arr, cb) => arr.filter(item => !cb(item));
@@ -216,25 +255,23 @@ export default {
 <template>
     <LayoutMain :title="titulo">
 
-    <div class="vl-parent">
-        <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="true" />
-    </div>
+        <div class="vl-parent">
+            <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="true" />
+        </div>
 
-    <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
-        <a :href="route(`${routeName}index`)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                <path
-                    d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-            </svg></a>
+        <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
+            <a :href="route(`${routeName}index`)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                    fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                    <path
+                        d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                </svg></a>
 
-    </SectionTitleLineWithButton>
+        </SectionTitleLineWithButton>
 
-
-
-    <CardBox>
-        <NotificationBarInCard v-if="hasErrors" color="danger">
-            <b>Whoops! Algo salio mal!.</b>
-            <span v-for="(error, key) in errors" :key="key">{{ error }}</span>
+        <CardBox>
+            <NotificationBarInCard v-if="hasErrors" color="danger">
+                <b>Whoops! Algo salio mal!.</b>
+                <span v-for="(error, key) in errors" :key="key">{{ error }}</span>
             </NotificationBarInCard>
 
 
@@ -243,8 +280,9 @@ export default {
 
                     <div v-if="documentUrl">
                         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="pdfTitle" main>
-                            <button class="flex flex-row " @click="documentUrl = null"><svg xmlns="http://www.w3.org/2000/svg" width="32"
-                                    height="32" fill="crimson" class="bi bi-x" viewBox="0 0 16 16">
+                            <button class="flex flex-row " @click="documentUrl = null"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="crimson" class="bi bi-x"
+                                    viewBox="0 0 16 16">
                                     <path
                                         d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                                 </svg> <b class="leading-7 text-lg ">Cerrar</b></button>

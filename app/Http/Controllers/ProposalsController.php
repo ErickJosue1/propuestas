@@ -16,6 +16,7 @@ use App\Models\Proceedings;
 use App\Models\proposals_user;
 use App\Models\ProposalStates;
 use App\Models\recognitions;
+use App\Models\review;
 use App\Models\User;
 use App\Notifications\ReviewerAssigned;
 use App\Notifications\WorkReviewed;
@@ -54,7 +55,7 @@ class ProposalsController extends Controller
     public function index(Request $request): Response
     {
         $records = new Proposals();
-        $user = Auth::user();
+        $user = User::find(Auth::user()->id);
 
         if ($user->hasRole('Admin')) {
             return Inertia::render("Proposals/Index", [
@@ -64,12 +65,22 @@ class ProposalsController extends Controller
                 'state'      => ProposalStates::all(),
                 'loadingResults' => false,
             ]);
-        } else {
-            $records = $user->hasRole('Postulante') ? $records->where('user_id', $user->id)->paginate(4)->withQueryString() : $records->where('evaluador_id', $user->id)->paginate(4)->withQueryString();
+        } else if ($user->hasRole('Postulante')) {
+            $records =  $records->where('user_id', $user->id);
 
             return Inertia::render("Proposals/Index", [
                 'titulo'      => 'Tus Propuestas',
-                'records'    => $records,
+                'records'    => $records->paginate(4)->withQueryString(),
+                'routeName'      => $this->routeName,
+                'state'      => ProposalStates::all(),
+                'loadingResults' => false,
+            ]);
+        } else {
+            $records = $user->proposals();
+
+            return Inertia::render("Proposals/Index", [
+                'titulo'      => 'Tus Propuestas',
+                'records'    => $records->paginate(4)->withQueryString(),
                 'routeName'      => $this->routeName,
                 'state'      => ProposalStates::all(),
                 'loadingResults' => false,
@@ -152,7 +163,7 @@ class ProposalsController extends Controller
             'convocatoria' => $records,
             'state'        => ProposalStates::find(2),
             'routeName'      => $this->routeName,
-            'criterias' => $criterias->load(['assesstment_criterias',])
+            'criterias' => $criterias->load(['assesstment_criterias', 'users'])
         ]);
     }
 
@@ -228,10 +239,37 @@ class ProposalsController extends Controller
     {
         $proposal->update($request->validated());
 
-        $user = User::find($proposal->user_id);
+        $user = User::find($request->user_id);
         $user->notify(new WorkReviewed($user, $proposal));
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
+    }
+
+    /* 
+        Get proposal reviews State and lenght
+    */
+
+    public function getState(Proposals $proposal)
+    {
+        $reviews = review::find($proposal->id);
+        $reviewrs = proposals_user::find($proposal->id);
+
+        if ($reviews && $reviewrs) {
+            if (count($reviews) == count($reviewrs)) {
+                $success = true;
+
+                foreach ($reviews as $value) {
+                    if ($value['state_id'] == 3) {
+                        $success = false;
+                        break;
+                    }
+                }
+
+                return $success ? 1 : 3;
+            }
+        } else {
+            return 2;
+        }
     }
 
     /* 

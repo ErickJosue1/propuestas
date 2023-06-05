@@ -12,12 +12,18 @@ class Criterias extends Model
     protected $fillable = [
         "assessment_criteria_id",
         "proposal_id",
-        "observations"
+        "observations",
+        "user_id"
     ];
 
     public function proposals()
     {
         return $this->belongsTo(Proposals::class, 'proposal_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     
