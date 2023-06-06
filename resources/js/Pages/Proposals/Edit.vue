@@ -71,6 +71,17 @@ export default {
                 document.body.appendChild(link);
                 link.click();
             });
+        },
+        viewPdf(filename) {
+            axios({
+                url: '/view-pdf/' + (filename + '.pdf') + '/' + this.proposal.user_id + '/' + this.proposal.id,
+                method: 'GET',
+                responseType: 'blob',
+            }).then(response => {
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                this.documentUrl = URL.createObjectURL(blob);
+                this.pdfTitle = filename
+            });
         }
     },
     setup(props) {
