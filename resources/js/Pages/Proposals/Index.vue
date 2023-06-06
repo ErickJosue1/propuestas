@@ -231,7 +231,7 @@ export default {
                                 </span>
                             </BaseButtons>
                             <BaseButtons v-else-if="useRole('Admin')" type="justify-center lg:justify-end" no-wrap>
-                                <a v-if="item.users == null" :href="route(`${routeName}assignment`, item.id)"> <button
+                                <a v-if="item.users.length <= 0" :href="route(`${routeName}assignment`, item.id)"> <button
                                         class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                                         Asignar Revisor
                                     </button>
