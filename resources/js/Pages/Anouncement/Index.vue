@@ -80,7 +80,7 @@ export default {
         },
         getDate(date_start, date_end) {
             const current = new Date();
-            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-${current.getDate()}`;
+            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-0${current.getDate()}`;
 
             console.log(date)
 

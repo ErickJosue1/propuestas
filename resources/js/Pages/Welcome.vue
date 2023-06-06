@@ -49,8 +49,7 @@ export default {
     methods: {
         getDate(date_start, date_end) {
             const current = new Date();
-            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-${current.getDate()}`;
-
+            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-0${current.getDate()}`;
             if (date >= date_start && date <= date_end) {
                 return true
             }
@@ -99,10 +98,13 @@ export default {
 
 <template>
     <LayoutWelcome>
+
+
         <CardBox class="mx-12 mt-24 max-xl:m-4 max-lg:mt-8" v-if="records.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
 
+        
 
         <div v-else class="w-full">
             <section class="py-16 bg-[#EFF0F4] lg:py-20 dark:bg-gray-800 font-poppins">
@@ -162,16 +164,16 @@ export default {
                                                             <div class="p-4 space-y-4 md:w-1/4 flex flex-col  ">
 
                                                                 <div
-                                                                    v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)">
+                                                                    v-if="getDate(item.calendars[0].date_start, item.calendars[0].date_end)">
                                                                 </div>
-                                                                <a v-if="getDate(item.calendars[2].date_start, item.calendars[2].date_end) && getDate(item.calendars[2].date_start, item.calendars[2].date_end)"
+                                                                <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)"
                                                                     :href="route('proposals.show', item.id)" class="w-full">
                                                                     <PillTag color="success" label="Inscribirse"
                                                                         :small="pillsSmall" :outline="pillsOutline"
                                                                         :icon="pillsIcon" />
                                                                 </a>
                                                                 <a
-                                                                    v-else-if="getDate(item.calendars[3].date_start, item.calendars[3].date_end)">
+                                                                    v-else-if="getDate(item.calendars[2].date_start, item.calendars[2].date_end)">
                                                                     <PillTag color="warning"
                                                                         label="Propuestas en evaluacion" :small="pillsSmall"
                                                                         :outline="pillsOutline" :icon="pillsIcon" />
