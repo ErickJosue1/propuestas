@@ -24,9 +24,9 @@ class StorereviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'proposals_id'        => "required|string|max:255",
-            'user_id'        => "required|string|max:255",
-            'state_id'        => "required|string|max:255",
+            'proposals_id'        => "required|integer|max:255",
+            'user_id'        => "required|integer|max:255",
+            'state_id'        => "required|integer|max:255",
         ];
     }
 }

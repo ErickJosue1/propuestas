@@ -167,7 +167,14 @@ export default {
         };
 
         const post = (stateId) => {
-            reviewPost(stateId)
+            const reviewForm = useForm({
+                proposals_id: props.proposal.id,
+                user_id: usePage().props.auth.user.id,
+                state_id: stateId
+            })
+
+            reviewForm.post(route('reviews.store'))
+
             axios.get(route('proposals.getState', props.proposal.id))
                 .then((response) => {
                     if (response.data != 2) {
@@ -175,20 +182,14 @@ export default {
                         form.put(route('proposals.updateReview', props.proposal.id))
                     }
                     else {
-                        window.location = route('proposals.index')
+                        /* window.location = route('proposals.index') */
+                        console.log(response)
                     }
 
                 })
         }
 
-        const reviewPost = (stateId) => {
-            const reviewForm = useForm({
-                proposals_id: props.proposal.id,
-                user_id: usePage().props.auth.user.id,
-                state_id: stateId
-            })
-            reviewForm.post(route('reviews.store'))
-        }
+       
 
         const remove = (arr, cb) => arr.filter(item => !cb(item));
 

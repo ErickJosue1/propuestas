@@ -251,8 +251,8 @@ class ProposalsController extends Controller
 
     public function getState(Proposals $proposal)
     {
-        $reviews = review::find($proposal->id);
-        $reviewrs = proposals_user::find($proposal->id);
+        $reviews = review::where('proposals_id', '=', $proposal->id);
+        $reviewrs = proposals_user::where('proposals_id', '=', $proposal->id);
 
         if ($reviews && $reviewrs) {
             if (count($reviews) == count($reviewrs)) {
