@@ -241,6 +241,7 @@ class ProposalsController extends Controller
 
         $user = User::find($request->user_id);
         $user->notify(new WorkReviewed($user, $proposal));
+        
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
     }
@@ -251,25 +252,23 @@ class ProposalsController extends Controller
 
     public function getState(Proposals $proposal)
     {
-        $reviews = review::where('proposals_id', '=', $proposal->id);
-        $reviewrs = proposals_user::where('proposals_id', '=', $proposal->id);
+        $reviews = review::where('proposals_id', '=', $proposal->id)->get();
+        $reviewrs = proposals_user::where('proposals_id', '=', $proposal->id)->get();
 
-        if ($reviews && $reviewrs) {
-            if (count($reviews) == count($reviewrs)) {
-                $success = true;
-
-                foreach ($reviews as $value) {
-                    if ($value['state_id'] == 3) {
-                        $success = false;
-                        break;
-                    }
+        if ($reviews->count() == $reviewrs->count()) {
+            $success = true;
+            foreach ($reviews as $value) {
+                if ($value['state_id'] == 3) {
+                    $success = false;
+                    break;
                 }
-
-                return $success ? 1 : 3;
             }
-        } else {
-            return 2;
+
+            return $success ? 1 : 3;
         }
+
+
+        return 2;
     }
 
     /* 
@@ -280,9 +279,11 @@ class ProposalsController extends Controller
     {
         $proposal = Proposals::find($request->proposal);
 
+        $proposal->users()->sync($request->reviewrs);
+
+
         foreach ($request->reviewrs as $item) {
-            $proposal->users()->sync($item['id']);
-            $user = User::find($item['id']);
+            $user = User::find($item);
             $user->notify(new ReviewerAssigned($user, $proposal));
         }
 

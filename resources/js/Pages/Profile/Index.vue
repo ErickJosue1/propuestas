@@ -102,7 +102,14 @@ export default {
     <LayoutMain>
 
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-
+            <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                    <path
+                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                    <path
+                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                </svg>
+            </a>
         </SectionTitleLineWithButton>
 
 
@@ -127,7 +134,8 @@ export default {
                         <th>Nombre</th>
                         <th>Apellido Paterno</th>
                         <th>Apellido Materno</th>
-                        <th />
+                        <th>Rol</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,17 +159,21 @@ export default {
                         <td data-label="Apellido Materno">
                             {{ item.maternal_surname }}
                         </td>
-
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <!--  <BaseButton color="info" :icon="mdiApplicationEdit" small
-                                    :href="route(`${routeName}edit`, item.id)" /> -->
-                                <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
+
                                 <a :href="route('users.assign-roles-and-permissions.view', item.id)"> <button
-                                        class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                                        class="bg-transparent dark:text-white dark:border-white hover:bgeve-blue-500 dark:hover:text-blue-700 text-blue-700 font-semibold hover:text-black py-2 px-4 border border-blue-500  dark:hover:border-transparent hover:border-transparent rounded">
                                         Asignar Rol
                                     </button>
                                 </a>
+                            </BaseButtons>
+                        </td>
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
+                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                                <BaseButton color="info" :icon="mdiApplicationEdit" small
+                                    :href="route(`${routeName}edit`, item.id)" />
+                                <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                             </BaseButtons>
                         </td>
 

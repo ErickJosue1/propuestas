@@ -137,9 +137,7 @@ export default {
                         <th>Status</th>
                         <th>Fecha Captura</th>
                         <th v-if="useRole('Postulante')">Descargar Constancia</th>
-                        <th v-if="useRole('Evaluador')">Habilitar Constancia</th>
-                        <th v-if="records.data.state_id != 3">Fecha Aprobado / Rechazado</th>
-                        <th v-else>Fecha Rechazado</th>
+                        <th>Fecha revision</th>
                         <th v-if="!useRole('Admin')">Acciones</th>
                         <th v-else>Revisores</th>
                     </tr>
@@ -180,24 +178,6 @@ export default {
                             </BaseButtons>
                         </td>
 
-                        <td data-label="Habilitar Constancia" v-if="item.state_id == 1 && useRole('Evaluador')"
-                            class=" lg:w-1 whitespace-nowrap">
-                            <BaseButtons type="justify-start lg:justify-center" no-wrap>
-                                <a :href="route('recognitionPDF', item.id)"> <button
-                                        class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold dark:hover:text-white hover:text-black py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                                        Habilitar
-                                    </button>
-                                </a>
-                            </BaseButtons>
-                        </td>
-
-                        <td data-label="Descargar Constancia"
-                            v-if="(item.state_id == 2 || item.state_id == 3) && useRole('Evaluador')"
-                            class=" lg:w-1 whitespace-nowrap">
-                            <BaseButtons type="justify-start lg:justify-center" no-wrap>
-                                -
-                            </BaseButtons>
-                        </td>
 
                         <td v-if="item.state_id == 2" data-label="Fecha Aprobado">
                             {{ state[item.state_id - 1].state }}

@@ -36,9 +36,17 @@ class ReviewController extends Controller
      */
     public function store(StorereviewRequest $request)
     {
+
+        $old_review = review::where('proposals_id', '=', $request->proposals_id)->where('user_id', '=', $request->user_id)->first();
+
+        if($old_review){
+            $old_review->delete();
+        }
+
         review::create($request->validated());
 
-        return true;
+
+        return response('Success', 200);
     }
 
     /**

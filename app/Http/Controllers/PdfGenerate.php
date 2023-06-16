@@ -33,7 +33,7 @@ class PdfGenerate extends Controller
                 ]
             );
             /*return response()->file($pdfPath, ['Content-Type' => 'application/pdf']);*/
-            return redirect()->route("proposals.index")->with('success', 'Reconocimiento asignado con exito correctamente!');
+            return response('Reconocimiento asignado con exito correctamente!', 200);
         }
     }
 

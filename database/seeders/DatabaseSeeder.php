@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Colony;
 use App\Models\Events;
+use App\Models\Institutions;
 use App\Models\Township;
 use App\Models\Workplace;
 use Illuminate\Database\Seeder;
@@ -38,9 +39,9 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             ProposalStatesSeeder::class,
             AreasKnowledgeSeeder::class,
-            EventsSeeder::class
-            /*             CodigosPostalesSeeder::class
- */
+            EventsSeeder::class,
+            InstitutionsSeeder::class
+
         ]);
 
         User::find(1)->assignRole('Admin');

@@ -80,7 +80,11 @@ export default {
         },
         getDate(date_start, date_end) {
             const current = new Date();
-            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-0${current.getDate()}`;
+            
+            const isMajor = m_date => m_date > 10;
+            const day = isMajor(current.getDate()) ? current.getDate() : '0' + current.getDate();
+
+            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-${day}`;
 
             console.log(date)
 

@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Institutions;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class InstitutionsSeeder extends Seeder
 {
@@ -15,6 +17,17 @@ class InstitutionsSeeder extends Seeder
      */
     public function run()
     {
-        Institutions::create(['name' => 'modulo.catalogos', 'guard_name' => 'web', 'description' => 'Catálogos del Sistema', 'module_key' => 'modulo']);
+        $documento = storage_path('app/public/Instituciones.xlsx');
+        $data = Excel::toArray([], $documento);
+
+        foreach ($data[0] as $row) {
+            $model = new Institutions();
+            $model->name = $row[1];
+            $model->status = '1';
+
+            $model->save();
+        }
+
+        Institutions::create(['name' => '', 'status' => '1']);
     }
 }

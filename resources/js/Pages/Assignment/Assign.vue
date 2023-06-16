@@ -52,7 +52,6 @@ export default {
         TableCheckboxCell
     },
     setup(props) {
-
         const form = useForm({
             reviewrs: [],
             proposal: props.proposal.id
@@ -60,7 +59,10 @@ export default {
 
         const guardar = () => {
             if (reviewrs.value.length != 0) {
-                form.reviewrs = reviewrs.value
+                for(let i = 0; i < reviewrs.value.length; i++){
+                    form.reviewrs.push(reviewrs.value[i].id) 
+                }
+                console.log(form.reviewrs)
                 form.post(route('proposals.sync'))
             }
             else {
