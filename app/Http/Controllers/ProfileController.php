@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Colony;
 use App\Models\User;
+use App\Models\Workplace;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,11 +13,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 
 class ProfileController extends Controller
 {
     protected string $routeName;
-    protected string $source; 
+    protected string $source;
     /* protected string $module = 'profile'; */
     protected User $model;
 
@@ -24,7 +27,7 @@ class ProfileController extends Controller
         $this->routeName = "profile.";
         $this->source    = "Profile/";
         $this->model     = new User();
-      /*   $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
+        /*   $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
         $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
         $this->middleware("permission:{$this->module}.update")->only(['edit', 'update']);
         $this->middleware("permission:{$this->module}.delete")->only(['destroy']); */
@@ -50,11 +53,26 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): Response
+    public function edit(User $user): Response
     {
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
+            'roles' => Role::pluck('name'),
+            'workplaces' => Workplace::all(),
+            'colonies' => Colony::all(),
+            'titulo' => 'Agregar Usuario',
+            'routeName' => $this->routeName,
+            'user' => $user
+        ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render("{$this->source}Create", [
+            'roles' => Role::pluck('name'),
+            'workplaces' => Workplace::all(),
+            'colonies' => Colony::all(),
+            'titulo' => 'Agregar Usuario',
+            'routeName' => $this->routeName,
         ]);
     }
 
