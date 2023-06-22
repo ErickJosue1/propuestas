@@ -157,7 +157,7 @@ export default {
                             axios.post(route('criterias.store', formData.data()))
                                 .then(function (response) {
                                     console.log(response)
-                                    post(3)
+                                    post(4)
                                 })
                         }
                     }
@@ -173,22 +173,26 @@ export default {
                 state_id: stateId
             })
 
-            reviewForm.post(route('reviews.store'))
+            reviewForm.post(route('reviews.store'), {
+                onFinish: () => {
+                    axios.get(route('proposals.getState', props.proposal.id))
+                        .then((response) => {
+                            console.log(response.data)
+                             if (response.data != 3 || form.state_id == 2) {
+                                if (response.data == 1) {
+                                    axios.get(route('recognitionPDF', props.proposal.id))
+                                }
+                                form.state_id = response.data
+                                form.put(route('proposals.updateReview', props.proposal.id))
+                            }
+        
+                            window.location = route('proposals.index') 
 
-            axios.get(route('proposals.getState', props.proposal.id))
-                .then((response) => {
-                    console.log(response.data)
-                    if (response.data != 2) {
-                        if (response.data == 1) {
-                            axios.get(route('recognitionPDF', props.proposal.id))
-                        }
-                        form.state_id = response.data
-                        form.put(route('proposals.updateReview', props.proposal.id))
-                    }
+                        })
+                }
+            })
 
-                    window.location = route('proposals.index')
 
-                })
         }
 
 
@@ -295,22 +299,6 @@ export default {
                         </SectionTitleLineWithButton>
                         <iframe :src="documentUrl" class="w-full aspect-video" allowfullscreen></iframe>
                     </div>
-                    <!-- 
-                                                                                                <div class="p-4" v-for="(item, index) in convocatoria.documents_supporting" :key="index">
-                                                                                                    <FormField :label="item.name">
-                                                                                                        <BaseButton @click="viewPdf(item.name)" color="info" :label="'Abrir ' + item.name + '.pdf'"
-                                                                                                            :icon="mdiOpenInNew" />
-
-                                                                                                        <button @click="getPdf(item.name)"
-                                                                                                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex justify-center items-center">
-                                                                                                            <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
-                                                                                                                viewBox="0 0 20 20">
-                                                                                                                <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
-                                                                                                            </svg>
-                                                                                                            <span>Descargar '{{ item.name }}'.pdf </span>
-                                                                                                        </button>
-                                                                                                    </FormField>
-                                                                                                </div> -->
 
                     <table>
                         <thead>
@@ -533,7 +521,8 @@ export default {
                                 <td data-label="Obvservaciones">
                                     <form-field label=""
                                         help="las observaciones estan desabilitadas para los criterios seleccionados">
-                                        <FormControl :id="item.name + item.value" type="textarea" />
+                                        <FormControl :id="item.name + item.value" placeholder="No aprobada"
+                                            type="textarea" />
                                     </form-field>
 
                                 </td>

@@ -12,6 +12,7 @@ use App\Models\calendar_announcement;
 use App\Models\Document_Supporting;
 use App\Models\Events;
 use App\Models\Institutions;
+use App\Models\Proposals;
 use App\Models\User;
 use Database\Seeders\AssestmentCriteriaSeeder;
 use Illuminate\Console\Scheduling\Event;
@@ -291,6 +292,7 @@ class AnnouncementsController extends Controller
             }
         }
 
+        rmdir('storage' . '/' . $announcement . 'advertising' . '/*');
         $announcement->delete();
         return redirect()->route("{$this->routeName}index")->with('success', 'Convocatoria eliminada con éxito');
     }

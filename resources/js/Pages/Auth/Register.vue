@@ -184,7 +184,7 @@ export default {
 
     <div class="vl-parent">
       <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-    </div>
+    </div>x
 
 
     <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">

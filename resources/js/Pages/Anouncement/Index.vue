@@ -35,6 +35,7 @@ export default {
             type: Object,
             required: true
         },
+      
         routeName: { type: String, required: true },
         loadingResults: { type: Boolean, required: true, default: true }
     },
@@ -156,7 +157,6 @@ export default {
                     </svg>
                 </a>
             </SectionTitleLineWithButton>
-
 
             <div v-if="records.length >= 1">
                 <CardBox class="mb-6" has-table>

@@ -46,7 +46,7 @@ class ReviewController extends Controller
         review::create($request->validated());
 
 
-        return response('Success', 200);
+        return true;
     }
 
     /**

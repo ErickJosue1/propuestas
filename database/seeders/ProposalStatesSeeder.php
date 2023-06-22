@@ -17,6 +17,7 @@ class ProposalStatesSeeder extends Seeder
     {
         ProposalStates::create(['state' => 'Aprobado']);
         ProposalStates::create(['state' => 'Pendiente']);
+        ProposalStates::create(['state' => 'Enviado para Validar']);
         ProposalStates::create(['state' => 'Rechazado']);
     }
 }

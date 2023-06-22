@@ -9,7 +9,8 @@ import {
     mdiTableOff,
     mdiGithub,
     mdiApplicationEdit, mdiTrashCan,
-    mdiInformation, mdiCloudDownload
+    mdiInformation, mdiCloudDownload,
+    mdiTrendingUp
 } from "@mdi/js";
 import PillTag from "@/components/PillTag.vue";
 import TableSampleClients from "@/components/TableSampleClients.vue";
@@ -39,7 +40,10 @@ export default {
             required: true
         },
         routeName: { type: String, required: true },
-        loadingResults: { type: Boolean, required: true, default: true }
+        loadingResults: { type: Boolean, required: true, default: true },
+        reviews: {
+            type: Object,
+        },
     },
     methods: {
         getPdf(proposal) {
@@ -57,6 +61,22 @@ export default {
                 link.click();
             });
         },
+        canReview(proposal) {
+            let success = false
+            if (this.reviews.length > 0) {
+                Object.entries(this.reviews).forEach(element => {
+                    if (element[1].proposals_id == proposal) {
+                        success = true
+                    }
+                });
+
+                return success ? true : false
+            }
+            else {
+                return false
+            }
+        }
+
     },
     components: {
         Link,
@@ -114,6 +134,8 @@ export default {
 
         </SectionTitleLineWithButton>
 
+
+
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.success }}
         </NotificationBar>
@@ -125,8 +147,6 @@ export default {
         <CardBox v-if="records.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
-
-
 
 
         <CardBox v-else class="mb-6" has-table>
@@ -149,15 +169,18 @@ export default {
                             {{ item.title }}
                         </td>
                         <td v-if="item.state_id == 2" data-label="Status">
-                            {{ state[item.state_id - 1].state }}
-                        </td>
-                        <td v-if="item.state_id == 1" data-label="Status">
-                            <PillTag color="success" label="Aprobado" :small="pillsSmall" :outline="pillsOutline"
-                                :icon="pillsIcon" />
+                            <PillTag color="warning" :label="state[item.state_id - 1].state" :small="false"
+                                :outline="false" />
                         </td>
                         <td v-if="item.state_id == 3" data-label="Status">
-                            <PillTag color="danger" label="Rechazado" :small="pillsSmall" :outline="pillsOutline"
-                                :icon="pillsIcon" />
+                            <PillTag color="info" :label="state[item.state_id - 1].state" :small="false"
+                                :outline="false" />
+                        </td>
+                        <td v-if="item.state_id == 1" data-label="Status">
+                            <PillTag color="success" label="Aprobado" :small="false" :outline="false" />
+                        </td>
+                        <td v-if="item.state_id == 4" data-label="Status">
+                            <PillTag color="danger" label="Rechazado" :small="false" :outline="false" />
                         </td>
                         <td data-label="Fecha Captura">
                             {{ item.created_at }}
@@ -171,7 +194,7 @@ export default {
                         </td>
 
                         <td data-label="Descargar Constancia"
-                            v-if="(item.state_id == 2 || item.state_id == 3) && useRole('Postulante')"
+                            v-if="(item.state_id > 1 || item.state_id <= 4) && useRole('Postulante')"
                             class=" lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-center" no-wrap>
                                 -
@@ -179,29 +202,24 @@ export default {
                         </td>
 
 
-                        <td v-if="item.state_id == 2" data-label="Fecha Aprobado">
-                            {{ state[item.state_id - 1].state }}
+                        <td data-label="Fecha Aprobado">
+                            --/--/----
                         </td>
-                        <td v-if="item.state_id == 1" data-label="Fecha Aprobado">
-                            {{ item.updated_at }}
-                        </td>
-                        <td v-if="item.state_id == 3" data-label="Fecha Rechazado">
-                            {{ item.updated_at }}
-                        </td>
-
 
 
                         <td class=" lg:w-1 whitespace-nowrap">
+
                             <BaseButtons v-if="useRole('Postulante')" type="justify-start lg:justify-center" no-wrap>
-                                <div v-if="item.state_id == 2 || item.state_id == 3">
+                                <div v-if="item.state_id != 1 && item.state_id != 3">
                                     <BaseButton color="info" :icon="mdiApplicationEdit" small
                                         :href="route(`${routeName}edit`, item.id)" />
                                     <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                                 </div>
                                 <div v-else>-</div>
                             </BaseButtons>
+
                             <BaseButtons v-else-if="useRole('Evaluador')" type="justify-center lg:justify-end" no-wrap>
-                                <a v-if="!(item.state_id != 2)" :href="route(`${routeName}review`, item.id)"> <button
+                                <a v-if="!canReview(item.id)" :href="route(`${routeName}review`, item.id)"> <button
                                         class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                                         Revisar
                                     </button>

@@ -23,6 +23,9 @@ import Swal from "sweetalert2";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { useStyleStore } from "@/stores/style.js";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
+
 
 export default {
     props: {
@@ -37,6 +40,7 @@ export default {
     components: {
         LayoutMain,
         FormField,
+        Loading,
         FormControl,
         BaseDivider,
         BaseButton,
@@ -102,7 +106,7 @@ export default {
                         });
                         e.target.value = null
                     }
-                    else{
+                    else {
                         this.date[i].date_start = e.target.value
                     }
                 }
@@ -113,7 +117,7 @@ export default {
             }
             else if (this.date.some(val => val.name === name)) {
                 const i = this.date.findIndex(val => val.name === name)
-          
+
                 if (e.target.value <= this.date[i].date_start) {
                     Swal.fire({
                         title: "La fecha de final es menor a la fecha inicial!",
@@ -145,6 +149,10 @@ export default {
     },
     setup(props) {
 
+
+        const isLoading = ref(false);
+        const fullPage = true;
+
         const date = [];
 
 
@@ -169,6 +177,9 @@ export default {
                 });
             }
             else {
+
+                isLoading.value = true
+
                 const config = {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 }
@@ -311,13 +322,18 @@ export default {
 
         const hasErrors = computed(() => errors.value.length > 0);
 
-        return { again, date, isDark, errors, file, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
+        return { isLoading, fullPage, again, date, isDark, errors, file, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
     },
 }
 </script>
 
 <template>
     <LayoutMain :title="titulo">
+
+        <div class="vl-parent">
+            <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+        </div>
+
         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
             <a :href="route(`${routeName}index`)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                     fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">

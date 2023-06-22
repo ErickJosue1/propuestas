@@ -77,6 +77,7 @@ class ProposalsController extends Controller
             ]);
         } else {
             $records = $user->proposals();
+            $reviews =  review::where('user_id', $user->id)->get();
 
             return Inertia::render("Proposals/Index", [
                 'titulo'      => 'Tus Propuestas',
@@ -84,6 +85,7 @@ class ProposalsController extends Controller
                 'routeName'      => $this->routeName,
                 'state'      => ProposalStates::all(),
                 'loadingResults' => false,
+                'reviews'      => $reviews,
             ]);
         }
     }
@@ -241,7 +243,7 @@ class ProposalsController extends Controller
 
         $user = User::find($request->user_id);
         $user->notify(new WorkReviewed($user, $proposal));
-        
+
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
     }
@@ -255,20 +257,21 @@ class ProposalsController extends Controller
         $reviews = review::where('proposals_id', '=', $proposal->id)->get();
         $reviewrs = proposals_user::where('proposals_id', '=', $proposal->id)->get();
 
-        if ($reviews->count() == $reviewrs->count()) {
-            $success = true;
+        if ($reviews->count() > floor($reviewrs->count() / 2)) {
+            $count = 0;
             foreach ($reviews as $value) {
-                if ($value['state_id'] == 3) {
-                    $success = false;
-                    break;
+                if ($value['state_id'] == 4) {
+                    $count++;
                 }
             }
-
-            return $success ? 1 : 3;
+            if ($count > floor($reviewrs->count() / 2) || $count == floor($reviewrs->count() / 2)) {
+                return 4;
+            } else {
+                return (($reviews->count() - $count) > (floor($reviewrs->count() / 2))) ? 1 : 3;
+            }
         }
 
-
-        return 2;
+        return 3;
     }
 
     /* 
@@ -300,19 +303,16 @@ class ProposalsController extends Controller
     public function update(UpdateProposalsRequest $request, Proposals $proposal)
     {
         $proposal->update($request->validated());
+        review::where('proposals_id', $proposal->id)->delete();
 
-        $user = User::find(Auth::user()->id);
 
-        if ($user->hasRole('Admin')) {
-            $user = User::find($request->evaluador_id);
-            empty($request->evaluador_id) ? null : $user->notify(new ReviewerAssigned($user, $proposal));
-        } else {
-            if (!empty($request->myFiles)) {
-                foreach ($request->myFiles as $files) {
-                    $files->storeAs(Auth::user()->name . 'Expediente' . $proposal->id, $files->getClientOriginalName(), 'public');
-                }
+
+        if (!empty($request->myFiles)) {
+            foreach ($request->myFiles as $files) {
+                $files->storeAs(Auth::user()->name . 'Expediente' . $proposal->id, $files->getClientOriginalName(), 'public');
             }
         }
+
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta editada correctamente!');
     }
@@ -327,12 +327,17 @@ class ProposalsController extends Controller
     {
         $files = glob('storage' . '/' . Auth::user()->name . 'Expediente' . $proposal->id . '/*');
 
+        proposals_user::where('proposals_id', '=', $proposal->id)->delete();
+        review::where('proposals_id', '=', $proposal->id)->delete();
+
+
         foreach ($files as $file) {
             if (is_file($file)) {
                 unlink($file);
             }
         }
 
+        rmdir('storage' . '/' . Auth::user()->name . 'Expediente' . $proposal->id);
         recognitions::where('proposal_id', '=', $proposal->id)->delete();
         $proposal->delete();
 

@@ -9,7 +9,6 @@ import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 <template>
     <LayoutAuthenticated>
 
-        <Head title="Dashboard" />
         <SectionMain>
             <slot />
 
