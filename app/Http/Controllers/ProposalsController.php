@@ -77,7 +77,7 @@ class ProposalsController extends Controller
             ]);
         } else {
             $records = $user->proposals();
-            $reviews =  review::where('user_id', $user->id);
+            $reviews =  review::where('user_id', $user->id)->get();
 
             return Inertia::render("Proposals/Index", [
                 'titulo'      => 'Tus Propuestas',
@@ -245,7 +245,7 @@ class ProposalsController extends Controller
         $user->notify(new WorkReviewed($user, $proposal));
 
 
-        return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
+        return true;
     }
 
     /* 
