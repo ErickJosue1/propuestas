@@ -119,7 +119,7 @@ export default {
                     formData.append(key, value)
                 })
 
-                axios.post(route('proposals.update', props.proposal.id),
+                st(route('proposals.update', props.proposal.id),
                     formData, config
                 )
                     .then((response) => {

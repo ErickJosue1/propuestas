@@ -174,7 +174,8 @@ export default {
             })
 
             reviewForm.post(route('reviews.store'), {
-                onFinish: () => {
+                onFinish: (response) => {
+                    console.log(response)
                     axios.get(route('proposals.getState', props.proposal.id))
                         .then((response) => {
                             console.log(response.data)

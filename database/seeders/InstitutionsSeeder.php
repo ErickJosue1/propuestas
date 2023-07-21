@@ -17,8 +17,9 @@ class InstitutionsSeeder extends Seeder
      */
     public function run()
     {
-        $documento = storage_path('app/public/Instituciones.xlsx');
-        $data = Excel::toArray([], $documento);
+        $documento = glob('database/seeders/Instituciones.xlsx');
+
+        $data = Excel::toArray([], $documento[0]);
 
         foreach ($data[0] as $row) {
             $model = new Institutions();

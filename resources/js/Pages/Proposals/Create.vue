@@ -96,7 +96,7 @@ export default {
 /*                     console.log(key, value)
  */                })
 
-                axios.post(route('proposals.store'), formData, config).then((response) => {
+               axios.post(route('proposals.store'), formData, config).then((response) => {
                     window.location = route('proposals.index')/* .with('success', 'Su propuesta ha sido guardada con éxito!') */
                 })
                     .catch(function (error) {

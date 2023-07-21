@@ -43,6 +43,7 @@ export default {
         loadingResults: { type: Boolean, required: true, default: true },
         reviews: {
             type: Object,
+            default: {}
         },
     },
     methods: {
@@ -134,6 +135,7 @@ export default {
 
         </SectionTitleLineWithButton>
 
+        {{ reviews }}
 
 
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
@@ -218,6 +220,7 @@ export default {
                                 <div v-else>-</div>
                             </BaseButtons>
 
+
                             <BaseButtons v-else-if="useRole('Evaluador')" type="justify-center lg:justify-end" no-wrap>
                                 <a v-if="!canReview(item.id)" :href="route(`${routeName}review`, item.id)"> <button
                                         class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
@@ -228,6 +231,8 @@ export default {
                                     Ya ha revisado esta propuestas
                                 </span>
                             </BaseButtons>
+
+                            
                             <BaseButtons v-else-if="useRole('Admin')" type="justify-center lg:justify-end" no-wrap>
                                 <a v-if="item.users.length <= 0" :href="route(`${routeName}assignment`, item.id)"> <button
                                         class="bg-transparent hover:bgeve-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">

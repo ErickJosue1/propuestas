@@ -77,7 +77,7 @@ class ProposalsController extends Controller
             ]);
         } else {
             $records = $user->proposals();
-            $reviews =  review::where('user_id', $user->id)->get();
+            $reviews =  review::where('user_id', $user->id);
 
             return Inertia::render("Proposals/Index", [
                 'titulo'      => 'Tus Propuestas',
@@ -264,7 +264,7 @@ class ProposalsController extends Controller
                     $count++;
                 }
             }
-            if ($count > floor($reviewrs->count() / 2) || $count == floor($reviewrs->count() / 2)) {
+            if ($count >= floor($reviewrs->count() / 2)) {
                 return 4;
             } else {
                 return (($reviews->count() - $count) > (floor($reviewrs->count() / 2))) ? 1 : 3;
