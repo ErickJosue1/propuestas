@@ -103,7 +103,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/view-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'viewPdf'])->name('view-AdPdf');
 
     //Non resource porposal routes 
-    Route::put('/proposals/{proposal}', [ProposalsController::class, 'updateReview'])->name('proposals.updateReview');
+    Route::put('/proposals/{proposal}/updateReview', [ProposalsController::class, 'updateReview'])->name('proposals.updateReview');
     Route::get('/proposals/{proposal}/assign', [ProposalsController::class, 'assignment'])->name('proposals.assignment');
     Route::get('/proposals/{proposal}/review', [ProposalsController::class, 'review'])->name('proposals.review');
     Route::get('/proposals/{proposal}/state', [ProposalsController::class, 'getState'])->name('proposals.getState');

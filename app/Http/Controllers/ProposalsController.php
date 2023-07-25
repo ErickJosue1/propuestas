@@ -58,6 +58,7 @@ class ProposalsController extends Controller
         $user = User::find(Auth::user()->id);
 
         if ($user->hasRole('Admin')) {
+
             return Inertia::render("Proposals/Index", [
                 'titulo'      => 'Propuestas',
                 'records'    => $records->with('users')->paginate(4)->withQueryString(),
@@ -239,14 +240,14 @@ class ProposalsController extends Controller
 
     public function updateReview(UpdateProposalsRequest $request, Proposals $proposal)
     {
-        $proposal->update($request->validated());
+            $response = $proposal->update($request->validated());
 
-        $user = User::find($request->user_id);
-        $user->notify(new WorkReviewed($user, $proposal));
+            $user = User::find($request->user_id);
+            $user->notify(new WorkReviewed($user, $proposal)); 
 
 
-        return true;
-    }
+            return redirect()->route("{$this->routeName}index")->with('success', 'Revisores asignados correctamente!');
+        }
 
     /* 
         Get proposal reviews State and lenght
@@ -303,18 +304,16 @@ class ProposalsController extends Controller
     public function update(UpdateProposalsRequest $request, Proposals $proposal)
     {
         $proposal->update($request->validated());
-        review::where('proposals_id', $proposal->id)->delete();
-
-
-
+ 
         if (!empty($request->myFiles)) {
             foreach ($request->myFiles as $files) {
                 $files->storeAs(Auth::user()->name . 'Expediente' . $proposal->id, $files->getClientOriginalName(), 'public');
             }
         }
 
+        review::where('proposals_id', $proposal->id)->delete();
 
-        return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta editada correctamente!');
+        return "Hola";
     }
 
     /**

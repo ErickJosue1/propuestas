@@ -135,8 +135,6 @@ export default {
 
         </SectionTitleLineWithButton>
 
-        {{ reviews }}
-
 
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.success }}

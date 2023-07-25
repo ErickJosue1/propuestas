@@ -156,7 +156,6 @@ export default {
                         if (canPost) {
                             axios.post(route('criterias.store', formData.data()))
                                 .then(function (response) {
-                                    console.log(response)
                                     post(4)
                                 })
                         }
@@ -175,21 +174,22 @@ export default {
 
             reviewForm.post(route('reviews.store'), {
                 onFinish: (response) => {
-                    console.log(response)
                     axios.get(route('proposals.getState', props.proposal.id))
                         .then((response) => {
-                            console.log(response.data)
-                             if (response.data != 3 || form.state_id == 2) {
+                            if (response.data != 3 || form.state_id == 2) {
                                 if (response.data == 1) {
                                     axios.get(route('recognitionPDF', props.proposal.id))
                                 }
-                                form.state_id = response.data
-                                form.put(route('proposals.updateReview', props.proposal.id))
-                            }
-        
-                            window.location = route('proposals.index') 
 
+                                form.state_id = response.data
+                                form.patch(route('proposals.updateReview', props.proposal.id))
+
+
+                                window.location = route('proposals.index')
+
+                            }
                         })
+
                 }
             })
 

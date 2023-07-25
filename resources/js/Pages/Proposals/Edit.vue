@@ -119,7 +119,7 @@ export default {
                     formData.append(key, value)
                 })
 
-                st(route('proposals.update', props.proposal.id),
+                axios.patch(route('proposals.update', props.proposal.id),
                     formData, config
                 )
                     .then((response) => {
