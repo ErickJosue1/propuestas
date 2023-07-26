@@ -223,6 +223,7 @@ export default {
                 })
                     .catch(function (error) {
                         if (error.response) {
+                            isLoading.value = false
 
                             Object.entries(error.response.data.errors).forEach(([key, value]) => {
                                 errors.value.push(value[0])

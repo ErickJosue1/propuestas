@@ -182,9 +182,7 @@ export default {
                                 }
 
                                 form.state_id = response.data
-                                form.patch(route('proposals.updateReview', props.proposal.id))
-
-
+                                form.put(route('proposals.updateReview', props.proposal.id))
                                 window.location = route('proposals.index')
 
                             }

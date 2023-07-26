@@ -240,13 +240,13 @@ class ProposalsController extends Controller
 
     public function updateReview(UpdateProposalsRequest $request, Proposals $proposal)
     {
-            $response = $proposal->update($request->validated());
+            $proposal->update($request->validated());
 
             $user = User::find($request->user_id);
             $user->notify(new WorkReviewed($user, $proposal)); 
 
 
-            return redirect()->route("{$this->routeName}index")->with('success', 'Revisores asignados correctamente!');
+            return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
         }
 
     /* 
@@ -313,7 +313,7 @@ class ProposalsController extends Controller
 
         review::where('proposals_id', $proposal->id)->delete();
 
-        return "Hola";
+        return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta editada correctamente!');
     }
 
     /**

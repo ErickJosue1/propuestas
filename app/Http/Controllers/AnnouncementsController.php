@@ -191,7 +191,7 @@ class AnnouncementsController extends Controller
     public function edit(Announcements $announcement)
     {
         return Inertia::render("Anouncement/Edit", [
-            'titulo'      => 'Crear una convocatoria',
+            'titulo'      => 'Editar una convocatoria',
             'routeName'      => $this->routeName,
             'institutions' => Institutions::all(),
             'assesstments' =>   Assestment_Criteria::all(),

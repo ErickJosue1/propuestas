@@ -119,7 +119,7 @@ export default {
                     formData.append(key, value)
                 })
 
-                axios.patch(route('proposals.update', props.proposal.id),
+                axios.post(route('proposals.update', props.proposal.id),
                     formData, config
                 )
                     .then((response) => {
@@ -212,15 +212,11 @@ export default {
                             <path
                                 d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                         </svg> <b class="leading-7 text-lg ">Cerrar</b></button>
-
-
-
                 </SectionTitleLineWithButton>
                 <iframe :src="documentUrl" class="w-full aspect-video" allowfullscreen></iframe>
             </div>
             <Tabs>
                 <Tab title="Gestion de documentacion" :criteria="false">
-
                     <table>
                         <thead>
                             <tr>
@@ -246,8 +242,6 @@ export default {
                                     <input type="file" :name="item.name" id="file-input" @change="onchange"
                                         accept="application/pdf"
                                         class="block mx-2 w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0 file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
-                                    <!--                                     <BaseButton color="danger" class="mx-1 my-1" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
- -->
                                 </td>
 
                                 <td class="before:hidden lg:w-1  whitespace-nowrap">

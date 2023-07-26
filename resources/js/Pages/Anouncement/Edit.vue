@@ -1,6 +1,6 @@
 <script>
 import { Link, useForm } from '@inertiajs/vue3';
-import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, mdiEye, mdiTrashCan } from "@mdi/js";
+import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, mdiEye, mdiTrashCan, mdiArchiveArrowDown } from "@mdi/js";
 import LayoutMain from '@/layouts/LayoutMain.vue';
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
@@ -54,6 +54,21 @@ export default {
         VueDatePicker
     },
     methods: {
+        getPdf(filename, announcement) {
+            axios({
+                url: '/download-AdPdf/' + (filename + '.pdf') + '/' + announcement,
+                method: 'GET',
+                responseType: 'blob', // This is important
+            }).then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                console.log(url)
+                link.href = url;
+                link.setAttribute('download', filename + '.pdf');
+                document.body.appendChild(link);
+                link.click();
+            });
+        },
         todo: function (data) {
             if (this.assesstments.some(e => e.name === data[0].name)) {
                 this.again = true
@@ -102,7 +117,7 @@ export default {
                         });
                         e.target.value = null
                     }
-                    else{
+                    else {
                         this.date[i].date_start = e.target.value
                     }
                 }
@@ -113,7 +128,7 @@ export default {
             }
             else if (this.date.some(val => val.name === name)) {
                 const i = this.date.findIndex(val => val.name === name)
-          
+
                 if (e.target.value <= this.date[i].date_start) {
                     Swal.fire({
                         title: "La fecha de final es menor a la fecha inicial!",
@@ -169,7 +184,7 @@ export default {
             if (date2.length < props.announcement.calendars.length) {
                 Swal.fire({
                     title: "Seleccione todas las fechas!",
-                    text: "Seleccione una las "+ props.announcement.calendars.length +" para los eventos",
+                    text: "Seleccione una las " + props.announcement.calendars.length + " para los eventos",
                     icon: "warning",
                     timer: 10000,
                     confirmButtonColor: "#3085d6",
@@ -304,7 +319,7 @@ export default {
 
         const hasErrors = computed(() => errors.value.length > 0);
 
-        return { again, date, isDark, errors, file, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
+        return { again, date, isDark, errors, file, hasErrors, submit, mdiArchiveArrowDown, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
     },
     created() {
         this.checkedRows = this.announcement.assesstment_criterias
@@ -325,7 +340,7 @@ export default {
                 </svg></a>
         </SectionTitleLineWithButton>
 
-    
+
 
         <CardBox form @submit.prevent="submit">
             <FormValidationErrors />
@@ -352,11 +367,14 @@ export default {
                         </FormField>
 
                         <label for="dropzone-file" class="block font-bold mb-2">Publicidad</label>
-                        <div class="flex items-center justify-center w-full">
+                        <div class="flex items-center justify-center w-full gap-2">
+                           
                             <input type="file" name="advertising" id="file-input" @change="onchange"
                                 accept="application/pdf"
-                                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0
-                                                                                                                              file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
+                                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0                                                                                            file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
+                                <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                                <BaseButton color="success" :icon="mdiArchiveArrowDown" small @click="getPdf('advertising',announcement.name)" />
+                            </BaseButtons>
                         </div>
 
                     </div>
