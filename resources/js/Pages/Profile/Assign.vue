@@ -74,7 +74,7 @@ export default {
             <template #footer>
                 <BaseButtons>
                     <BaseButton @click="submit" type="submit" color="info" label="Crear" />
-                    <BaseButton type="reset" color="danger" outline label="Cancelar" />
+                    <BaseButton :href="route('profile.index')" type="reset" color="danger" outline label="Cancelar" />
                 </BaseButtons>
             </template>
         </CardBox>
