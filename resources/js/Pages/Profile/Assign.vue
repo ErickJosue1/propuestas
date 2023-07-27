@@ -20,8 +20,11 @@ export default {
     },
     data() {
         return {
-            selectedRoles: [],
-            selectedPermissions: [],
+            selectedRole: null,
+            mdiBallotOutline,
+            mdiAccount,
+            mdiMail,
+            mdiGithub
         };
     },
     components: {
@@ -31,29 +34,19 @@ export default {
         BaseDivider,
         BaseButton,
         BaseButtons,
-        CardBox,
-        SectionTitleLineWithButton
+        SectionTitleLineWithButton,
+        CardBox
     },
     methods: {
-        assignRolesAndPermissions() {
-            const url = `/users/${this.user.id}/assign-roles-and-permissions`;
-            const data = {
-                roles: this.selectedRoles,
-                permissions: this.selectedPermissions,
-            };
-
-            axios.post(url, data)
-                .then(response => {
-                    // Handle success
-                })
-                .catch(error => {
-                    // Handle error
-                });
+        assignRole() {
+            const form = useForm({
+                role_id: this.selectedRole
+            })
+            form.post(route('profile.assignRole', this.$props.user.id))
         },
     },
-
-       
 };
+
 </script>
 
 <template>
@@ -67,13 +60,13 @@ export default {
         </SectionTitleLineWithButton>
 
 
-        <CardBox form @submit.prevent="submit">
+        <CardBox form @submit.prevent="assignRole">
             <FormField label="Roles">
-                <FormControl placeholder="" :options="roles" :icon="mdiAccount" />
+                <FormControl v-model="selectedRole" placeholder="" :options="roles" :icon="mdiAccount" />
             </FormField>
             <template #footer>
                 <BaseButtons>
-                    <BaseButton @click="submit" type="submit" color="info" label="Crear" />
+                    <BaseButton @click="assignRole" type="submit" color="info" label="Crear" />
                     <BaseButton :href="route('profile.index')" type="reset" color="danger" outline label="Cancelar" />
                 </BaseButtons>
             </template>

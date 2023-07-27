@@ -65,6 +65,22 @@ class ProfileController extends Controller
         ]);
     }
 
+    //assign A role to an user
+
+    public function assignRole(Request $request, $userId)
+    {
+        $request->validate([
+            'role_id' => 'required|exists:roles,id',
+        ]);
+
+        $user = User::findOrFail($userId);
+        $role = Role::findOrFail($request->input('role_id'));
+
+        $user->roles()->sync([$role->id]);
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Rol asignado con éxito!');
+    }
+
     public function create()
     {
         return Inertia::render("{$this->source}Create", [
