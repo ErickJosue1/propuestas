@@ -22,9 +22,12 @@ use App\Models\Areas_knowledge;
 use App\Models\Calendar;
 use App\Models\Proposals;
 use App\Models\review;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+use function GuzzleHttp\Promise\all;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +42,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'records' => Announcements::paginate(4)->withQueryString()->load('institutions','assesstment_criterias', 'documents_supporting', 'calendars')
+        'records' => Announcements::paginate(4)->withQueryString()->load('institutions', 'assesstment_criterias', 'documents_supporting', 'calendars')
     ]);
 });
 
@@ -49,7 +52,7 @@ Route::get('/download-AdPdf/{filename}/{announcement}', [AnnouncementsController
 
 
 Route::get('/dashboard', function () {
-    return Inertia::render('HomeView');
+    return Inertia::render('HomeView', ['users' => User::all(), 'announcements' =>  Announcements::all(),'proposals' => Proposals::all()]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -81,7 +84,7 @@ Route::middleware('auth')->group(function () {
     //Views and downloads of proposal's recognition
     Route::get('/generate-pdf/{proposal}', [PdfGenerate::class, 'recognitionPDF'])->name('recognitionPDF');
     Route::get('/download-pdf/{proposal}', [PdfGenerate::class, 'downloadRecognitionPDF'])->name('downloadRecognitionPDF');
-    
+
 
     //Sync reviewrs
     Route::post('/proposals/sync', [ProposalsController::class, 'syncReviewrs'])->name('proposals.sync');
@@ -112,7 +115,7 @@ Route::middleware('auth')->group(function () {
 
 
     //Main routes
-    Route::resource('reviews',ReviewController::class)->names('reviews');
+    Route::resource('reviews', ReviewController::class)->names('reviews');
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
     Route::resource('announcements', AnnouncementsController::class)->names('announcements');
     Route::resource('permissions', PermissionController::class)->names('permissions');

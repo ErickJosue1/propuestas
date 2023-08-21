@@ -183,7 +183,7 @@ class ProposalsController extends Controller
             'titulo'      => 'Revision de propuesta ' . '"' . $proposal->title . '"',
             'proposal'    => $proposal,
             'convocatoria' => $records,
-            'routeName'      => $this->routeName,
+            'routeName'     => $this->routeName,
         ]);
     }
 
