@@ -38,7 +38,7 @@ class RenapoController extends Controller
         if ($this->model::where('curp', $request)->exists()) {
             $records = $this->model::where('curp', $request)->get();
         } else {
-            $request = Http::get("https://curpws.bienestar.gob.mx/ServiceCurpPro/ConsultaPor/Curp/$request")['response'];
+            $request = Http::withToken('6244dffd-036a-494e-8e34-eef40b3173cd')->post("https://apimarket.mx/api/renapo/grupo/valida-curp",['curp' => $request])['data'];
 
             $records = Renapo::create(
                 [
