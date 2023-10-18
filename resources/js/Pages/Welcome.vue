@@ -51,10 +51,11 @@ export default {
             const current = new Date();
             console.log(date_start, date_end)
 
-            const isMajor = m_date => m_date > 10;
+            const isMajor = m_date => m_date >= 10;
             const day = isMajor(current.getDate()) ? current.getDate() : '0' + current.getDate();
+            const month = isMajor((current.getMonth()+1)) ? (current.getMonth()+1) : '0' + current.getMonth();
 
-            const date = `${current.getFullYear()}-0${current.getMonth() + 1}-${day}`;
+            const date = `${current.getFullYear()}-${month}-${day}`;
             console.log(date)
             if (date >= date_start && date <= date_end) {
                 return true
@@ -149,19 +150,19 @@ export default {
                         </div>
                         <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)"
                             :href="route('proposals.show', item.id)" class="w-full">
-                            <PillTag color="success" label="Inscribirse" :small="pillsSmall" :outline="pillsOutline"
+                            <PillTag color="success" label="Inscribirse" :small="false" :outline="false"
                                 :icon="pillsIcon" />
                         </a>
                         <a v-else-if="getDate(item.calendars[2].date_start, item.calendars[2].date_end)">
-                            <PillTag color="warning" label="Propuestas en evaluacion" :small="pillsSmall"
-                                :outline="pillsOutline" :icon="pillsIcon" />
+                            <PillTag color="warning" label="Propuestas en evaluacion" :small="false"
+                                :outline="false" :icon="pillsIcon" />
                         </a>
                         <a v-else>
-                            <PillTag color="danger" label="Convocatoria Cerrada" :small="pillsSmall"
-                                :outline="pillsOutline" :icon="pillsIcon" />
+                            <PillTag color="danger" label="Convocatoria Cerrada" :small="false"
+                                :outline="false" :icon="pillsIcon" />
                         </a>
                         <div @click="getPdf('advertising', item.name)">
-                                <PillTag color="info" label="Descargar" :small="pillsSmall" :outline="pillsOutline"
+                                <PillTag color="info" label="Descargar" :small="false" :outline="false"
                                 :icon="pillsIcon" />
                         </div>
                     </div>

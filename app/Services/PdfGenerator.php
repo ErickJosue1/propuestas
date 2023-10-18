@@ -22,7 +22,7 @@ class PdfGenerator extends FPDF
         $this->SetX(($this->w - $w) / 2);
         $this->SetTextColor(90, 90, 90);
 
-        $this->Image(storage_path('app') . '/' . 'base.jpeg', 0, 0, $this->w, $this->h);
+        $this->Image('./' . 'GEX.jpeg', 0, 0, $this->w, $this->h);
         $this->Cell($w, 10, $username);
 
         // description
@@ -39,9 +39,9 @@ class PdfGenerator extends FPDF
 
         //QR
 
-    /*     QrCode::format('png')->generate('dkjfbuhbfuhysdb', $dest . '/' . $name . 'QR' . '.png');
+        QrCode::size(200)->format('png')->color(90, 90, 90)->generate('dkjfbuhbfuhysdb', $dest . '/' . $name . 'QR' . '.png');
 
-        $this->Image(public_path($dest . '/' . $name . 'QR' . '.png'), 0, 0);  */
+        $this->Image($dest . '/' . $name . 'QR' . '.png', 160, ($this->h / 2) + (($this->h / 2) * 0.5), 35, 35);
 
         $this->Output('F', $dest . '/' . $name . '.pdf');
     }

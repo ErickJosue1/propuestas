@@ -255,10 +255,12 @@ class ProposalsController extends Controller
 
     public function getState(Proposals $proposal)
     {
+
+        //Change the $reviews->count() >= to > and also the ($reviews->count() - $count) >= to > if you want to approve the proposal with majority and not with the half
         $reviews = review::where('proposals_id', '=', $proposal->id)->get();
         $reviewrs = proposals_user::where('proposals_id', '=', $proposal->id)->get();
 
-        if ($reviews->count() > floor($reviewrs->count() / 2)) {
+        if ($reviews->count() >= floor($reviewrs->count() / 2)) {
             $count = 0;
             foreach ($reviews as $value) {
                 if ($value['state_id'] == 4) {
@@ -268,7 +270,7 @@ class ProposalsController extends Controller
             if ($count >= floor($reviewrs->count() / 2)) {
                 return 4;
             } else {
-                return (($reviews->count() - $count) > (floor($reviewrs->count() / 2))) ? 1 : 3;
+                return (($reviews->count() - $count) >= (floor($reviewrs->count() / 2))) ? 1 : 3;
             }
         }
 

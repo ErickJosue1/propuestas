@@ -10,6 +10,8 @@ use App\Services\PdfGenerator;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Matrix\Decomposition\QR;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PdfGenerate extends Controller
 {
@@ -35,6 +37,10 @@ class PdfGenerate extends Controller
             /*return response()->file($pdfPath, ['Content-Type' => 'application/pdf']);*/
             return response('Reconocimiento asignado con exito correctamente!', 200);
         }
+    }
+
+    public function testQR(){
+        return QrCode::size(200)->generate("Test");
     }
 
     public function downloadRecognitionPDF(Proposals $proposal)

@@ -178,12 +178,13 @@ export default {
                         .then((response) => {
                             if (response.data != 3 || form.state_id == 2) {
                                 if (response.data == 1) {
+                                    console.log("Recognition");
                                     axios.get(route('recognitionPDF', props.proposal.id))
                                 }
 
                                 form.state_id = response.data
                                 form.put(route('proposals.updateReview', props.proposal.id))
-                                window.location = route('proposals.index')
+                                window.location = route('proposals.index') 
 
                             }
                         })

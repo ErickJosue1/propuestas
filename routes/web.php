@@ -84,7 +84,9 @@ Route::middleware('auth')->group(function () {
     //Views and downloads of proposal's recognition
     Route::get('/generate-pdf/{proposal}', [PdfGenerate::class, 'recognitionPDF'])->name('recognitionPDF');
     Route::get('/download-pdf/{proposal}', [PdfGenerate::class, 'downloadRecognitionPDF'])->name('downloadRecognitionPDF');
+    Route::get('/generate', [PdfGenerate::class, 'testQR'])->name('testQR');
 
+    
 
     //Sync reviewrs
     Route::post('/proposals/sync', [ProposalsController::class, 'syncReviewrs'])->name('proposals.sync');
