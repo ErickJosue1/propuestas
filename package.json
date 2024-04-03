@@ -32,7 +32,7 @@
         "moment": "^2.29.4",
         "pdfjs-dist": "^3.4.120",
         "postscribe": "^2.0.8",
-        "sweetalert2": "^11.7.5",
+        "sweetalert2": "^11.6.13",
         "vue-date-pick": "^1.5.1",
         "vue-loading-overlay": "6.0",
         "vue-meta": "^2.4.0",
