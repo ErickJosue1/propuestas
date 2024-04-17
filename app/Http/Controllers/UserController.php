@@ -22,11 +22,14 @@ class UserController extends Controller
     public function assignRolesAndPermissionsView(User $user)
     {
         $roles = Role::all();
-        $permissions = Permission::all();
+        $permissions = Permission::paginate(10)->withQueryString();
+        
 
         return Inertia::render("Profile/Assign", [
             'titulo'      => 'Asignar Roles y Permisos',
             'user'    => $user,
+            'user_roles' => $user->getRolesArray(),
+            'user_permissions' => $user->getPermissionArray(),
             'roles'    => $roles,
             'permissions'    => $permissions,
         ]);

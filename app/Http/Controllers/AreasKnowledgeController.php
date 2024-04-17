@@ -80,6 +80,12 @@ class AreasKnowledgeController extends Controller
      */
     public function show(Areas_knowledge $knowledge)
     {
+        $records = $this->model::all();
+
+        if($records){
+            return $records;
+        }
+
         abort(406);
     }
 

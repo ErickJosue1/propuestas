@@ -52,7 +52,6 @@ class RegisteredUserController extends Controller
             'maternal_surname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
-            'role' => ['required', 'string',],
             'colony_id' => ['required', 'integer', 'exists:colonies,id'],
             'workplace_id' => ['required', 'integer', 'exists:workplaces,id'],
         ])->validate();
@@ -66,7 +65,7 @@ class RegisteredUserController extends Controller
             'workplace_id' => $input['workplace_id'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
-        ])->assignRole($input['role']);
+        ])->assignRole('Postulante');
 
         event(new Registered($user));
 

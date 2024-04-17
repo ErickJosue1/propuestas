@@ -50,7 +50,6 @@ export default {
       password: '',
       password_confirmation: '',
       curp: '',
-      role: "",
       colony_id: '',
       workplace_id: '',
     });
@@ -238,10 +237,6 @@ export default {
           <FormField label="Confirma Contraseña" label-for="password_conf" help="Confirma tu contraseña">
             <FormControl v-model="form.password_confirmation" :icon="mdiAsterisk" type="password" id="password_conf"
               autocomplete="current-password" required />
-          </FormField>
-
-          <FormField label="Rol" label-for="role" help="Porfavor seleccione un rol">
-            <FormControl v-model="form.role" id="role" :options="roles" required />
           </FormField>
 
        <!--    <FormField label="Codigo postal" label-for="cp" help="Porfavor introduce el codigo postal de tu residencia">

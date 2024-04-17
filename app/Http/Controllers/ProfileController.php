@@ -6,17 +6,21 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Colony;
 use App\Models\User;
 use App\Models\Workplace;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Actions\Fortify\PasswordValidationRules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
+    use PasswordValidationRules;
+
     protected string $routeName;
     protected string $source;
     /* protected string $module = 'profile'; */
@@ -69,16 +73,62 @@ class ProfileController extends Controller
 
     public function assignRole(Request $request, $userId)
     {
-        $request->validate([
-            'role_id' => 'required|exists:roles,id',
-        ]);
 
         $user = User::findOrFail($userId);
-        $role = Role::findOrFail($request->input('role_id'));
 
-        $user->roles()->sync([$role->id]);
+        //give
 
-        return redirect()->route("{$this->routeName}index")->with('success', 'Rol asignado con éxito!');
+        if (!empty($request->roles)) {
+            $user->syncRoles($request->roles);
+        }
+
+        if (!empty($request->permissions)) {
+            $user->givePermissionTo($request->permissions);
+        }
+
+        //Revoke
+
+        if (!empty($request->rRoles)) {
+            $user->removeRole($request->rRoles);
+        }
+
+        if (!empty($request->rPermissions)) {
+            $user->revokePermissionTo($request->rPermissions);
+        }
+
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Roles y Permisos modificados con éxito!');
+    }
+
+
+
+    public function store(Request $input)
+    {
+        Validator::make($input->all(), [
+            'curp' => ['required', 'string', 'max:18', 'unique:users'],
+            'name' => ['required', 'string', 'max:255'],
+            'paternal_surname' => ['required', 'string', 'max:255'],
+            'maternal_surname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => $this->passwordRules(),
+            'role' => ['required', 'string',],
+            'colony_id' => ['required', 'integer', 'exists:colonies,id'],
+            'workplace_id' => ['required', 'integer', 'exists:workplaces,id'],
+        ])->validate();
+
+        $user = User::create([
+            'curp' => $input['curp'],
+            'name' => $input['name'],
+            'paternal_surname' => $input['paternal_surname'],
+            'maternal_surname' => $input['maternal_surname'],
+            'colony_id' => $input['colony_id'],
+            'workplace_id' => $input['workplace_id'],
+            'email' => $input['email'],
+            'password' => Hash::make($input['password']),
+        ])->assignRole($input['role']);
+
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Usuario creado con exito con éxito!');
     }
 
     public function create()

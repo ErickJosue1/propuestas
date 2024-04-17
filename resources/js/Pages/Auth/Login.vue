@@ -31,7 +31,7 @@ const form = useForm({
 const submit = () => {
   form
     .transform(data => ({
-      ... data,
+      ...data,
       remember: form.remember && form.remember.length ? 'on' : ''
     }))
     .post(route('login'), {
@@ -42,86 +42,48 @@ const submit = () => {
 
 <template>
   <LayoutGuest>
+
     <Head title="Login" />
 
-    <SectionFullScreen
-      v-slot="{ cardClass }"
-      bg="purplePink"
-    >
-      <CardBox
-        :class="cardClass"
-        is-form
-        @submit.prevent="submit"
-      >
+    <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
+
+      <CardBox :class="cardClass" is-form @submit.prevent="submit">
         <FormValidationErrors />
 
-        <NotificationBarInCard 
-          v-if="status"
-          color="info"
-        >
+        <div class="w-full text-righ">
+          <Link class="hover:text-sky-700 " href="/">
+          Volver
+          </Link>
+        </div>
+
+        <NotificationBarInCard v-if="status" color="info">
           {{ status }}
         </NotificationBarInCard>
 
-        <FormField
-          label="Email"
-          label-for="email"
-          help="Porfavor introduce tu eamil"
-        >
-          <FormControl
-            v-model="form.email"
-            :icon="mdiAccount"
-            id="email"
-            autocomplete="email"
-            type="email"
-            required
-          />
+        <FormField class="pt-4" label="Email" label-for="email" help="Porfavor introduce tu eamil">
+          <FormControl v-model="form.email" :icon="mdiAccount" id="email" autocomplete="email" type="email" required />
         </FormField>
 
-        <FormField
-          label="Contraseña"
-          label-for="Contraseña"
-          help="Porfavor introduce tu contraseña"
-        >
-          <FormControl
-            v-model="form.password"
-            :icon="mdiAsterisk"
-            type="password"
-            id="password"
-            autocomplete="current-password"
-            required
-          />
+        <FormField label="Contraseña" label-for="Contraseña" help="Porfavor introduce tu contraseña">
+          <FormControl v-model="form.password" :icon="mdiAsterisk" type="password" id="password"
+            autocomplete="current-password" required />
         </FormField>
 
-        <FormCheckRadioGroup
-          v-model="form.remember"
-          name="remember"
-          :options="{ remember: 'Recordar' }"
-        />
+        <FormCheckRadioGroup v-model="form.remember" name="remember" :options="{ remember: 'Recordar' }" />
 
         <BaseDivider />
 
         <BaseLevel>
           <BaseButtons>
-            <BaseButton
-              type="submit"
-              color="info"
-              label="Iniciar sesion"
-              :class="{ 'opacity-25': form.processing }"
-              :disabled="form.processing"
-            />
-            <BaseButton
-              v-if="canResetPassword"
-              route-name="password.request"
-              color="info"
-              outline
-              label="Olvidaste tu contraseña?"
-            />
+            <BaseButton type="submit" color="info" label="Iniciar sesion" :class="{ 'opacity-25': form.processing }"
+              :disabled="form.processing" />
+            <BaseButton v-if="canResetPassword" route-name="password.request" color="info" outline
+              label="Olvidaste tu contraseña?" />
           </BaseButtons>
-          <Link
-            :href="route('register')"
-          >
-            Registrarse
-          </Link>
+
+
+          <BaseButton route-name="register" color="info" outline label="Registrarse" />
+
         </BaseLevel>
       </CardBox>
     </SectionFullScreen>

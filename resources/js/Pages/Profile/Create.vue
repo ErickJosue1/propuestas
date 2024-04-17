@@ -64,7 +64,7 @@ export default {
 
         const submit = () => {
             isLoading.value = true;
-            form.post(route('register'), {
+            form.post(route('profile.store'), {
                 onSuccess: (e) => {
                     form.reset()
                     cp.postal_code = {

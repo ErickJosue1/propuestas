@@ -164,7 +164,7 @@ export default {
 
                                 <a :href="route('users.assign-roles-and-permissions.view', item.id)"> <button
                                         class="bg-transparent dark:text-white dark:border-white hover:bgeve-blue-500 dark:hover:text-blue-700 text-blue-700 font-semibold hover:text-black py-2 px-4 border border-blue-500  dark:hover:border-transparent hover:border-transparent rounded">
-                                        Asignar Rol
+                                            Modificar rol
                                     </button>
                                 </a>
                             </BaseButtons>
