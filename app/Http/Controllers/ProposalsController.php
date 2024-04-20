@@ -60,7 +60,7 @@ class ProposalsController extends Controller
         if ($user->hasRole('Admin')) {
 
             return Inertia::render("Proposals/Index", [
-                'titulo'      => 'Propuestas',
+                'titulo'      => 'Laboratorios',
                 'records'    => $records->with('users')->paginate(4)->withQueryString(),
                 'routeName'      => $this->routeName,
                 'state'      => ProposalStates::all(),
@@ -70,7 +70,7 @@ class ProposalsController extends Controller
             $records =  $records->where('user_id', $user->id);
 
             return Inertia::render("Proposals/Index", [
-                'titulo'      => 'Tus Propuestas',
+                'titulo'      => 'Tus Laboratorios',
                 'records'    => $records->paginate(4)->withQueryString(),
                 'routeName'      => $this->routeName,
                 'state'      => ProposalStates::all(),
@@ -81,7 +81,7 @@ class ProposalsController extends Controller
             $reviews =  review::where('user_id', $user->id)->get();
 
             return Inertia::render("Proposals/Index", [
-                'titulo'      => 'Tus Propuestas',
+                'titulo'      => 'Tus Laboratorios [Revision]',
                 'records'    => $records->paginate(4)->withQueryString(),
                 'routeName'      => $this->routeName,
                 'state'      => ProposalStates::all(),
@@ -111,12 +111,6 @@ class ProposalsController extends Controller
 
         $proposal = $this->model::create($request->validated());
 
-        /*  Proceedings::create([
-            'path' => $path,
-            'proposal_id' => $proposal->id,
-            'user_id'  => $request->user_id
-        ]); */
-
         foreach ($request->myFiles as $files) {
             $files->storeAs(Auth::user()->name . 'Expediente'  . $proposal->id, $files->getClientOriginalName(), 'public');
         }
@@ -134,14 +128,14 @@ class ProposalsController extends Controller
     public function show(Announcements $proposal)
     {
         if (Proposals::where('announcement_id', '=', $proposal->id)->exists()) {
-            return redirect()->route("announcements.index")->with('error', 'Ya te has postulado para esta convocatoria!');
+            return redirect()->route("announcements.index")->with('error', 'Ya has postulado un laboratorio para esta convocatoria!');
         } else {
             return Inertia::render("Proposals/Create", [
-                'titulo'      => 'Propuesta',
-                'convocatoria' => $proposal->load(['assesstment_criterias', 'documents_supporting']),
+                'titulo'      => 'Laboratorios',
+                'convocatoria' => $proposal->load(['assesstment_criterias', 'documents_supporting', 'fields']),
                 'state'        => ProposalStates::find(2),
                 'routeName'      => $this->routeName,
-                'areas'        => Areas_knowledge::all()
+                'areas'        => Areas_knowledge::all(),
             ]);
         }
     }
@@ -157,6 +151,9 @@ class ProposalsController extends Controller
 
         $records = Announcements::find($proposal->announcement_id);
         $records->load(['assesstment_criterias', 'documents_supporting']);
+
+
+
         $criterias = Criterias::where('proposal_id', '=', "$proposal->id")->get();
 
 
@@ -240,14 +237,14 @@ class ProposalsController extends Controller
 
     public function updateReview(UpdateProposalsRequest $request, Proposals $proposal)
     {
-            $proposal->update($request->validated());
+        $proposal->update($request->validated());
 
-            $user = User::find($request->user_id);
-            $user->notify(new WorkReviewed($user, $proposal)); 
+        $user = User::find($request->user_id);
+        $user->notify(new WorkReviewed($user, $proposal));
 
 
-            return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
-        }
+        return redirect()->route("{$this->routeName}index")->with('success', 'Propuesta revisada correctamente!');
+    }
 
     /* 
         Get proposal reviews State and lenght
@@ -306,7 +303,7 @@ class ProposalsController extends Controller
     public function update(UpdateProposalsRequest $request, Proposals $proposal)
     {
         $proposal->update($request->validated());
- 
+
         if (!empty($request->myFiles)) {
             foreach ($request->myFiles as $files) {
                 $files->storeAs(Auth::user()->name . 'Expediente' . $proposal->id, $files->getClientOriginalName(), 'public');

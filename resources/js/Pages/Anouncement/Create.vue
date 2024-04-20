@@ -14,6 +14,7 @@ import Tab from '@/components/Tab.vue';
 import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import TodoList from '@/components/TodoList.vue';
 import DocList from '@/components/DocList.vue';
+import FieldList from '../../Components/FieldList.vue';
 import { ref, computed, reactive } from 'vue';
 import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
 import FormValidationErrors from '@/components/FormValidationErrors.vue'
@@ -34,8 +35,8 @@ export default {
         institutions: { type: Object, required: true },
         assesstments: { type: Object, required: true },
         documents: { type: Object, required: true },
-        events: { type: Object, required: true }
-
+        events: { type: Object, required: true },
+        fields: { type: Object, required: true }
     },
     components: {
         LayoutMain,
@@ -55,7 +56,8 @@ export default {
         DocList,
         FormValidationErrors,
         NotificationBar,
-        VueDatePicker
+        VueDatePicker,
+        FieldList
     },
     methods: {
         todo: function (data) {
@@ -74,6 +76,15 @@ export default {
             }
             else {
                 this.documents.push(data[0]);
+            }
+        },
+        field: function (data) {
+            if (this.fields.some(e => e.title === data[0].title)) {
+                this.again = true
+                this.errors = 'No puede incluir un documentos con el mismo titulo!'
+            }
+            else {
+                this.fields.push(data[0]);
             }
         },
         onchange(e) {
@@ -217,21 +228,32 @@ export default {
                     formData.append('documents[' + index + '][name]', object.name)
                 })
 
+                checkedFields.value.forEach((object, index) => {
+                    if (object.id) {
+                        formData.append('fields[' + index + '][id]', object.id)
+                    }
+                    formData.append('fields[' + index + '][title]', object.title)
+                    formData.append('fields[' + index + '][description]', object.description)
+
+                })
+
 
                 axios.post(route('announcements.store'), formData, config).then((response) => {
-                    window.location = route('announcements.index')/* .with('success', 'Su Convocatoria ha sido guardada con éxito!') */
+                    console.log(response)  //window.location = route('announcements.index')/* .with('success', 'Su Convocatoria ha sido guardada con éxito!') */
                 })
                     .catch(function (error) {
                         if (error.response) {
                             isLoading.value = false
 
+                            console.log(error.response.data);
+                            console.log(error.response.status);
+                            console.log(error.response.headers);
+
                             Object.entries(error.response.data.errors).forEach(([key, value]) => {
                                 errors.value.push(value[0])
                             })
 
-                            console.log(error.response.data);
-                            console.log(error.response.status);
-                            console.log(error.response.headers);
+
                         } else if (error.request) {
                             // The request was made but no response was received
                             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -270,10 +292,29 @@ export default {
         const file = []
         const checkedRows = ref([]);
         const checkedDocs = ref([]);
+        const checkedFields = ref([]);
+
 
         const remove = (arr, cb) => arr.filter(item => !cb(item));
 
         const isClientName = row => client => row.name === client.name;
+
+        const isClientTitle = row => client => row.title === client.title;
+
+
+        const checkField = (isChecked, field) => {
+            let checkedArray = checkedFields.value;
+
+            const isNameChecked = isClientTitle(field);
+
+            if (isChecked) {
+                checkedArray.push(field);
+            } else {
+                checkedArray = remove(checkedArray, isNameChecked);
+            }
+
+            checkedFields.value = checkedArray;
+        }
 
         const checked = (isChecked, client, type) => {
             let checkedArray = type ? checkedRows.value : checkedDocs.value;
@@ -323,7 +364,7 @@ export default {
 
         const hasErrors = computed(() => errors.value.length > 0);
 
-        return { isLoading, fullPage, again, date, isDark, errors, file, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
+        return { isLoading, fullPage, again, date, isDark, errors, file, hasErrors, submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, checked, checkField, checkedFields, checkedRows, mdiEye, mdiTrashCan, showTable, eliminar, checkedDocs }
     },
 }
 </script>
@@ -364,7 +405,8 @@ export default {
                             <FormControl v-model="form.institutions_id" :options="institutions" />
                         </FormField>
 
-                        <FormField label="Descripcion" help="Descripcion general de la convocatoria. Max 255 caracteres">
+                        <FormField label="Descripcion"
+                            help="Descripcion general de la convocatoria. Max 255 caracteres">
                             <FormControl v-model="form.description" type="textarea"
                                 placeholder="Explica brevemente la convocatoria" />
                         </FormField>
@@ -419,14 +461,67 @@ export default {
                         </div>
                     </div>
                 </Tab>
+                <Tab title="Formulario">
+                    <div class="p-4 rounded-lg" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <FieldList @fields="field"></FieldList>
+
+                        <div v-if="fields.length > 0">
+                            <SectionTitleLineWithButton class="pt-6" :icon="mdiBallotOutline" title="Campos" main>
+                                <a :href="route('announcements.index')"><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                        <path
+                                            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                    </svg></a>
+                            </SectionTitleLineWithButton>
+
+                            <BaseDivider />
+
+                            <div v-if="checkedFields.length" class="p-3 bg-gray-100/50 dark:bg-slate-800">
+                                <span v-for="checkedField in checkedFields" :key="checkedField.id"
+                                    class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700">
+                                    {{ checkedField.title }}
+                                </span>
+                            </div>
+                            <table class="border-gray-200 dark:border-gray-700">
+                                <thead>
+                                    <tr>
+                                        <th v-if="true" />
+                                        <th>Titulo</th>
+                                        <th>Descripcion</th>
+                                        <th />
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="field in fields" :key="field.id">
+                                        <TableCheckboxCell v-if="true" @checked="checkField($event, field)" />
+
+                                        <td data-label="Nombre">
+                                            {{ field.title }}
+                                        </td>
+                                        <td data-label="Descripcion">
+                                            {{ field.description }}
+                                        </td>
+                                        <td class="before:hidden lg:w-1 whitespace-nowrap">
+                                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                                                <BaseButton color="info" :icon="mdiEye" small />
+                                            </BaseButtons>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </Tab>
                 <Tab title="Criterios de Evaluacion">
                     <div class="p-4 rounded-lg" id="profile">
                         <todo-list @tasks="todo" ref="TodoListRef"></todo-list>
 
                         <div v-if="assesstments.length > 0">
                             <SectionTitleLineWithButton class="pt-6" :icon="mdiBallotOutline" title="Criterios" main>
-                                <a :href="route('announcements.index')"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                        height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                <a :href="route('announcements.index')"><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                         <path
                                             d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                                     </svg></a>
@@ -482,8 +577,8 @@ export default {
                         <doc-list @docs="docs"></doc-list>
                         <div v-if="documents.length > 0">
                             <SectionTitleLineWithButton class="pt-6" :icon="mdiBallotOutline" title="Documentos" main>
-                                <a :href="route('announcements.index')"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                        height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                <a :href="route('announcements.index')"><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                         <path
                                             d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                                     </svg></a>

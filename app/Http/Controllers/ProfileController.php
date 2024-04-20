@@ -111,7 +111,7 @@ class ProfileController extends Controller
             'maternal_surname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
-            'role' => ['required', 'string',],
+            'role' => ['required', 'string','exists:role,id'],
             'colony_id' => ['required', 'integer', 'exists:colonies,id'],
             'workplace_id' => ['required', 'integer', 'exists:workplaces,id'],
         ])->validate();

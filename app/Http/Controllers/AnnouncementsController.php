@@ -11,6 +11,7 @@ use App\Models\Assestment_Criteria;
 use App\Models\calendar_announcement;
 use App\Models\Document_Supporting;
 use App\Models\Events;
+use App\Models\Fields;
 use App\Models\Institutions;
 use App\Models\Proposals;
 use App\Models\User;
@@ -78,6 +79,7 @@ class AnnouncementsController extends Controller
             'institutions' => Institutions::all(),
             'assesstments' =>   Assestment_Criteria::all(),
             'documents'    => Document_Supporting::all(),
+            'fields'    => Fields::all(),
             'events' => Events::all()
         ]);
     }
@@ -94,10 +96,13 @@ class AnnouncementsController extends Controller
             return redirect()->back()->withErrors(['Seleccione al menos un criterio para la convocatoria!']);
         } else if (empty($request->documents)) {
             return redirect()->back()->withErrors(['Seleccione al menos un documento para la convocatoria!']);
+        } else if (empty($request->fields)) {
+            return redirect()->back()->withErrors(['Seleccione al menos un campo para los laboratorios!']);
         } else {
             $record = $this->model::create($request->validated());
             $criteria = new Assestment_Criteria();
             $docuemnt = new Document_Supporting();
+            $field = new Fields();
 
             foreach ($request->dates as $value) {
                 calendar_announcement::create(
@@ -108,6 +113,20 @@ class AnnouncementsController extends Controller
                         'announcements_id' => $record->id,
                     ]
                 );
+            }
+
+            foreach ($request->fields as $value) {
+                if (isset($value['id'])) {
+                    $record->fields()->attach($value['id']);
+                } else {
+                    $field = Fields::create(
+                        [
+                            'title' => $value['title'],
+                            'description' => $value['description'],
+                        ]
+                    );
+                    $record->fields()->attach($field->id);
+                }
             }
 
             foreach ($request->documents as $value) {

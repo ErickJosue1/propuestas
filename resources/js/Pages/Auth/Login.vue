@@ -1,6 +1,6 @@
 <script setup>
 import { useForm, Head, Link } from '@inertiajs/vue3'
-import { mdiAccount, mdiAsterisk } from '@mdi/js'
+import { mdiAccount, mdiAsterisk, mdiArrowLeft } from '@mdi/js'
 import LayoutGuest from '@/layouts/LayoutGuest.vue'
 import SectionFullScreen from '@/components/SectionFullScreen.vue'
 import CardBox from '@/components/CardBox.vue'
@@ -13,6 +13,7 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import FormValidationErrors from '@/components/FormValidationErrors.vue'
 import NotificationBarInCard from '@/components/NotificationBarInCard.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
+import PillTag from "@/components/PillTag.vue";
 
 const props = defineProps({
   canResetPassword: Boolean,
@@ -51,8 +52,8 @@ const submit = () => {
         <FormValidationErrors />
 
         <div class="w-full text-righ">
-          <Link class="hover:text-sky-700 " href="/">
-          Volver
+          <Link class="hover:text-sky-700" href="/">
+          <PillTag color="info" label="Volver" :small="false" :outline="true" :icon="mdiArrowLeft" />
           </Link>
         </div>
 

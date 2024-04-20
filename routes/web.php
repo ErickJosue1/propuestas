@@ -8,6 +8,7 @@ use App\Http\Controllers\ColonyController;
 use App\Http\Controllers\CriteriasController;
 use App\Http\Controllers\DocumentSupportingController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\FieldsController;
 use App\Http\Controllers\InstitutionsController;
 use App\Http\Controllers\PdfGenerate;
 use App\Http\Controllers\PermissionController;
@@ -15,11 +16,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalsController;
 use App\Http\Controllers\RenapoController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\RevisorDocumentsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use App\Models\Announcements;
 use App\Models\Areas_knowledge;
 use App\Models\Calendar;
+use App\Models\Fields;
 use App\Models\Proposals;
 use App\Models\review;
 use App\Models\User;
@@ -130,6 +133,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('calendar', CalendarController::class)->names('calendar');
     Route::resource('criterias', CriteriasController::class)->names('criterias');
     Route::resource('knowledges', AreasKnowledgeController::class)->names('knowledges');
+    Route::resource('revisorDocs', RevisorDocumentsController::class)->names('revisorDocs');
+    Route::resource('fields', FieldsController::class)->names('fields');
+
+
 });
 
 require __DIR__ . '/auth.php';

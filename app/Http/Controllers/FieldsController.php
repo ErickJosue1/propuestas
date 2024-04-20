@@ -2,49 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use Spatie\Permission\Models\Role;
-use App\Http\Requests\StoreRolesRequest;
-use App\Http\Requests\UpdateRolesRequest;
-use Inertia\Response;
+use App\Models\Fields;
+use App\Http\Requests\StoreFieldsRequest;
+use App\Http\Requests\UpdateFieldsRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Permission;
+use Inertia\Response;
 
-class RolesController extends Controller
+class FieldsController extends Controller
 {
 
     protected string $routeName;
     protected string $source;
-    protected string $module = 'roles';
-    protected Role $model;
+    protected string $module = 'fields';
+    protected Fields $model;
 
     public function __construct()
     {
-        $this->routeName = "roles.";
-        $this->source    = "Roles/";
-        $this->model     = new Role();
+        $this->routeName = "fields.";
+        $this->source    = "Fields/";
+        $this->model     = new Fields();
 
-        /*        $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
+
+        /*   $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
         $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
         $this->middleware("permission:{$this->module}.update")->only(['edit', 'update']);
         $this->middleware("permission:{$this->module}.delete")->only(['destroy']); */
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index(Request $request): Response
     {
         $records = $this->model;
         $records = $records->when($request->search, function ($query, $search) {
             if ($search != '') {
-                $query->where('name',          'LIKE', "%$search%");
+                $query->where('title',          'LIKE', "%$search%");
             }
-        })->paginate(10)->withQueryString();
+        })->paginate(5)->withQueryString();
 
         return Inertia::render("{$this->source}Index", [
-            'titulo'          => 'Catálogo de Roles',
-            'records'        => $records,
+            'titulo'          => 'Campos de Laboratorio',
+            'fields'        => $records,
             'routeName'      => $this->routeName,
             'loadingResults' => false,
             'search'         => $request->search ?? '',
+            'status'         => (bool) $request->status,
         ]);
     }
 
@@ -56,76 +62,73 @@ class RolesController extends Controller
     public function create()
     {
         return Inertia::render("{$this->source}Create", [
-            'titulo' => 'Agregar Roles',
+            'titulo' => 'Agregar Campos',
             'routeName' => $this->routeName,
-            'permissions' => Permission::paginate(10),
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreRolesRequest  $request
+     * @param  \App\Http\Requests\StoreFieldsRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRolesRequest $request)
+    public function store(StoreFieldsRequest $request)
     {
         $this->model::create($request->validated());
-        return redirect()->route("{$this->routeName}index")->with('success', 'Rol guardado con éxito!');
+        return redirect()->route("{$this->routeName}index")->with('success', 'Campo guardado con éxito!');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Roles  $roles
+     * @param  \App\Models\Fields  $fields
      * @return \Illuminate\Http\Response
      */
-    public function show(Role $roles)
+    public function show(Fields $fields)
     {
-        abort(405);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Roles  $roles
+     * @param  \App\Models\Fields  $fields
      * @return \Illuminate\Http\Response
      */
-    public function edit(Role $role)
+    public function edit(Fields $field)
     {
         return Inertia::render("{$this->source}Edit", [
-            'titulo'          => 'Editar Rol',
+            'titulo'          => 'Editar Campos de Laboratorios',
             'routeName'      => $this->routeName,
-            'role' => $role,
-            'permissions' => Permission::paginate(10)
+            'field' => $field,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateRolesRequest  $request
-     * @param  \App\Models\Roles  $roles
+     * @param  \App\Http\Requests\UpdateFieldsRequest  $request
+     * @param  \App\Models\Fields  $fields
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRolesRequest $request, Role $role)
+    public function update(UpdateFieldsRequest $request, Fields $field)
     {
-        $role->update($request->validated());
-
-        
+        $field->update($request->validated());
         return redirect()->route("{$this->routeName}index")
-            ->with('success', 'Rol editado correctamente');
+            ->with('success', 'Campo editado correctamente');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Roles  $roles
+     * @param  \App\Models\Fields  $fields
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $role)
+    public function destroy(Fields $field)
     {
-        $role->delete();
-        return redirect()->route("{$this->routeName}index")->with('success', 'Rol eliminado con éxito');
+        $field->delete();
+        return redirect()->route("{$this->routeName}index")
+            ->with('success', 'Campo eliminado correctamente');
     }
 }

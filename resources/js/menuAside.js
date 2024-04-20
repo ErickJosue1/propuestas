@@ -78,10 +78,20 @@ export default [
     role: "Admin"
   },
   {
-    label: "Asignar Revisores",
-    href: "/proposals",
+    label: "Revisores",
     icon: mdiSquareEditOutline,
-    role: "Admin"
+    role: "Admin",
+    menu: [
+      {
+        label: "Documentacion",
+        permission: 'permissions.index',
+      },
+      {
+        label: "Asignar",
+        href:"/proposals",
+        role: "Admin",
+      },
+    ]
   },
   {
     label: "Eventos",
@@ -132,6 +142,7 @@ export default [
         to: "/documents",
         permission: 'document.index',
       },
+
       {
         label: "Criterios",
         href: "/assesstment",
@@ -144,6 +155,11 @@ export default [
         to: "/knowledges",
         permission: "thematics.index",
       },
+      {
+        label: "Formularios",
+        href: "/fields",
+        to: "/fields",
+      },
     ],
   },
 
@@ -155,13 +171,13 @@ export default [
   },
   {
     href: "/proposals",
-    label: "Tus propuestas",
+    label: "Laboratorios",
     icon: mdiBookshelf,
     role: "Postulante"
   },
   {
     href: "/proposals",
-    label: "Propuestas",
+    label: "Laboratorios",
     icon: mdiBookshelf,
     role: "Evaluador"
   },

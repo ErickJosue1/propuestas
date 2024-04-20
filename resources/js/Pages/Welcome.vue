@@ -47,22 +47,19 @@ export default {
   methods: {
     getDate(date_start, date_end) {
       const current = new Date();
-      console.log(date_start, date_end);
 
-      const isMajor = (m_date) => m_date >= 10;
-      const day = isMajor(current.getDate())
-        ? current.getDate()
-        : "0" + current.getDate();
-      const month = isMajor(current.getMonth() + 1)
-        ? current.getMonth() + 1
-        : "0" + current.getMonth();
+      const isMajor = m_date => m_date > 10;
+      const day = isMajor(current.getDate()) ? current.getDate() : '0' + current.getDate();
 
-      const date = `${current.getFullYear()}-${month}-${day}`;
-      console.log(date);
+      const date = `${current.getFullYear()}-0${current.getMonth() + 1}-${day}`;
+
+      console.log(date)
+
       if (date >= date_start && date <= date_end) {
-        return true;
-      } else {
-        return false;
+        return true
+      }
+      else {
+        return false
       }
     },
     getPdf(filename, announcement) {
@@ -114,302 +111,73 @@ export default {
         <div class="divide-y divide-gray-200 dark:divide-gray-700">
           <div class="space-y-2 pb-8 pt-6 md:space-y-5">
             <h1
-              class="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14"
-            >
-              Latest
+              class="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+              Convocatorias
             </h1>
             <p class="text-lg leading-7 text-gray-500 dark:text-gray-400">
-              A blog created with Next.js and Tailwind.css
+              Lo ultimo en la plataforma!
             </p>
           </div>
           <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-            <li class="py-12">
-              <article>
-                <div
-                  class="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0"
-                >
+            <li class="py-8" v-for="(item, index) in records" :key="index">
+              <article class="border-x-4	px-8">
+                <div class="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
                   <dl>
-                    <dt class="sr-only">Published on</dt>
-                    <dd
-                      class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400"
-                    >
-                      <time datetime="2023-08-05T00:00:00.000Z">August 5, 2023</time>
+                    <dt class="sr-only">Publicado en</dt>
+                    <dd class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
+                      <time datetime="2023-08-05T00:00:00.000Z">{{ item.calendars[0].date_start }}</time>
                     </dd>
                   </dl>
-                  <div class="space-y-5 xl:col-span-3">
-                    <div class="space-y-6">
-                      <div>
+                  <div class="space-y-4 xl:col-span-3 ">
+                    <div class="space-y-8">
+                      <div class="space-y-2">
                         <h2 class="text-2xl font-bold leading-8 tracking-tight">
-                          <a
-                            class="text-gray-900 dark:text-gray-100"
-                            href="/blog/release-of-tailwind-nextjs-starter-blog-v2.0"
-                            >Release of Tailwind Nextjs Starter Blog v2.0</a
-                          >
+                          <a class="text-gray-900 dark:text-gray-100"
+                            href="/blog/release-of-tailwind-nextjs-starter-blog-v2.0">{{ item.name }}</a>
                         </h2>
                         <div class="flex flex-wrap">
-                          <a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/next-js"
-                            >next-js</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/tailwind"
-                            >tailwind</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/guide"
-                            >guide</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/feature"
-                            >feature</a
-                          >
+                          <a v-if="
+                            getDate(item.calendars[1].date_start, item.calendars[1].date_end)
+                          ">
+                            <PillTag color="success" label="Inscripcion de laboratorios" :small="false" :outline="false"
+                              :icon="pillsIcon" />
+                          </a>
+                          <a v-else-if="
+                            getDate(item.calendars[2].date_start, item.calendars[2].date_end)
+                          ">
+                            <PillTag color="warning" label="Laboratorios en evaluacion" :small="false" :outline="false"
+                              :icon="pillsIcon" />
+                          </a>
+                          <a v-else>
+                            <PillTag color="danger" label="Convocatoria Cerrada" :small="false" :outline="false"
+                              :icon="pillsIcon" />
+                          </a>
                         </div>
                       </div>
                       <div class="prose max-w-none text-gray-500 dark:text-gray-400">
-                        Release of Tailwind Nextjs Starter Blog template v2.0, refactored
-                        with Nextjs App directory and React Server Components
-                        setup.Discover the new features and how to migrate from V1.
+                        {{ item.description }}
                       </div>
                     </div>
                     <div class="text-base font-medium leading-6">
-                      <a
-                        class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                        aria-label='Read more: "Release of Tailwind Nextjs Starter Blog v2.0"'
-                        href="/blog/release-of-tailwind-nextjs-starter-blog-v2.0"
-                        >Read more →</a
-                      >
+                      <div class="flex flex-row space-x-2">
+                        <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)"
+                          :href="route('proposals.show', item.id)">
+                          <PillTag color="success" label="Inscribirse" :small="false" :outline="false"
+                            :icon="pillsIcon" />
+                        </a>
+                        <div @click="getPdf('advertising', item.name)">
+                          <PillTag color="info" label="Descargar" :small="false" :outline="false" :icon="pillsIcon" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </article>
             </li>
-            <li class="py-12">
-              <article>
-                <div
-                  class="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0"
-                >
-                  <dl>
-                    <dt class="sr-only">Published on</dt>
-                    <dd
-                      class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400"
-                    >
-                      <time datetime="2021-08-07T15:32:14.000Z">August 7, 2021</time>
-                    </dd>
-                  </dl>
-                  <div class="space-y-5 xl:col-span-3">
-                    <div class="space-y-6">
-                      <div>
-                        <h2 class="text-2xl font-bold leading-8 tracking-tight">
-                          <a
-                            class="text-gray-900 dark:text-gray-100"
-                            href="/blog/new-features-in-v1"
-                            >New features in v1</a
-                          >
-                        </h2>
-                        <div class="flex flex-wrap">
-                          <a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/next-js"
-                            >next-js</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/tailwind"
-                            >tailwind</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/guide"
-                            >guide</a
-                          >
-                        </div>
-                      </div>
-                      <div class="prose max-w-none text-gray-500 dark:text-gray-400">
-                        An overview of the new features released in v1 - code block copy,
-                        multiple authors, frontmatter layout and more
-                      </div>
-                    </div>
-                    <div class="text-base font-medium leading-6">
-                      <a
-                        class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                        aria-label='Read more: "New features in v1"'
-                        href="/blog/new-features-in-v1"
-                        >Read more →</a
-                      >
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </li>
-            <li class="py-12">
-              <article>
-                <div
-                  class="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0"
-                >
-                  <dl>
-                    <dt class="sr-only">Published on</dt>
-                    <dd
-                      class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400"
-                    >
-                      <time datetime="2021-05-02T00:00:00.000Z">May 2, 2021</time>
-                    </dd>
-                  </dl>
-                  <div class="space-y-5 xl:col-span-3">
-                    <div class="space-y-6">
-                      <div>
-                        <h2 class="text-2xl font-bold leading-8 tracking-tight">
-                          <a
-                            class="text-gray-900 dark:text-gray-100"
-                            href="/blog/nested-route/introducing-multi-part-posts-with-nested-routing"
-                            >Introducing Multi-part Posts with Nested Routing</a
-                          >
-                        </h2>
-                        <div class="flex flex-wrap">
-                          <a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/multi-author"
-                            >multi-author</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/next-js"
-                            >next-js</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/feature"
-                            >feature</a
-                          >
-                        </div>
-                      </div>
-                      <div class="prose max-w-none text-gray-500 dark:text-gray-400">
-                        The blog template supports posts in nested sub-folders. This can
-                        be used to group posts of similar content e.g. a multi-part
-                        course. This post is itself an example of a nested route!
-                      </div>
-                    </div>
-                    <div class="text-base font-medium leading-6">
-                      <a
-                        class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                        aria-label='Read more: "Introducing Multi-part Posts with Nested Routing"'
-                        href="/blog/nested-route/introducing-multi-part-posts-with-nested-routing"
-                        >Read more →</a
-                      >
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </li>
-            <li class="py-12">
-              <article>
-                <div
-                  class="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0"
-                >
-                  <dl>
-                    <dt class="sr-only">Published on</dt>
-                    <dd
-                      class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400"
-                    >
-                      <time datetime="2021-01-12T00:00:00.000Z">January 12, 2021</time>
-                    </dd>
-                  </dl>
-                  <div class="space-y-5 xl:col-span-3">
-                    <div class="space-y-6">
-                      <div>
-                        <h2 class="text-2xl font-bold leading-8 tracking-tight">
-                          <a
-                            class="text-gray-900 dark:text-gray-100"
-                            href="/blog/introducing-tailwind-nextjs-starter-blog"
-                            >Introducing Tailwind Nextjs Starter Blog</a
-                          >
-                        </h2>
-                        <div class="flex flex-wrap">
-                          <a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/next-js"
-                            >next-js</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/tailwind"
-                            >tailwind</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/guide"
-                            >guide</a
-                          >
-                        </div>
-                      </div>
-                      <div class="prose max-w-none text-gray-500 dark:text-gray-400">
-                        Looking for a performant, out of the box template, with all the
-                        best in web technology to support your blogging needs? Checkout
-                        the Tailwind Nextjs Starter Blog template.
-                      </div>
-                    </div>
-                    <div class="text-base font-medium leading-6">
-                      <a
-                        class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                        aria-label='Read more: "Introducing Tailwind Nextjs Starter Blog"'
-                        href="/blog/introducing-tailwind-nextjs-starter-blog"
-                        >Read more →</a
-                      >
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </li>
-            <li class="py-12">
-              <article>
-                <div
-                  class="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0"
-                >
-                  <dl>
-                    <dt class="sr-only">Published on</dt>
-                    <dd
-                      class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400"
-                    >
-                      <time datetime="2020-12-21T00:00:00.000Z">December 21, 2020</time>
-                    </dd>
-                  </dl>
-                  <div class="space-y-5 xl:col-span-3">
-                    <div class="space-y-6">
-                      <div>
-                        <h2 class="text-2xl font-bold leading-8 tracking-tight">
-                          <a
-                            class="text-gray-900 dark:text-gray-100"
-                            href="/blog/deriving-ols-estimator"
-                            >Deriving the OLS Estimator</a
-                          >
-                        </h2>
-                        <div class="flex flex-wrap">
-                          <a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/next-js"
-                            >next-js</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/math"
-                            >math</a
-                          ><a
-                            class="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                            href="/tags/ols"
-                            >ols</a
-                          >
-                        </div>
-                      </div>
-                      <div class="prose max-w-none text-gray-500 dark:text-gray-400">
-                        How to derive the OLS Estimator with matrix notation and a tour of
-                        math typesetting using markdown with the help of KaTeX.
-                      </div>
-                    </div>
-                    <div class="text-base font-medium leading-6">
-                      <a
-                        class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                        aria-label='Read more: "Deriving the OLS Estimator"'
-                        href="/blog/deriving-ols-estimator"
-                        >Read more →</a
-                      >
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </li>
+
+
+
+
           </ul>
         </div>
         <!--    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">

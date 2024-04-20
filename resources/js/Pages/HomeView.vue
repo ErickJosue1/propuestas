@@ -80,18 +80,18 @@ const props = defineProps({
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
         <CardBoxWidget trend="12%" color="text-emerald-500" :icon="mdiAccountMultiple"
           :number="Object.keys(users).length" label="Usuarios" />
-        <CardBoxWidget trend="12%" color="text-blue-500" :icon="mdiEye" :number="7770"
+        <CardBoxWidget trend="12%" color="text-blue-500" :icon="mdiEye" :number="1"
           label="Visitas" />
         <CardBoxWidget trend="General" trend-type="alert" color="text-yellow-500" :icon="mdiFlash"
-          :number="Object.keys(proposals).length" label="Proyectos" />
+          :number="Object.keys(proposals).length" label="Laboratorios" />
         <CardBoxWidget trend="12%" color="text-emerald-500" :icon="mdiAccountMultiple"
           :number="Object.keys(announcements).length" label="Convocatorias" />
         <CardBoxWidget trend="12%"  trend-type="up"  color="text-emerald-500" :icon="mdiHandOkay" :number="accepted"
-          label="Proyectos Aceptados" />
+          label="Laboratorios Aceptados" />
         <CardBoxWidget trend="Overflow" trend-type="down" color="text-red-500" :icon="mdiDeleteAlert"
-          :number="denied" label="Proyectos Rechazados" />
+          :number="denied" label="Laboratorios Rechazados" />
         <CardBoxWidget trend="Overflow" trend-type="alert" color="text-yellow-500" :icon="mdiClockTimeOne"
-          :number="inProcess" label="Proyectos en Revisión" />
+          :number="inProcess" label="Laboratorios en Revisión" />
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">

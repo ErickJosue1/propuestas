@@ -96,7 +96,7 @@ export default {
 /*                     console.log(key, value)
  */                })
 
-               axios.post(route('proposals.store'), formData, config).then((response) => {
+                axios.post(route('proposals.store'), formData, config).then((response) => {
                     window.location = route('proposals.index')/* .with('success', 'Su propuesta ha sido guardada con éxito!') */
                 })
                     .catch(function (error) {
@@ -189,7 +189,8 @@ export default {
                         <FormField :label="item.name">
                             <!--                             <FormFilePicker :name="item.name" @change="onchange" label="Subir" />
                                  --> <label for="file-input" class="sr-only">Choose file</label>
-                            <input type="file" :name="item.name" id="file-input" @change="onchange" accept="application/pdf"
+                            <input type="file" :name="item.name" id="file-input" @change="onchange"
+                                accept="application/pdf"
                                 class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0
                                                                           file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
                         </FormField>
@@ -204,101 +205,25 @@ export default {
                 </Tab>
 
                 <Tab title="Gestion de propuestas">
+                    <div class="p-4" v-for="(item, index) in convocatoria.fields" :key="index">
+                        <FormField :label="item.title" help="Max 255 caracteres">
+                            <FormControl v-model="form.title"
+                                :placeholder="item.description" />
+                        </FormField>
 
-                    <FormField label="Titulo de la propuestas" help="Max 255 caracteres">
-                        <FormControl v-model="form.title" type="tel"
-                            placeholder="Asigne el nombre de identificacion para el proyecto" />
-                    </FormField>
+                    </div>
 
-                    <FormField label="Area del conocimiento" help="Seleccione un area del conocimiento">
+
+                 <!--    <FormField label="Area del conocimiento" help="Seleccione un area del conocimiento">
                         <FormControl v-model="form.area_knowledge_id" :options="areas" />
-                    </FormField>
-
-                    <FormField label="Linea de investigacion" help="Seleccione una linea de investigacion">
-                        <FormControl v-model="form.line_research" :options="linea" />
                     </FormField>
 
                     <FormField label="Resumen"
                         help="Descripcion general de la convocatoria. Min 1000 caracteres. Max 4000 caracteres">
                         <FormControl v-model="form.abstract" type="textarea"
                             placeholder="Explica brevemente la Propuesta" />
-                    </FormField>
+                    </FormField> -->
 
-                    <FormField label="Planteamiento del problema"
-                        help="Describle la problematica que se abordara. Min 500 caracteres. Max 3000 caracteres">
-                        <FormControl v-model="form.problem_statement" type="textarea"
-                            placeholder="Explica una o mas problematicas" />
-                    </FormField>
-
-                    <FormField label="Justificacion"
-                        help="Justifica la realizacion del proyecto. Min 500 caracteres. Max 3000 caracteres">
-                        <FormControl v-model="form.justification" type="textarea"
-                            placeholder="Describe las dimensiones, necesidades y oportunidades de la Propuesta" />
-                    </FormField>
-
-                    <FormField label="Antecedentes de la propuestas"
-                        help="Si la propuesta es la continuacion de una investigacion previamente apoyada, favor de mencionarlo. Min 500 caracteres. Max 3000 caracteres">
-                        <FormControl v-model="form.background" type="textarea"
-                            placeholder="Describe los estudios previos, vacios del conocimiento, resultados contradictorios en otras investigaciones" />
-                    </FormField>
-                    <FormField label="Experiencia de los responsables" help="Min 500 caracteres. Max 4000 caracteres">
-                        <FormControl v-model="form.technical_manager_experience" type="textarea"
-                            placeholder="Describe la experienca similar en proyectos previos del responsable tecnico y el personal clabe de la Propuesta" />
-                    </FormField>
-
-
-                    <FormField label="Capacidades de los responsables" help="Min 500 caracteres. Max 4000 caracteres">
-                        <FormControl v-model="form.capcities" type="textarea"
-                            placeholder="Describe las capacidades con las que cuenta para desarrollar el proyecto de investigacion" />
-                    </FormField>
-
-                    <FormField label="Objetivo general" help="Min 100 caracteres. Max 1000 caracteres">
-                        <FormControl v-model="form.general_objective" type="textarea"
-                            placeholder="Describe claro y preciso, la finalidad de la investigación, qué se " />
-                    </FormField>
-
-                    <FormField label="Objetivos específicos" help="Min 100 caracteres. Max 2000 caracteres">
-                        <FormControl v-model="form.specific_objective" type="textarea"
-                            placeholder="Describe las metas, medibles y alcanzables durante el desarrollo del proyecto, deben ser presentadas de manera clara, concreta y concisa." />
-                    </FormField>
-
-                    <FormField label="Revisión de la literatura" help="Min 1000 caracteres. Max 4000 caracteres">
-                        <FormControl type="textarea"
-                            placeholder="Describe los resultados obtenidos de otros estudios similares previos" />
-                    </FormField>
-
-                    <FormField label="Grado de novedad científica" help="Min 500 caracteres. Max 4000 caracteres">
-                        <FormControl v-model="form.differentiators" type="textarea"
-                            placeholder="Enumera los puntos modulares que evidencien el grado de novedad científica, contenido innovador, originalidad y relevancia científica" />
-                    </FormField>
-
-                    <FormField label="Beneficios de la propuesta" help="Min 500 caracteres. Max 3000 caracteres">
-                        <FormControl v-model="form.benefits" type="textarea"
-                            placeholder="Describe al menos uno de los elementos que se beneficiarán con la implementación del proyecto de innovación" />
-                    </FormField>
-
-                    <FormField label="Principales resultados esperados" help="Min 500 caracteres. Max 3000 caracteres">
-                        <FormControl v-model="form.expected_results" type="textarea"
-                            placeholder="Describe el conocimiento de frontero esperado, Indicar los resultados novedosos" />
-                    </FormField>
-
-                    <FormField label="Entregables comprometidos" help="Min 100 caracteres. Max 2000 caracteres">
-                        <FormControl type="textarea" v-model="form.expected_results_review"
-                            placeholder="Especifica cuales son los entregables comprometidos como resultado del proyecto de investigación" />
-                    </FormField>
-
-                    <FormField label="Producto que se compromete a entregar">
-                        <FormControl :options="linea" />
-                    </FormField>
-
-                    <FormField label="Propiedad intelectual" help="Min 500 caracteres. Max 4000 caracteres">
-                        <FormControl v-model="form.ownership_proposal" type="textarea"
-                            placeholder="Descripción de los porcentajes de Uularidad de lo propiedad intelectual y de la propuesto de explotación de los derechos en caso de existir" />
-                    </FormField>
-
-                    <FormField label="Referencias" help="Min 500 caracteres. Max 4000 caracteres">
-                        <FormControl v-model="form.products_generated" type="textarea" placeholder="Referencias..." />
-                    </FormField>
 
                     <base-divider></base-divider>
 

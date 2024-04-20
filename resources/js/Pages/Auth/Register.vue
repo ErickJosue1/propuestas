@@ -52,6 +52,7 @@ export default {
       curp: '',
       colony_id: '',
       workplace_id: '',
+      role: ''
     });
 
     const isLoading = ref(false);
@@ -239,16 +240,15 @@ export default {
               autocomplete="current-password" required />
           </FormField>
 
-       <!--    <FormField label="Codigo postal" label-for="cp" help="Porfavor introduce el codigo postal de tu residencia">
-            <FormControl @change="getColony" v-model="cp.postal_code.cp" id="cp" :icon="mdiAccount" type="text"
-              required />
+          <FormField label="Rol" label-for="role" help="Porfavor seleccione un rol">
+            <FormControl v-model="form.role" id="role" :options="roles" required />
           </FormField>
- -->
+          
           <FormField label="Codigo postal" help="Porfavor introduce el codigo postal de tu residencia">
             <div class="relative">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
-                  viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
@@ -261,7 +261,8 @@ export default {
             </div>
           </FormField>
 
-          <FormField label="Estado" label-for="state" help="Este campo se autocompletara al introducir el codigo postal">
+          <FormField label="Estado" label-for="state"
+            help="Este campo se autocompletara al introducir el codigo postal">
             <FormControl v-model="cp.postal_code.state" id="state" :icon="mdiEmail" type="text" transparent disabled />
           </FormField>
 
@@ -271,7 +272,8 @@ export default {
               disabled />
           </FormField>
 
-          <FormField label="Colonia" label-for="colony" help="Las opciones se habilitaran al introducir el codigo postal">
+          <FormField label="Colonia" label-for="colony"
+            help="Las opciones se habilitaran al introducir el codigo postal">
             <FormControl v-model="form.colony_id" id="colony" :options="cp.postal_code.colony" :disabled="show"
               :transparent="show" required />
           </FormField>
