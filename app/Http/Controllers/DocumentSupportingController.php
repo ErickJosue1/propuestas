@@ -73,7 +73,7 @@ class DocumentSupportingController extends Controller
     public function store(StoreDocument_SupportingRequest $request)
     {
         $this->model::create($request->validated());
-        return redirect()->route("{$this->routeName}index")->with('success', 'Permiso guardado con éxito!');
+        return redirect()->route("{$this->routeName}index")->with('success', 'Documento guardado con éxito!');
     }
 
     /**

@@ -13,13 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('proposals', function (Blueprint $table) {
+        Schema::create('revisor_statuses', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->foreignId('state_id')->nullable();
-            $table->foreignId('announcement_id')->nullable();
-            $table->foreignId('area_knowledge_id')->nullable();
-            $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('proposals');
+        Schema::dropIfExists('revisor_statuses');
     }
 };

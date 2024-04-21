@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRevisorDocumentsRequest extends FormRequest
+class Storeproposal_fieldRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class UpdateRevisorDocumentsRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,7 +24,7 @@ class UpdateRevisorDocumentsRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'        => "required|string|max:50",
+            //
         ];
     }
 }

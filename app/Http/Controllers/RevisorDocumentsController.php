@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\RevisorDocuments;
 use App\Http\Requests\StoreRevisorDocumentsRequest;
 use App\Http\Requests\UpdateRevisorDocumentsRequest;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RevisorDocumentsController extends Controller
 {
@@ -12,16 +15,17 @@ class RevisorDocumentsController extends Controller
     private string $routeName;
     private RevisorDocuments $model;
     private string $module = 'revisorDocs';
+    protected string $source;
 
     public function __construct()
     {
-        
+
         $this->model = new RevisorDocuments();
         $this->routeName = 'revisorDocs.';
-
+        $this->source    = "RevisorDocs/";
         $this->middleware("role:Admin");
 
-     /*  $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
+        /*  $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
          $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
          $this->middleware("permission:{$this->module}.update")->only(['update', 'edit']);
          $this->middleware("permission:{$this->module}.delete")->only(['destroy', 'edit']);  */
@@ -32,9 +36,23 @@ class RevisorDocumentsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request): Response
     {
-        //
+        $records = $this->model;
+        $records = $records->when($request->search, function ($query, $search) {
+            if ($search != '') {
+                $query->where('name',          'LIKE', "%$search%");
+            }
+        })->paginate(5)->withQueryString();
+
+        return Inertia::render("{$this->source}Index", [
+            'titulo'          => 'Documentacion para Evaluadores',
+            'revisorDocs'        => $records,
+            'routeName'      => $this->routeName,
+            'loadingResults' => false,
+            'search'         => $request->search ?? '',
+            'status'         => (bool) $request->status,
+        ]);
     }
 
     /**
@@ -44,7 +62,10 @@ class RevisorDocumentsController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render("{$this->source}Create", [
+            'titulo' => 'Agregar Documento',
+            'routeName' => $this->routeName,
+        ]);
     }
 
     /**
@@ -55,7 +76,8 @@ class RevisorDocumentsController extends Controller
      */
     public function store(StoreRevisorDocumentsRequest $request)
     {
-        //
+        $this->model::create($request->validated());
+        return redirect()->route("{$this->routeName}index")->with('success', 'Documento guardado con éxito!');
     }
 
     /**
@@ -75,9 +97,13 @@ class RevisorDocumentsController extends Controller
      * @param  \App\Models\RevisorDocuments  $revisorDocuments
      * @return \Illuminate\Http\Response
      */
-    public function edit(RevisorDocuments $revisorDocuments)
+    public function edit(RevisorDocuments $revisorDoc)
     {
-        //
+        return Inertia::render("{$this->source}Edit", [
+            'titulo'          => 'Editar Soporte a documentos para revisores',
+            'routeName'      => $this->routeName,
+            'revisorDoc' => $revisorDoc,
+        ]);
     }
 
     /**
@@ -87,9 +113,11 @@ class RevisorDocumentsController extends Controller
      * @param  \App\Models\RevisorDocuments  $revisorDocuments
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRevisorDocumentsRequest $request, RevisorDocuments $revisorDocuments)
+    public function update(UpdateRevisorDocumentsRequest $request, RevisorDocuments $revisorDoc)
     {
-        //
+        $revisorDoc->update($request->validated());
+        return redirect()->route("{$this->routeName}index")
+            ->with('success', 'Documento editado correctamente');
     }
 
     /**
@@ -98,8 +126,10 @@ class RevisorDocumentsController extends Controller
      * @param  \App\Models\RevisorDocuments  $revisorDocuments
      * @return \Illuminate\Http\Response
      */
-    public function destroy(RevisorDocuments $revisorDocuments)
+    public function destroy(RevisorDocuments $revisorDoc)
     {
-        //
+        $revisorDoc->delete();
+        return redirect()->route("{$this->routeName}index")
+            ->with('success', 'Documento eliminado correctamente');
     }
 }

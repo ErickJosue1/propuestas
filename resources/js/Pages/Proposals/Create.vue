@@ -66,6 +66,9 @@ export default {
                 console.log(this.file)
             }
 
+        },
+        onFieldChange(e, item, index) {
+            this.form.fields[index] = { id: item.id, info: e }
         }
     },
     setup(props) {
@@ -92,23 +95,32 @@ export default {
                 }
 
                 Object.entries(form.data()).forEach(([key, value]) => {
-                    formData.append(key, value)
-/*                     console.log(key, value)
- */                })
+                    if (key == 'fields') {
+                        value.forEach((value) => {
+                            formData.append('fields[' + value.id + ']', value.info)
+                            console.log(value.id)
+                        });
+                    }
+                    else {
+                        formData.append(key, value)
+                    }
+                })
 
                 axios.post(route('proposals.store'), formData, config).then((response) => {
-                    window.location = route('proposals.index')/* .with('success', 'Su propuesta ha sido guardada con éxito!') */
+                    window.location = route('proposals.index')
                 })
                     .catch(function (error) {
                         if (error.response) {
+
+                            console.log(error.response.data);
+                            console.log(error.response.status);
+                            console.log(error.response.headers);
 
                             Object.entries(error.response.data.errors).forEach(([key, value]) => {
                                 errors.value.push(value[0])
                             })
 
-                            console.log(error.response.data);
-                            console.log(error.response.status);
-                            console.log(error.response.headers);
+
                         } else if (error.request) {
                             // The request was made but no response was received
                             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -131,25 +143,11 @@ export default {
 
         const form = useForm({
             title: '',
-            line_research: '',
-            abstract: '',
-            problem_statement: '',
-            justification: '',
-            background: '',
-            technical_manager_experience: '',
-            capcities: '',
-            general_objective: '',
-            specific_objective: '',
-            expected_results: '',
-            expected_results_review: '',
-            differentiators: '',
-            benefits: '',
-            products_generated: '',
-            ownership_proposal: '',
             announcement_id: props.convocatoria.id,
             area_knowledge_id: '',
             user_id: usePage().props.auth.user.id,
-            state_id: props.state.id
+            state_id: props.state.id,
+            fields: []
         })
 
         const linea = ['Linea 1', 'Linea 2', 'Linea 3']
@@ -205,19 +203,30 @@ export default {
                 </Tab>
 
                 <Tab title="Gestion de propuestas">
+
+
+                    <FormField label="Titulo" class="p-4"
+                        help="Titulo del Laboratorio. Min 15 caracteres. Max 255 caracteres">
+                        <FormControl v-model="form.title" placeholder="Asigne un titulo para el Laboratorio" />
+                    </FormField>
+                    <FormField class="px-4" label="Area del conocimiento" help="Seleccione un area del conocimiento">
+                        <FormControl v-model="form.area_knowledge_id" :options="areas" />
+                    </FormField>
+
+                    <hr>
+
                     <div class="p-4" v-for="(item, index) in convocatoria.fields" :key="index">
                         <FormField :label="item.title" help="Max 255 caracteres">
-                            <FormControl v-model="form.title"
+                            <FormControl @update:modelValue="onFieldChange($event, item, index)"
                                 :placeholder="item.description" />
                         </FormField>
 
                     </div>
 
 
-                 <!--    <FormField label="Area del conocimiento" help="Seleccione un area del conocimiento">
-                        <FormControl v-model="form.area_knowledge_id" :options="areas" />
-                    </FormField>
 
+
+                    <!--    
                     <FormField label="Resumen"
                         help="Descripcion general de la convocatoria. Min 1000 caracteres. Max 4000 caracteres">
                         <FormControl v-model="form.abstract" type="textarea"

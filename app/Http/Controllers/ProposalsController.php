@@ -6,6 +6,7 @@ use App\Models\Proposals;
 use App\Http\Requests\StoreProposalsRequest;
 use App\Http\Requests\UpdateProposalsRequest;
 use App\Models\announcement_assestment_criteria;
+use App\Models\announcement_field;
 use App\Models\Announcements;
 use App\Models\announcements_document_supporting;
 use App\Models\Areas_knowledge;
@@ -13,6 +14,7 @@ use App\Models\Assestment_Criteria;
 use App\Models\Criterias;
 use App\Models\Document_Supporting;
 use App\Models\Proceedings;
+use App\Models\proposal_field;
 use App\Models\proposals_user;
 use App\Models\ProposalStates;
 use App\Models\recognitions;
@@ -59,9 +61,10 @@ class ProposalsController extends Controller
 
         if ($user->hasRole('Admin')) {
 
+
             return Inertia::render("Proposals/Index", [
                 'titulo'      => 'Laboratorios',
-                'records'    => $records->with('users')->paginate(4)->withQueryString(),
+                'records'    =>  $records->with('users')->paginate(4)->withQueryString(),
                 'routeName'      => $this->routeName,
                 'state'      => ProposalStates::all(),
                 'loadingResults' => false,
@@ -109,7 +112,14 @@ class ProposalsController extends Controller
     public function store(StoreProposalsRequest $request)
     {
 
+        $fields = announcement_field::where('announcements_id', $request->announcement_id)->get();
+
         $proposal = $this->model::create($request->validated());
+
+        foreach ($fields as $value) {
+            $proposal->fields()->attach($value->id, ['info' => $request->fields[$value->id]]);
+        }
+
 
         foreach ($request->myFiles as $files) {
             $files->storeAs(Auth::user()->name . 'Expediente'  . $proposal->id, $files->getClientOriginalName(), 'public');
@@ -176,9 +186,14 @@ class ProposalsController extends Controller
         $records = Announcements::find($proposal->announcement_id);
         $records->load(['assesstment_criterias', 'documents_supporting']);
 
+        $fields = proposal_field::where('proposals_id',$proposal->id)->get();
+        $fields->load('fields');
+
         return Inertia::render("Proposals/Review", [
             'titulo'      => 'Revision de propuesta ' . '"' . $proposal->title . '"',
             'proposal'    => $proposal,
+            'fields' => $fields,
+            'area' => Areas_knowledge::find($proposal->area_knowledge_id),
             'convocatoria' => $records,
             'routeName'     => $this->routeName,
         ]);
@@ -307,6 +322,11 @@ class ProposalsController extends Controller
         if (!empty($request->myFiles)) {
             foreach ($request->myFiles as $files) {
                 $files->storeAs(Auth::user()->name . 'Expediente' . $proposal->id, $files->getClientOriginalName(), 'public');
+            }
+        }
+
+        if (!empty($request->fields)) {
+            foreach ($request->fields as $fields) {
             }
         }
 

@@ -239,7 +239,7 @@ export default {
 
 
                 axios.post(route('announcements.store'), formData, config).then((response) => {
-                    console.log(response)  //window.location = route('announcements.index')/* .with('success', 'Su Convocatoria ha sido guardada con éxito!') */
+                    window.location = route('announcements.index')/* .with('success', 'Su Convocatoria ha sido guardada con éxito!') */
                 })
                     .catch(function (error) {
                         if (error.response) {

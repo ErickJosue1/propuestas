@@ -11,21 +11,6 @@ class Proposals extends Model
 
     protected $fillable = [
         'title',
-        'line_research',
-        'abstract',
-        'problem_statement',
-        'justification',
-        'background',
-        'technical_manager_experience',
-        'capcities',
-        'general_objective',
-        'specific_objective',
-        'expected_results',
-        'expected_results_review',
-        'differentiators',
-        'benefits',
-        'products_generated',
-        'ownership_proposal',
         'announcement_id',
         'area_knowledge_id',
         'user_id',
@@ -61,5 +46,11 @@ class Proposals extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    public function fields()
+    {
+        $table = 'proposal_fields';
+        return $this->belongsToMany(Fields::class, $table, 'proposals_id', 'fields_id');
     }
 }

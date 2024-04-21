@@ -16,4 +16,10 @@ class Fields extends Model
         $table = 'announcement_fields';
         return $this->belongsToMany(Announcements::class, $table, 'fields_id', 'announcements_id');
     }
+
+    public function proposals()
+    {
+        $table = 'proposal_fields';
+        return $this->belongsToMany(Proposals::class, $table, 'fields_id', 'proposals_id');
+    }
 }

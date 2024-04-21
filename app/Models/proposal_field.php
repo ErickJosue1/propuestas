@@ -5,21 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class announcement_field extends Model
+class proposal_field extends Model
 {
     use HasFactory;
 
-    protected $table = 'announcement_fields';
+    protected $table = 'proposal_fields';
 
-    protected $fillable = ['announcements_id', 'fields_id'];
+    protected $fillable = ['proposals_id', 'fields_id', 'info'];
 
     public function fields()
     {
         return $this->belongsTo(Fields::class, 'fields_id');
     }
 
-    public function announcements()
+    public function proposals()
     {
-        return $this->belongsTo(Announcements::class, 'announcements_id');
+        return $this->belongsTo(Proposals::class, 'proposals_id');
     }
 }

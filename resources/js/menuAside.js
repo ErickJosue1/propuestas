@@ -84,11 +84,12 @@ export default [
     menu: [
       {
         label: "Documentacion",
-        permission: 'permissions.index',
+        href: "revisorDocs",
+        role: "Admin",
       },
       {
         label: "Asignar",
-        href:"/proposals",
+        href: "/proposals",
         role: "Admin",
       },
     ]
