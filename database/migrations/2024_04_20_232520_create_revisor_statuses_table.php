@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('state_id')->nullable();
+            $table->string("observations");
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('state_id')->references('id')->on('proposal_states');

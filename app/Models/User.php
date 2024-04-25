@@ -104,4 +104,10 @@ class User extends Authenticatable implements MustVerifyEmail
         $table = 'revisor_statuses';
         return $this->belongsToMany(ProposalStates::class, $table, 'user_id', 'state_id');
     }
+
+    public function statusId()
+    {
+        $table = 'revisor_statuses';
+        return $this->belongsToMany(ProposalStates::class, $table, 'user_id', 'state_id')->withPivot('state_id');
+    }
 }

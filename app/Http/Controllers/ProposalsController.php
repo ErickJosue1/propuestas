@@ -197,9 +197,9 @@ class ProposalsController extends Controller
     public function assignment(Proposals $proposal)
     {
         $records = User::whereHas(
-            'roles',
+            'status',
             function ($q) {
-                $q->where('name', 'Evaluador');
+                $q->where('state_id', 1);
             }
         )->get();
 

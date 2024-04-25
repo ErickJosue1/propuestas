@@ -18,6 +18,10 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'modulo.catalogos', 'guard_name' => 'web', 'description' => 'Catálogos del Sistema', 'module_key' => 'modulo']);
         Permission::create(['name' => 'modulo.seguridad', 'guard_name' => 'web', 'description' => 'Administración de Seguridad', 'module_key' => 'modulo']);
 
+        //For evaluator state
+        Permission::create(['name' => 'evaluator.approved', 'guard_name' => 'web', 'description' => 'Aprobacion de evaluador', 'module_key' => 'approved']);
+        Permission::create(['name' => 'evaluator.rejected', 'guard_name' => 'web', 'description' => 'Rechazo de evaluador', 'module_key' => 'rejected']);
+
         Permission::create(['name' => 'institutions.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'institutions.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'institutions.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
@@ -27,7 +31,6 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'permissions.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'permissions.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'permissions.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
-
 
         Permission::create(['name' => 'revisorDocs.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'revisorDocs.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);

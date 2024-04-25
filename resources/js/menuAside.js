@@ -187,7 +187,14 @@ export default [
     href: "/proposals",
     label: "Laboratorios",
     icon: mdiBookshelf,
-    role: "Evaluador"
+    role: "Evaluador",
+    permission: "evaluator.approved",
+  },
+  {
+    href: "/revisorDocs",
+    label: "Revision",
+    icon: mdiFileDocument,
+    role: "Revisor"
   },
 
   /* {

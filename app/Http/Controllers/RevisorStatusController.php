@@ -38,10 +38,10 @@ class RevisorStatusController extends Controller
      * @param  \App\Http\Requests\StoreRevisorStatusRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, User $user)
+    public function store(Request $request, User $userId)
     {
-        $user = User::find(Auth::user()->id);
-        $route = $user->hasRole("Evaluador") ? "revisorDocs.documents" : "proposal.index";
+        $user = $userId;
+        $route = $user->hasRole("Evaluador") ? "revisorDocs.documents" : "revisorDocs.index";
 
         if ($user->hasRole("Evaluador")) {
             $documentsTotal = RevisorDocuments::whereHas('users', function ($query) use ($user) {
@@ -59,13 +59,23 @@ class RevisorStatusController extends Controller
         }
 
         if (RevisorStatus::where("user_id", $user->id)->exists()) {
-            RevisorStatus::where("user_id", $user->id)->update(['state_id' => $request->status]);
+            RevisorStatus::where("user_id", $user->id)->update(['state_id' => $request->status, 'observations' => $request->observations]);
         } else {
-            $user->status()->attach($request->status);
+            if ($request->observations) {
+                $user->status()->attach($request->status, ['observations' => $request->observations]);
+            } else {
+                $user->status()->attach($request->status, ['observations' => '']);
+            }
+        }
+
+        if ($request->status == 1) {
+            $user->givePermissionTo('evaluator.approved');
+        } else if ($request->status == 4) {
+            $user->givePermissionTo('evaluator.rejected');
         }
 
 
-        return redirect()->route($route)->with('success', $request->status .  'Documentos con éxito!');
+        return redirect()->route($route)->with('success', 'Documentos enviados con exito con éxito!');
     }
 
     /**

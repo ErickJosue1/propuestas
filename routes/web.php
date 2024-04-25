@@ -99,11 +99,14 @@ Route::middleware('auth')->group(function () {
     //Sync reviewrs
     Route::post('/proposals/sync', [ProposalsController::class, 'syncReviewrs'])->name('proposals.sync');
 
-    //Asign Documents
+    //Assign Documents
     Route::post('/revisorDocs/assign', [RevisorDocumentsController::class, 'assign'])->name('revisorDocs.assign');
 
-    //Asign Documents
+    //Assign Documents
     Route::get('/revisorDocs/updateStatus', [RevisorDocumentsController::class, 'updateStatus'])->name('revisorDocs.updateStatus');
+
+    //Review Evaluador documents
+    Route::get('/revisorDocs/{userId}/review', [RevisorDocumentsController::class, 'review'])->name('revisorDocs.review');
 
     //Upload Evaluator document
     Route::post('/revisorDocs/storeDocument', [RevisorDocumentsController::class, 'storeDocument'])->name('revisorDocs.storeDocument');
@@ -125,6 +128,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/{userId}/assign-role', [ProfileController::class, 'assignRole'])->name('profile.assignRole');
 
+    //Views and downloads of evaluator's documents
+    Route::get('/download-pdf/{filename}/{user}', [RevisorDocumentsController::class, 'downloadPdf'])->name('downloadEvaluator-pdf');
+    Route::get('/view-pdf/{filename}/{user}', [RevisorDocumentsController::class, 'viewPdf'])->name('viewEvaluator-pdf');
 
     //Views and downloads of proposal's documents
     Route::get('/download-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'downloadPdf'])->name('download-pdf');

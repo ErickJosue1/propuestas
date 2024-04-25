@@ -59,24 +59,9 @@ export default {
         PillTag
     },
     methods: {
-        onchange(e, path) {
+        onchange(e) {
 
-            /* if (this.documents[id] == 0) {
-                Swal.fire({
-                    title: "¿Esta seguro?",
-                    text: "Esta acción no se puede revertir",
-                    icon: "warning",
-                    showCancelButton: true,
-                    cancelButtonColor: "#d33",
-                    confirmButtonColor: "#3085d6",
-                    confirmButtonText: "Si!, eliminar registro!",
-                }).then((res) => {
-                    if (res.isConfirmed) {
-                        form.delete(route("revisorDocs.destroy", id));
-                    }
-                });
-            } */
-            console.log(path)
+            console.log(e.target)
 
             Swal.fire({
                 title: "Va a subir el documento -" + e.target.name + "-",
@@ -205,13 +190,24 @@ export default {
             {{ $page.props.flash.error }}
         </NotificationBar>
 
-        <CardBox v-if="status.length > 0">
+        <CardBox v-if="status[0].state_id == 3">
             <NotificationBar color="info" :icon="mdiInformation" :outline="false">
-                Tu propuesta fue enviada a revision
+                Tus documentos fue enviada a revision
             </NotificationBar>
 
             <CardBoxComponentEmpty />
+        </CardBox>
 
+        <CardBox v-else-if="status[0].state_id == 1">
+            <NotificationBar color="success" :icon="mdiInformation" :outline="false">
+                Tu documentos fueron aprovados
+            </NotificationBar>
+        </CardBox>
+
+        <CardBox v-else-if="status[0].state_id == 4">
+            <NotificationBar color="danger" :icon="mdiInformation" :outline="false">
+                Tu documentos fueron rechazados
+            </NotificationBar>
         </CardBox>
 
         <CardBox v-else-if="records.length < 1">
@@ -228,7 +224,7 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in records" :key="item.id">
+                    <tr v-for="(item, index) in records" :key="index">
                         <TableCheckboxCell v-if="true" :value="documents[item.id] == 1" :disabled="true" />
 
                         <td data-label="Nombre">
@@ -237,13 +233,13 @@ export default {
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <div class="w-full text-righ">
-                                <label for="file-input" class="cursor-pointer">
+                                <label :for="item.id" class="cursor-pointer">
                                     <PillTag color="success" label="Subir" :small="false" :outline="false"
                                         :icon="mdiCloudUpload" />
                                 </label>
 
-                                <input type="file" class="hidden" :name="item.name" id="file-input"
-                                    @change="onchange($event, item.id)" />
+                                <input type="file" class="hidden file-input" accept="application/pdf" :name="item.name"
+                                    :id="item.id" @change="onchange" />
 
                             </div>
                         </td>

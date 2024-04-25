@@ -20,7 +20,9 @@ import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
 import { ref, computed, reactive } from 'vue';
 import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
-
+import { useRole } from '@/Hooks/usePermissions';
+import PillTag from "@/components/PillTag.vue";
+import axios from 'axios';
 
 
 export default {
@@ -46,6 +48,7 @@ export default {
         CardBoxComponentEmpty,
         Pagination,
         NotificationBar,
+        PillTag
     },
     setup(props) {
         const form = useForm({
@@ -129,7 +132,7 @@ export default {
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
-            mdiApplicationEdit, mdiTrashCan, checkedDocs, checked, asignar
+            mdiApplicationEdit, mdiTrashCan, checkedDocs, checked, asignar, useRole
         }
     }
 
@@ -139,8 +142,8 @@ export default {
 <template>
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+            <a v-if="useRole('Admin')" :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg"
+                    width="24" height="24" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                     <path
                         d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
                     <path
@@ -148,7 +151,6 @@ export default {
                 </svg>
             </a>
         </SectionTitleLineWithButton>
-
 
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.success }}
@@ -158,12 +160,12 @@ export default {
             {{ $page.props.flash.error }}
         </NotificationBar>
 
-
         <CardBox v-if="revisorDocs.data.length < 1">
             <CardBoxComponentEmpty />
         </CardBox>
 
-        <CardBox v-else class="mb-6" has-table>
+        <CardBox v-else-if="useRole('Admin')" class="mb-6" has-table>
+
             <table>
                 <thead>
                     <tr>
@@ -231,6 +233,53 @@ export default {
                     <BaseButton @click="asignar" type="submit" color="success" label="Asignar a Evaluadores" />
                 </BaseButtons>
             </template>
+        </CardBox>
+        <CardBox v-else-if="useRole('Revisor')" class="mb-6" has-table>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Status</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in revisorDocs.data" :key="item.id">
+                        <td data-label="Nombre">
+                            {{ item.name }}
+                        </td>
+
+                        <td>
+                            <PillTag v-if="item.status_id[0].id == 1" color="success" :label="item.status_id[0].state"
+                                :small="false" :outline="false" :icon="pillsIcon" />
+
+                            <PillTag v-if="item.status_id[0].id == 4" color="danger" :label="item.status_id[0].state"
+                                :small="false" :outline="false" :icon="pillsIcon" />
+                            <PillTag v-if="item.status_id[0].id == 3" color="warning" :label="item.status_id[0].state"
+                                :small="false" :outline="false" :icon="pillsIcon" />
+                        </td>
+
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
+                            <a class="w-full text-righ" :href="route('revisorDocs.review', item.id)"
+                                v-if="item.status_id[0].id == 3">
+                                <label :for="item.id" class="cursor-pointer">
+                                    <PillTag color="info" label="Revisar" :small="false" :outline="false"
+                                        :icon="mdiCloudUpload" />
+                                </label>
+                            </a>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+            <Pagination :currentPage="revisorDocs.current_page" :links="revisorDocs.links"
+                :total="revisorDocs.links.length - 2"></Pagination>
+
+
         </CardBox>
 
     </LayoutMain>

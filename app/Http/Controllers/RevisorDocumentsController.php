@@ -48,8 +48,17 @@ class RevisorDocumentsController extends Controller
             }
         })->paginate(5)->withQueryString();
 
-        return Inertia::render("{$this->source}Index", [
-            'titulo'          => 'Documentacion para Evaluadores',
+        $route = "Index";
+        $title = "Documentacion para Evaluadores";
+
+        if (User::find(Auth::user()->id)->hasRole("Revisor")) {
+            $route = "ReviewIndex";
+            $title = "Revision de documentacion";
+            $records = User::whereHas('status')->with('statusId')->paginate(5)->withQueryString();
+        }
+
+        return Inertia::render("{$this->source}{$route}", [
+            'titulo'          => $title,
             'revisorDocs'        => $records,
             'routeName'      => $this->routeName,
             'loadingResults' => false,
@@ -71,6 +80,8 @@ class RevisorDocumentsController extends Controller
         ]);
     }
 
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -83,6 +94,50 @@ class RevisorDocumentsController extends Controller
         return redirect()->route("{$this->routeName}index")->with('success', 'Documento guardado con éxito!');
     }
 
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function review(User $userId)
+    {
+
+        $documents = RevisorDocuments::whereHas('users', function ($query) use ($userId) {
+            $query->where('user_id', $userId->id);
+        })->get();
+
+        return Inertia::render("{$this->source}Review", [
+            'titulo' => 'Revisar Documentacion',
+            'revisorDocs' => $documents,
+            'user' => $userId,
+            'routeName' => $this->routeName,
+        ]);
+    }
+
+    /* 
+        Send the specified document file to the view
+    */
+
+    public function downloadPdf($filename, $user)
+    {
+        $pathToFile = storage_path('Evaluadores/' . User::find($user)->name . ' Documentos' . '/' . $filename);
+
+        return response()->download($pathToFile);
+    }
+
+    /* 
+        Give the specified document file path to the view
+    */
+
+    public function viewPdf($filename, $user)
+    {
+        $pathToFile = storage_path('Evaluadores/' . User::find($user)->name . ' Documentos' . '/' . $filename);
+
+        return response()->make(file_get_contents($pathToFile), 200, [
+            'Content-Type'        => mime_content_type($pathToFile),
+            'Content-Disposition' => 'inline; filename="' . $filename . '"'
+        ]);
+    }
 
     /**
      * Display the specified resource.
