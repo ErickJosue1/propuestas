@@ -28,6 +28,12 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'permissions.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'permissions.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
 
+
+        Permission::create(['name' => 'revisorDocs.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'revisorDocs.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'revisorDocs.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);
+        Permission::create(['name' => 'revisorDocs.delete', 'guard_name' => 'web', 'description' => 'Eliminar Registros', 'module_key' => 'cat']);
+
         Permission::create(['name' => 'perfiles.index', 'guard_name' => 'web', 'description' => 'Leer Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'perfiles.store', 'guard_name' => 'web', 'description' => 'Crear Registros', 'module_key' => 'cat']);
         Permission::create(['name' => 'perfiles.update', 'guard_name' => 'web', 'description' => 'Actualizar Registros', 'module_key' => 'cat']);

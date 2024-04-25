@@ -18,6 +18,8 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
+import { ref, computed, reactive } from 'vue';
+import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
 
 
 
@@ -33,6 +35,7 @@ export default {
     },
     components: {
         Link,
+        TableCheckboxCell,
         LayoutMain,
         CardBox,
         TableSampleClients,
@@ -42,9 +45,9 @@ export default {
         BaseButton,
         CardBoxComponentEmpty,
         Pagination,
-        NotificationBar
+        NotificationBar,
     },
-    setup() {
+    setup(props) {
         const form = useForm({
             name: '',
         });
@@ -64,12 +67,69 @@ export default {
             });
         };
 
+        const checkedDocs = ref([]);
+
+        const remove = (arr, cb) => arr.filter(item => !cb(item));
+
+        const isClientName = row => client => row.name === client.name;
+
+
+        const checked = (isChecked, field) => {
+            let checkedArray = checkedDocs.value;
+
+            const isNameChecked = isClientName(field);
+
+            if (isChecked) {
+                checkedArray.push(field);
+            } else {
+                checkedArray = remove(checkedArray, isNameChecked);
+            }
+
+            checkedDocs.value = checkedArray;
+
+            console.log(checkedDocs.value)
+        }
+
+        //revisorDocs.assign
+
+        const asignar = () => {
+
+            const assignForm = useForm({
+                documents: checkedDocs.value,
+            });
+
+            if (assignForm.documents.length <= 0) {
+                Swal.fire({
+                    title: "Seleccione al menos un documento",
+                    icon: "warning",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "OK",
+                })
+            }
+
+
+            Swal.fire({
+                title: "¿Esta seguro?",
+                text: "Asignara los documentos seleccionados a los evaluadores",
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonColor: "#d33",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Si!, asignar documentos!",
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    assignForm.post(route("revisorDocs.assign"));
+                }
+            });
+        };
+
+
         return {
             form, eliminar, mdiMonitorCellphone,
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
-            mdiApplicationEdit, mdiTrashCan,
+            mdiApplicationEdit, mdiTrashCan, checkedDocs, checked, asignar
         }
     }
 
@@ -89,7 +149,7 @@ export default {
             </a>
         </SectionTitleLineWithButton>
 
-     
+
         <NotificationBar v-if="$page.props.flash.success" color="success" :icon="mdiInformation" :outline="false">
             {{ $page.props.flash.success }}
         </NotificationBar>
@@ -106,27 +166,23 @@ export default {
             <table>
                 <thead>
                     <tr>
-                        <th />
+                        <th v-if="true" />
                         <th>Nombre</th>
                         <th />
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="item in revisorDocs.data" :key="item.id">
-                        <td class="align-items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-book-half" viewBox="0 0 16 16">
-                                <path
-                                    d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
-                            </svg>
-                        </td>
+                        <TableCheckboxCell v-if="true" @checked="checked($event, item)" />
+
                         <td data-label="Nombre">
                             {{ item.name }}
                         </td>
 
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                <BaseButton color="info" :icon="mdiApplicationEdit" small :href="route(`${routeName}edit`, item.id)" />
+                                <BaseButton color="info" :icon="mdiApplicationEdit" small
+                                    :href="route(`${routeName}edit`, item.id)" />
                                 <BaseButton color="danger" :icon="mdiTrashCan" small @click="eliminar(item.id)" />
                             </BaseButtons>
                         </td>
@@ -139,6 +195,41 @@ export default {
 
             <Pagination :currentPage="revisorDocs.current_page" :links="revisorDocs.links"
                 :total="revisorDocs.links.length - 2"></Pagination>
+
+            <template #footer>
+                <hr>
+                <SectionTitleLineWithButton class="pt-6" :icon="mdiBallotOutline" title="Documentos para asignar" main>
+
+                </SectionTitleLineWithButton>
+
+                <div v-if="checkedDocs.length" class="p-3 my-3">
+
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="checkedDoc in checkedDocs" :key="checkedDoc.id">
+
+                                <td data-label="Nombre">
+                                    {{ checkedDoc.name }}
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <CardBox v-else>
+                    <CardBoxComponentEmpty />
+                </CardBox>
+
+                <BaseButtons v-if="checkedDocs.length">
+                    <BaseButton @click="asignar" type="submit" color="success" label="Asignar a Evaluadores" />
+                </BaseButtons>
+            </template>
         </CardBox>
 
     </LayoutMain>

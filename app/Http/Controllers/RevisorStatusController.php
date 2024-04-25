@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\RevisorStatus;
 use App\Http\Requests\StoreRevisorStatusRequest;
 use App\Http\Requests\UpdateRevisorStatusRequest;
+use App\Models\RevisorDocuments;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RevisorStatusController extends Controller
 {
@@ -34,9 +38,34 @@ class RevisorStatusController extends Controller
      * @param  \App\Http\Requests\StoreRevisorStatusRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRevisorStatusRequest $request)
+    public function store(Request $request, User $user)
     {
-        //
+        $user = User::find(Auth::user()->id);
+        $route = $user->hasRole("Evaluador") ? "revisorDocs.documents" : "proposal.index";
+
+        if ($user->hasRole("Evaluador")) {
+            $documentsTotal = RevisorDocuments::whereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
+
+            $documentsUp = RevisorDocuments::whereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+                $query->where('status', 1);
+            })->get();
+
+            if (!($documentsTotal->count() == $documentsUp->count())) {
+                return redirect()->route($route)->with('error', 'Faltan Documentos por subir');
+            }
+        }
+
+        if (RevisorStatus::where("user_id", $user->id)->exists()) {
+            RevisorStatus::where("user_id", $user->id)->update(['state_id' => $request->status]);
+        } else {
+            $user->status()->attach($request->status);
+        }
+
+
+        return redirect()->route($route)->with('success', $request->status .  'Documentos con éxito!');
     }
 
     /**

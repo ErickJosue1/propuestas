@@ -11,4 +11,9 @@ class ProposalStates extends Model
 
     protected $fillable = ['state'];
 
+    public function users()
+    {
+        $table = 'revisor_statuses';
+        return $this->belongsToMany(User::class, $table, 'state_id', ' user_id');
+    }
 }

@@ -92,4 +92,16 @@ class User extends Authenticatable implements MustVerifyEmail
             return [$permission['name'] => true];
         });
     }
+
+    public function documents()
+    {
+        $table = 'user_revisor_documents';
+        return $this->belongsToMany(RevisorDocuments::class, $table, 'user_id', 'revisor_documents_id');
+    }
+
+    public function status()
+    {
+        $table = 'revisor_statuses';
+        return $this->belongsToMany(ProposalStates::class, $table, 'user_id', 'state_id');
+    }
 }

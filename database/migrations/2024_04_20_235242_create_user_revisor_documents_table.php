@@ -15,7 +15,15 @@ return new class extends Migration
     {
         Schema::create('user_revisor_documents', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('revisor_documents_id');
+            $table->string("path");
+            $table->integer("status");
             $table->timestamps();
+
+                
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('revisor_documents_id')->references('id')->on('revisor_documents');
         });
     }
 

@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\RevisorDocuments;
 use App\Http\Requests\StoreRevisorDocumentsRequest;
 use App\Http\Requests\UpdateRevisorDocumentsRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,7 +27,6 @@ class RevisorDocumentsController extends Controller
         $this->model = new RevisorDocuments();
         $this->routeName = 'revisorDocs.';
         $this->source    = "RevisorDocs/";
-        $this->middleware("role:Admin");
 
         /*  $this->middleware("permission:{$this->module}.index")->only(['index', 'show']);
          $this->middleware("permission:{$this->module}.store")->only(['store', 'create']);
@@ -79,6 +82,99 @@ class RevisorDocumentsController extends Controller
         $this->model::create($request->validated());
         return redirect()->route("{$this->routeName}index")->with('success', 'Documento guardado con éxito!');
     }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function storeDocument(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+
+        foreach ($request->myFiles as $files) {
+            $contenidoArchivo = file_get_contents($files);
+            Storage::disk("evaluadores")->put($user->name . ' Documentos/' . $files->getClientOriginalName(), $contenidoArchivo);
+        }
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus()
+    {
+        $userId = Auth::user()->id;
+        $user = User::find(Auth::user()->id);
+
+        $documents = RevisorDocuments::whereHas('users', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->get();
+
+        foreach ($documents as $value) {
+
+            $status = 0;
+
+            if (Storage::disk("evaluadores")->exists($user->name . ' Documentos/' . $value['name'] . '.pdf')) {
+                $status = 1;
+            }
+
+            $doc = RevisorDocuments::find($value['id']);
+
+            if ($doc->users()->wherePivot('user_id', $userId)->exists()) {
+                $doc->users()->updateExistingPivot($userId, ['status' => $status]);
+            }
+        }
+
+        return redirect()->route("{$this->routeName}documents")->with('success', 'Documentos subidos con éxito!');
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function assign(Request $request)
+    {
+
+        $users = User::role("Evaluador")->get();
+
+        foreach ($users as $user) {
+
+            $directory = storage_path('Evaluadores/' . $user->name . ' Documentos');
+
+            if (!File::isDirectory($directory)) {
+                Storage::disk("evaluadores")->makeDirectory($user->name . ' Documentos');
+            }
+
+            foreach ($request->documents as $value) {
+                $status = 0;
+
+                if (Storage::disk("evaluadores")->exists($user->name . ' Documentos/' . $value['name'] . '.pdf')) {
+                    $status = 1;
+                }
+
+                $doc = RevisorDocuments::find($value['id']);
+
+                if (!$doc->users()->wherePivot('user_id', $user->id)->exists()) {
+                    $doc->users()->attach($user->id, ['path' => $directory, 'status' => $status]);
+                }
+            }
+        }
+
+
+
+        return redirect()->route("{$this->routeName}index")->with('success', 'Documentos asignados con éxito!');
+    }
+
+
 
     /**
      * Display the specified resource.

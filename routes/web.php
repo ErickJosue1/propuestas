@@ -17,6 +17,7 @@ use App\Http\Controllers\ProposalsController;
 use App\Http\Controllers\RenapoController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RevisorDocumentsController;
+use App\Http\Controllers\RevisorStatusController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use App\Models\Announcements;
@@ -25,8 +26,12 @@ use App\Models\Calendar;
 use App\Models\Fields;
 use App\Models\Proposals;
 use App\Models\review;
+use App\Models\RevisorDocuments;
+use App\Models\RevisorStatus;
 use App\Models\User;
+use App\Models\user_revisorDocument;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -55,8 +60,8 @@ Route::get('/download-AdPdf/{filename}/{announcement}', [AnnouncementsController
 
 
 Route::get('/dashboard', function () {
-    return Inertia::render('HomeView', ['users' => User::all(), 'announcements' =>  Announcements::all(),'proposals' => Proposals::all()]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return Inertia::render('HomeView', ['users' => User::all(), 'announcements' =>  Announcements::all(), 'proposals' => Proposals::all()]);
+})->middleware(['auth', 'verified', 'role:Admin'])->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
@@ -89,12 +94,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/download-pdf/{proposal}', [PdfGenerate::class, 'downloadRecognitionPDF'])->name('downloadRecognitionPDF');
     Route::get('/generate', [PdfGenerate::class, 'testQR'])->name('testQR');
 
-    
+
 
     //Sync reviewrs
     Route::post('/proposals/sync', [ProposalsController::class, 'syncReviewrs'])->name('proposals.sync');
 
-    //Assign roles
+    //Asign Documents
+    Route::post('/revisorDocs/assign', [RevisorDocumentsController::class, 'assign'])->name('revisorDocs.assign');
+
+    //Asign Documents
+    Route::get('/revisorDocs/updateStatus', [RevisorDocumentsController::class, 'updateStatus'])->name('revisorDocs.updateStatus');
+
+    //Upload Evaluator document
+    Route::post('/revisorDocs/storeDocument', [RevisorDocumentsController::class, 'storeDocument'])->name('revisorDocs.storeDocument');
+
+    //Assign status
+    Route::post('/revisorStatus/{userId}/assign/', [RevisorStatusController::class, 'store'])->name('revisorStatus.assign');
+
+
+    //Asign roles
     Route::get('/users/{user}/assign-roles-and-permissions', [UserController::class, 'assignRolesAndPermissionsView'])->name('users.assign-roles-and-permissions.view');
     Route::post('/users/{user}/assign-roles-and-permissions', [UserController::class, 'assignRolesAndPermissions'])->name('users.assign-roles-and-permissions');
 
@@ -120,6 +138,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/proposals/{proposal}/state', [ProposalsController::class, 'getState'])->name('proposals.getState');
 
 
+    //Evaluator Documents
+
+    Route::get('/RevisorDocs/Documents', function () {
+        return Inertia::render('RevisorDocs/Documents', [
+            'titulo'          => 'Tu Documentacion',
+            'records' =>  RevisorDocuments::whereHas('users', function ($query) {
+                $query->where('user_id', Auth::user()->id);
+            })->get(),
+            'documents' => user_revisorDocument::where('user_id', Auth::user()->id)->get()->mapWithKeys(function ($record) {
+                return [$record['revisor_documents_id'] => $record['status']];
+            }),
+            'routeName'      => "revisorDocs.",
+            'status'       => RevisorStatus::where("user_id", Auth::user()->id)->get(),
+        ]);
+    })->middleware("role:Evaluador")->name('revisorDocs.documents');
+
     //Main routes
     Route::resource('reviews', ReviewController::class)->names('reviews');
     Route::resource('institutions', InstitutionsController::class)->names('institutions');
@@ -135,8 +169,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('knowledges', AreasKnowledgeController::class)->names('knowledges');
     Route::resource('revisorDocs', RevisorDocumentsController::class)->names('revisorDocs');
     Route::resource('fields', FieldsController::class)->names('fields');
-
-
 });
 
 require __DIR__ . '/auth.php';

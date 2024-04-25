@@ -14,7 +14,8 @@ import {
   mdiBookshelf,
   mdiCalendarAccountOutline,
   mdiClockTimeEleven,
-  mdiAccount
+  mdiAccount,
+  mdiFileDocument
 
 } from "@mdi/js";
 
@@ -175,6 +176,12 @@ export default [
     label: "Laboratorios",
     icon: mdiBookshelf,
     role: "Postulante"
+  },
+  {
+    href: "/RevisorDocs/Documents",
+    label: "Documentos",
+    icon: mdiFileDocument,
+    role: "Evaluador"
   },
   {
     href: "/proposals",

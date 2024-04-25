@@ -58,40 +58,31 @@ class ProposalsController extends Controller
     {
         $records = new Proposals();
         $user = User::find(Auth::user()->id);
+        $title = "";
+        $reviews = review::all();
 
         if ($user->hasRole('Admin')) {
-
-
-            return Inertia::render("Proposals/Index", [
-                'titulo'      => 'Laboratorios',
-                'records'    =>  $records->with('users')->paginate(4)->withQueryString(),
-                'routeName'      => $this->routeName,
-                'state'      => ProposalStates::all(),
-                'loadingResults' => false,
-            ]);
+            $title = "Laboratorios";
+            $records =  $records->with('users')->paginate(4)->withQueryString();
         } else if ($user->hasRole('Postulante')) {
             $records =  $records->where('user_id', $user->id);
-
-            return Inertia::render("Proposals/Index", [
-                'titulo'      => 'Tus Laboratorios',
-                'records'    => $records->paginate(4)->withQueryString(),
-                'routeName'      => $this->routeName,
-                'state'      => ProposalStates::all(),
-                'loadingResults' => false,
-            ]);
-        } else {
+            $title = "Tus Laboratorios";
+            $records =  $records->paginate(4)->withQueryString();
+        } else if ($user->hasRole('Evaluador')) {
             $records = $user->proposals();
+            $records = $records->paginate(4)->withQueryString();
             $reviews =  review::where('user_id', $user->id)->get();
-
-            return Inertia::render("Proposals/Index", [
-                'titulo'      => 'Tus Laboratorios [Revision]',
-                'records'    => $records->paginate(4)->withQueryString(),
-                'routeName'      => $this->routeName,
-                'state'      => ProposalStates::all(),
-                'loadingResults' => false,
-                'reviews'      => $reviews,
-            ]);
+            $title = "Tus Laboratorios [Revision]";
         }
+
+        return Inertia::render("Proposals/Index", [
+            'titulo'      => $title,
+            'records'    => $records,
+            'routeName'      => $this->routeName,
+            'state'      => ProposalStates::all(),
+            'loadingResults' => false,
+            'reviews'      => $reviews,
+        ]);
     }
 
     /**
@@ -186,7 +177,7 @@ class ProposalsController extends Controller
         $records = Announcements::find($proposal->announcement_id);
         $records->load(['assesstment_criterias', 'documents_supporting']);
 
-        $fields = proposal_field::where('proposals_id',$proposal->id)->get();
+        $fields = proposal_field::where('proposals_id', $proposal->id)->get();
         $fields->load('fields');
 
         return Inertia::render("Proposals/Review", [
