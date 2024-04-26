@@ -41,7 +41,8 @@ class RevisorStatusController extends Controller
     public function store(Request $request, User $userId)
     {
         $user = $userId;
-        $route = $user->hasRole("Evaluador") ? "revisorDocs.documents" : "revisorDocs.index";
+
+        $route = User::find(Auth::user()->id)->hasRole("Evaluador") ? "revisorDocs.documents" : "revisorDocs.index";
 
         if ($user->hasRole("Evaluador")) {
             $documentsTotal = RevisorDocuments::whereHas('users', function ($query) use ($user) {
