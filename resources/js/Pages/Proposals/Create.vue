@@ -83,7 +83,19 @@ export default {
                     confirmButtonText: "Ok!",
                 });
             }
+            else if (form.fields.length < props.convocatoria.fields.length) {
+                Swal.fire({
+                    title: "Campos obligatorios!",
+                    text: "Es necesario subir los " + props.convocatoria.fields.length + " documentos",
+                    icon: "warning",
+                    timer: 10000,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Ok!",
+                });
+            }
             else {
+                isLoading.value = true
+
                 const config = {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 }
@@ -111,6 +123,7 @@ export default {
                 })
                     .catch(function (error) {
                         if (error.response) {
+                            isLoading.value = false
 
                             console.log(error.response.data);
                             console.log(error.response.status);
@@ -156,7 +169,10 @@ export default {
 
         const hasErrors = computed(() => errors.value.length > 0);
 
-        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors }
+        const isLoading = ref(false);
+        const fullPage = true;
+
+        return { submit, form, mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, linea, file, hasErrors, errors, isLoading, fullPage }
     },
 
 
@@ -166,6 +182,11 @@ export default {
 
 <template>
     <LayoutMain :title="titulo">
+
+        <div class="vl-parent">
+            <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+        </div>
+
         <SectionTitleLineWithButton :icon="mdiBallotOutline" :title="titulo" main>
             <a :href="route(`${routeName}index`)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                     fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">

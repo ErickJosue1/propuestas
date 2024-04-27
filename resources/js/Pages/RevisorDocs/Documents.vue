@@ -23,6 +23,7 @@ import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
 import PillTag from "@/components/PillTag.vue";
 import axios from 'axios';
 import { forEach } from 'lodash';
+import { useRole } from '@/Hooks/usePermissions';
 
 
 
@@ -161,7 +162,7 @@ export default {
             mdiTableBorder,
             mdiTableOff,
             mdiGithub,
-            mdiApplicationEdit, mdiTrashCan, mdiCloudUpload, file, submit
+            mdiApplicationEdit, mdiTrashCan, mdiCloudUpload, file, submit, useRole
         }
     }
 
@@ -171,7 +172,7 @@ export default {
 <template>
     <LayoutMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" :title="titulo" main>
-            <a :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            <a v-if="useRole('Admin')" :href="route(`${routeName}create`)"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                     fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                     <path
                         d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
@@ -190,25 +191,27 @@ export default {
             {{ $page.props.flash.error }}
         </NotificationBar>
 
-        <CardBox v-if="status[0].state_id == 3">
-            <NotificationBar color="info" :icon="mdiInformation" :outline="false">
-                Tus documentos fue enviada a revision
-            </NotificationBar>
+        <span v-if="status.length" >
+            <CardBox v-if="status[0].state_id == 3">
+                <NotificationBar color="info" :icon="mdiInformation" :outline="false">
+                    Tus documentos fue enviada a revision
+                </NotificationBar>
 
-            <CardBoxComponentEmpty />
-        </CardBox>
+                <CardBoxComponentEmpty />
+            </CardBox>
 
-        <CardBox v-else-if="status[0].state_id == 1">
-            <NotificationBar color="success" :icon="mdiInformation" :outline="false">
-                Tu documentos fueron aprovados
-            </NotificationBar>
-        </CardBox>
+            <CardBox v-else-if="status[0].state_id == 1">
+                <NotificationBar color="success" :icon="mdiInformation" :outline="false">
+                    Tu documentos fueron aprovados
+                </NotificationBar>
+            </CardBox>
 
-        <CardBox v-else-if="status[0].state_id == 4">
-            <NotificationBar color="danger" :icon="mdiInformation" :outline="false">
-                Tu documentos fueron rechazados
-            </NotificationBar>
-        </CardBox>
+            <CardBox v-else-if="status[0].state_id == 4">
+                <NotificationBar color="danger" :icon="mdiInformation" :outline="false">
+                    Tu documentos fueron rechazados
+                </NotificationBar>
+            </CardBox>
+        </span>
 
         <CardBox v-else-if="records.length < 1">
             <CardBoxComponentEmpty />

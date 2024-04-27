@@ -81,7 +81,7 @@ export default {
         field: function (data) {
             if (this.fields.some(e => e.title === data[0].title)) {
                 this.again = true
-                this.errors = 'No puede incluir un documentos con el mismo titulo!'
+                this.errors = 'No puede incluir un campos con el mismo titulo!'
             }
             else {
                 this.fields.push(data[0]);
