@@ -50,7 +50,7 @@ use function GuzzleHttp\Promise\all;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'records' => Announcements::paginate(4)->withQueryString()->load('institutions', 'assesstment_criterias', 'documents_supporting', 'calendars')
+        'records' => Announcements::paginate(3)->withQueryString()->load('institutions', 'assesstment_criterias', 'documents_supporting', 'calendars')
     ]);
 });
 
@@ -58,6 +58,8 @@ Route::resource('renapo', RenapoController::class)->names('renapo');
 Route::resource('colony', ColonyController::class)->names('colony');
 Route::get('/download-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'downloadPdf'])->name('download-AdPdf');
 
+//Annoucement Image Display
+Route::get('/view-image/{filename}/{announcement}', [AnnouncementsController::class, 'viewImage'])->name('view-image');
 
 Route::get('/dashboard', function () {
     return Inertia::render('HomeView', ['users' => User::all(), 'announcements' =>  Announcements::all(), 'proposals' => Proposals::all()]);
@@ -136,6 +138,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/download-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'downloadPdf'])->name('download-pdf');
     Route::get('/view-pdf/{filename}/{user}/{announcement}', [ProposalsController::class, 'viewPdf'])->name('view-pdf');
     Route::get('/view-AdPdf/{filename}/{announcement}', [AnnouncementsController::class, 'viewPdf'])->name('view-AdPdf');
+
+
 
     //Non resource porposal routes 
     Route::put('/proposals/{proposal}/updateReview', [ProposalsController::class, 'updateReview'])->name('proposals.updateReview');

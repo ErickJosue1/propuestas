@@ -17,7 +17,7 @@ use Inertia\Inertia;
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
         return Inertia::render('Welcome', [
-            'records' => Announcements::paginate(4)->withQueryString()->load('institutions','assesstment_criterias', 'documents_supporting', 'calendars')
+            'records' => Announcements::with('institutions','assesstment_criterias', 'documents_supporting', 'calendars')->paginate(4)->withQueryString()
         ]);
     });
 

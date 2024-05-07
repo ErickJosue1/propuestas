@@ -157,9 +157,12 @@ class AnnouncementsController extends Controller
                 }
             }
 
-            foreach ($request->myFiles as $files) {
+            /*      foreach ($request->myFiles as $files) {
                 $files->storeAs($request->name . 'advertising', $files->getClientOriginalName(), 'public');
-            }
+            } */
+
+            $request->myFiles[0]->storeAs($request->name . 'advertising', $request->myFiles[0]->getClientOriginalName(), 'public');
+            $request->myFiles[1]->storeAs($request->name . 'cover', $request->myFiles[1]->getClientOriginalName(), 'public');
         }
 
         return redirect()->route("{$this->routeName}index")->with('success', 'Convocatoria guardada con éxito!');
@@ -189,6 +192,27 @@ class AnnouncementsController extends Controller
             'Content-Disposition' => 'inline; filename="' . $filename . '"'
         ]);
     }
+
+    public function viewImage($filename, $announcement)
+    {
+        $pathToFile = storage_path('app/public/' . $announcement . 'cover' . '/' . $filename);
+
+        if (file_exists($pathToFile)) {
+            $image = file_get_contents($pathToFile);
+            $imageType = mime_content_type($pathToFile);
+
+            return response()->make($image, 200, [
+                'Content-Type'        => $imageType,
+                'Content-Disposition' => 'inline; filename="' . $filename . '"'
+            ]);
+        } else {
+            // Manejar el caso en que la imagen no exista
+            return response()->json(['error' => 'Imagen no encontrada'], 404);
+        }
+    }
+
+
+
 
     /**
      * Display the specified resource.

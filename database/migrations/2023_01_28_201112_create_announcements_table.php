@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('announcements', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->string('description', 512);
             $table->string('num_announcement');
             $table->string('y_announcement');
             $table->string('status');

@@ -44,7 +44,36 @@ export default {
     LayoutWelcome,
     PillTag,
   },
+  mounted() {
+    let Script = document.createElement('script')
+    Script.setAttribute('src', 'https://unpkg.com/tailwindcss-jit-cdn')
+    document.head.appendChild(Script)
+  },
+  data() {
+    return {
+      imageUrls: {}  // Arreglo para almacenar las URLs de las imágenes
+    };
+  },
   methods: {
+    viewImageForAll() {
+      this.records.data.forEach(item => {
+        this.viewImage(item.name);
+      });
+    },
+    viewImage(announcement) {
+      axios({
+        url: '/view-image/' + ("cover.png") + '/' + announcement,
+        method: 'GET',
+        responseType: 'blob',
+      }).then(response => {
+        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        const link = URL.createObjectURL(blob);
+
+        this.imageUrls[announcement] = link;
+
+        console.log('sdf')
+      });
+    },
     getDate(date_start, date_end) {
       const current = new Date();
 
@@ -86,7 +115,13 @@ export default {
       return formattedDate;
     },
   },
+
+  created() {
+    this.viewImageForAll();
+  },
+
   setup() {
+
     return {
       mdiMonitorCellphone,
       mdiTableBorder,
@@ -95,6 +130,7 @@ export default {
       mdiEye,
       mdiTrashCan,
       PillTag,
+
     };
   },
 };
@@ -102,175 +138,96 @@ export default {
 
 <template>
   <LayoutWelcome>
-    <CardBox class="mx-12 mt-24 max-xl:m-4 max-lg:mt-8" v-if="records.length < 1">
+    <CardBox class="mx-12 mt-24 max-xl:m-4 max-lg:mt-8" v-if="records.data.length < 1">
       <CardBoxComponentEmpty />
     </CardBox>
 
-    <div v-else class="w-full">
-      <div class="mt-16 mx-5">
-        <div class="divide-y divide-gray-200 dark:divide-gray-700">
-          <div class="space-y-2 pb-8 pt-6 md:space-y-5">
-            <h1
-              class="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-              Convocatorias
-            </h1>
-            <p class="text-lg leading-7 text-gray-500 dark:text-gray-400">
-              Lo ultimo en la plataforma!
-            </p>
-          </div>
-          <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-            <li class="py-8" v-for="(item, index) in records" :key="index">
-              <article class="border-x-4	px-8">
-                <div class="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-                  <dl>
-                    <dt class="sr-only">Publicado en</dt>
-                    <dd class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                      <time datetime="2023-08-05T00:00:00.000Z">{{ item.calendars[0].date_start }}</time>
-                    </dd>
-                  </dl>
-                  <div class="space-y-4 xl:col-span-3 ">
-                    <div class="space-y-8">
-                      <div class="space-y-2">
-                        <h2 class="text-2xl font-bold leading-8 tracking-tight">
-                          <a class="text-gray-900 dark:text-gray-100"
-                            href="/blog/release-of-tailwind-nextjs-starter-blog-v2.0">{{ item.name }}</a>
-                        </h2>
-                        <div class="flex flex-wrap">
-                          <a v-if="
-                            getDate(item.calendars[1].date_start, item.calendars[1].date_end)
-                          ">
-                            <PillTag color="success" label="Inscripcion de laboratorios" :small="false" :outline="false"
-                              :icon="pillsIcon" />
-                          </a>
-                          <a v-else-if="
-                            getDate(item.calendars[2].date_start, item.calendars[2].date_end)
-                          ">
-                            <PillTag color="warning" label="Laboratorios en evaluacion" :small="false" :outline="false"
-                              :icon="pillsIcon" />
-                          </a>
-                          <a v-else>
-                            <PillTag color="danger" label="Convocatoria Cerrada" :small="false" :outline="false"
-                              :icon="pillsIcon" />
-                          </a>
-                        </div>
-                      </div>
-                      <div class="prose max-w-none text-gray-500 dark:text-gray-400">
-                        {{ item.description }}
-                      </div>
-                    </div>
-                    <div class="text-base font-medium leading-6">
-                      <div class="flex flex-row space-x-2">
-                        <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)"
-                          :href="route('proposals.show', item.id)">
-                          <PillTag color="success" label="Inscribirse" :small="false" :outline="false"
-                            :icon="pillsIcon" />
-                        </a>
-                        <div @click="getPdf('advertising', item.name)">
-                          <PillTag color="info" label="Descargar" :small="false" :outline="false" :icon="pillsIcon" />
-                        </div>
-                      </div>
-                    </div>
+    <body class="antialiasedfont-sans p-6">
+      <div class="container mx-auto">
+        <div class="flex flex-wrap -mx-4">
+          <div v-for="item in records.data" class="w-full sm:w-1/2 md:w-1/2 xl:w-1/4 p-4 ">
+            <div class="c-card block shadow-md hover:shadow-xl rounded-lg overflow-hidden dark:bg-slate-700">
+              <div class="relative pb-48 overflow-hidden">
+                <img class="absolute inset-0 h-full w-full object-cover" :src="imageUrls[item.name]" alt="">
+              </div>
+
+              <div class="p-4">
+                <div class="flex flex-wrap">
+                  <a v-if="
+                    getDate(item.calendars[0].date_start, item.calendars[0].date_end)
+                  ">
+                    <PillTag color="success" label="Inscripcion de laboratorios" :small="false" :outline="false"
+                      :icon="pillsIcon" />
+                  </a>
+                  <a v-else-if="
+                    getDate(item.calendars[1].date_start, item.calendars[1].date_end)
+                  ">
+                    <PillTag color="success" label="Inscripcion de laboratorios" :small="false" :outline="false"
+                      :icon="pillsIcon" />
+                  </a>
+                  <a v-else-if="
+                    getDate(item.calendars[2].date_start, item.calendars[2].date_end)
+                  ">
+                    <PillTag color="warning" label="Laboratorios en evaluacion" :small="false" :outline="false"
+                      :icon="pillsIcon" />
+                  </a>
+                  <a v-else>
+                    <PillTag color="danger" label="Convocatoria Cerrada" :small="false" :outline="false"
+                      :icon="pillsIcon" />
+                  </a>
+                </div>
+                <h2 class="mt-2 mb-2 font-bold">{{ viewImage(item.name) }}</h2>
+                <p class="text-sm">{{ item.description }}</p>
+                <div class="mt-3 flex items-center">
+                  <span class="text-sm font-semibold">Fecha</span>&nbsp;<span class="font-bold text-xl">{{
+                    item.calendars[0].date_start }}</span>&nbsp;<span class="text-sm font-semibold"></span>
+                </div>
+              </div>
+              <div class="p-4 border-t border-b text-xs ">
+                <span class="flex items-center mb-1">
+                  <i class="far fa-clock fa-fw mr-2 "></i> Institucion
+                </span>
+                <span class="flex items-center">
+                  <i class="far fa-address-card fa-fw  mr-2"></i> {{ item.institutions.name }}
+                </span>
+              </div>
+              <div class="text-base font-medium leading-6 px-4 py-4">
+                <div class="flex flex-row space-x-2">
+                  <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end) || getDate(item.calendars[0].date_start, item.calendars[0].date_end)"
+                    :href="route('proposals.show', item.id)">
+                    <PillTag color="success" label="Inscribirse" :small="false" :outline="false" :icon="pillsIcon" />
+                  </a>
+                  <div class="cursor-pointer" @click="getPdf('advertising', item.name)">
+                    <PillTag color="info" label="Descargar" :small="false" :outline="false" :icon="pillsIcon" />
                   </div>
                 </div>
-              </article>
-            </li>
-
-
-
-
-          </ul>
-        </div>
-        <!--    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          <div
-            v-for="item in records"
-            :key="item.id"
-            class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500"
-          >
-            <div>
-              <span>
-                <div
-                  class="h-16 w-16 bg-red-50 dark:bg-red-800/20 flex items-center justify-center rounded-full"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    class="w-7 h-7 stroke-red-500"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
-                    />
-                  </svg>
-                </div>
-                Convocatoria
-              </span>
-
-              <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">
-                {{ item.name }}
-                <span class="text-lg text-gray-700 dark:text-gray-400">
-                  {{ convertTimeFormatMonth(item.created_at) }}
-                </span>
-              </h2>
-
-              <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                {{ item.description }}
-              </p>
-            </div>
-            <div class="px-12 flex flex-row space-x-2">
-              <div
-                v-if="getDate(item.calendars[0].date_start, item.calendars[0].date_end)"
-              ></div>
-              <a
-                v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end)"
-                :href="route('proposals.show', item.id)"
-                class="w-full"
-              >
-                <PillTag
-                  color="success"
-                  label="Inscribirse"
-                  :small="false"
-                  :outline="false"
-                  :icon="pillsIcon"
-                />
-              </a>
-              <a
-                v-else-if="
-                  getDate(item.calendars[2].date_start, item.calendars[2].date_end)
-                "
-              >
-                <PillTag
-                  color="warning"
-                  label="Propuestas en evaluacion"
-                  :small="false"
-                  :outline="false"
-                  :icon="pillsIcon"
-                />
-              </a>
-              <a v-else>
-                <PillTag
-                  color="danger"
-                  label="Convocatoria Cerrada"
-                  :small="false"
-                  :outline="false"
-                  :icon="pillsIcon"
-                />
-              </a>
-              <div @click="getPdf('advertising', item.name)">
-                <PillTag
-                  color="info"
-                  label="Descargar"
-                  :small="false"
-                  :outline="false"
-                  :icon="pillsIcon"
-                />
               </div>
             </div>
           </div>
-        </div> -->
+
+
+        </div>
       </div>
-    </div>
+
+      <Pagination :currentPage="records.current_page" :links="records.links" :total="records.links.length - 2">
+      </Pagination>
+
+    </body>
+
+
   </LayoutWelcome>
 </template>
+
+<style>
+.c-card {
+  img {
+    transition: transform .3s ease-in-out;
+  }
+
+  &:hover {
+    img {
+      transform: scale(1.05)
+    }
+  }
+}
+</style>

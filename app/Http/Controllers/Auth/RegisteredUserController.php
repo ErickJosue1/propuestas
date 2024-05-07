@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
     public function create(): Response
     {
         return Inertia::render('Auth/Register', [
-            'roles' => Role::pluck('name'),
+            'roles' => Role::where("name", "!=", "admin")->pluck('name'),
             'workplaces' => Workplace::all(),
             'colonies' => Colony::all(),
         ]);
@@ -52,7 +52,7 @@ class RegisteredUserController extends Controller
             'maternal_surname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
-            'role' => ['required', 'string','exists:roles,id'],
+            'role' => ['required', 'string', 'exists:roles,id'],
             'colony_id' => ['required', 'integer', 'exists:colonies,id'],
             'workplace_id' => ['required', 'integer', 'exists:workplaces,id'],
         ])->validate();

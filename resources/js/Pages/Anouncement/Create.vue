@@ -88,18 +88,25 @@ export default {
             }
         },
         onchange(e) {
+
+
             if (this.file.some(val => val.name === e.target.name)) {
                 const i = this.file.findIndex(val => val.name === e.target.name)
                 const name = e.target.name
                 const fileA = e.target.files[0]
                 this.file[i] = { name: name, file: fileA }
-                console.log(this.file)
             }
             else {
                 const name = e.target.name
                 const fileA = e.target.files[0]
                 this.file.push({ name: name, file: fileA })
-                console.log(this.file)
+            }
+
+
+
+
+            for (let i = 0; i < this.file.length; i++) {
+                console.log(this.file[i].file)
             }
         },
         dateChange(e, name, operation) {
@@ -168,10 +175,10 @@ export default {
 
 
         const submit = () => {
-            if (file.length < 1) {
+            if (file.length < 2) {
                 Swal.fire({
-                    title: "PDF de publicidad obligatorio!",
-                    text: "Es necesario el documento de publicidad!",
+                    title: "PDF de publicidad e imagen de convocatoria obligatorios!",
+                    text: "Son necesarios los documentos!",
                     icon: "warning",
                     timer: 10000,
                     confirmButtonColor: "#3085d6",
@@ -198,7 +205,7 @@ export default {
                 const formData = new FormData();
 
                 for (let index = 0; index < file.length; index++) {
-                    formData.append('myFiles[' + index + ']', file[index].file, file[index].name + ".pdf")
+                    formData.append('myFiles[' + index + ']', file[index].file, file[index].name + "." + file[index].file.name.split(".")[1])
                 }
 
                 date.forEach((object, index) => {
@@ -270,8 +277,7 @@ export default {
 
             }
 
-/*             form.post(route('announcements.store'));
- */        }
+        }
 
         const showTable = computed(() => {
             return props.assesstments.length > 0 ? true : false
@@ -290,6 +296,7 @@ export default {
         });
 
         const file = []
+        const cover = []
         const checkedRows = ref([]);
         const checkedDocs = ref([]);
         const checkedFields = ref([]);
@@ -418,7 +425,13 @@ export default {
                                 class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0
                                                                                                                               file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
                         </div>
-
+                        <label for="dropzone-file" class="block font-bold mb-2 mt-6">Imagen de Portada para la
+                            convocatoria</label>
+                        <div class="flex items-center justify-center w-full ">
+                            <input type="file" name="cover" id="file-input" @change="onchange" accept="image/*"
+                                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0
+                                                                                                                              file:bg-gray-100 file:mr-4 file:py-3 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400">
+                        </div>
                     </div>
                 </Tab>
                 <Tab title="Calendario">
@@ -488,7 +501,6 @@ export default {
                                         <th v-if="true" />
                                         <th>Titulo</th>
                                         <th>Descripcion</th>
-                                        <th />
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -501,11 +513,7 @@ export default {
                                         <td data-label="Descripcion">
                                             {{ field.description }}
                                         </td>
-                                        <td class="before:hidden lg:w-1 whitespace-nowrap">
-                                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                                <BaseButton color="info" :icon="mdiEye" small />
-                                            </BaseButtons>
-                                        </td>
+                                 
                                     </tr>
                                 </tbody>
                             </table>
@@ -542,7 +550,6 @@ export default {
                                         <th v-if="true" />
                                         <th>Nombre</th>
                                         <th>Peso</th>
-                                        <th />
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -559,13 +566,7 @@ export default {
                                                 {{ client.value }}
                                             </progress>
                                         </td>
-                                        <td class="before:hidden lg:w-1 whitespace-nowrap">
-                                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                                <BaseButton color="info" :icon="mdiEye" small />
-                                                <BaseButton @click="eliminar(client.id, true)" color="danger"
-                                                    :icon="mdiTrashCan" small />
-                                            </BaseButtons>
-                                        </td>
+                                   
                                     </tr>
                                 </tbody>
                             </table>
@@ -597,7 +598,6 @@ export default {
                                     <tr>
                                         <th v-if="true" />
                                         <th>Nombre</th>
-                                        <th />
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -607,13 +607,7 @@ export default {
                                         <td data-label="Name">
                                             {{ document.name }}
                                         </td>
-                                        <td class="before:hidden lg:w-1 whitespace-nowrap">
-                                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                                                <BaseButton color="info" :icon="mdiEye" small />
-                                                <BaseButton @click="eliminar(document.id, false)" color="danger"
-                                                    :icon="mdiTrashCan" small />
-                                            </BaseButtons>
-                                        </td>
+                                        
                                     </tr>
                                 </tbody>
                             </table>
