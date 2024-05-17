@@ -110,6 +110,10 @@ export default {
             }
         },
         dateChange(e, name, operation) {
+
+            console.log(e.target.value, name, operation)
+
+
             if (operation) {
                 if (this.date.some(val => val.name === name)) {
                     const i = this.date.findIndex(val => val.name === name)
@@ -150,6 +154,8 @@ export default {
                 else {
                     this.date[i].date_end = e.target.value
                 }
+
+                console.log(this.date)
             }
             else {
                 Swal.fire({

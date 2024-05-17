@@ -20,8 +20,8 @@ return new class extends Migration
             $table->timestamps();
 
                 
-            $table->foreign('announcements_id')->references('id')->on('announcements');
-            $table->foreign('revisor_documents_id')->references('id')->on('revisor_documents');
+            $table->foreign('announcements_id')->references('id')->on('announcements')->onDelete('cascade');;
+            $table->foreign('revisor_documents_id')->references('id')->on('revisor_documents')->onDelete('cascade');;
         });
     }
 

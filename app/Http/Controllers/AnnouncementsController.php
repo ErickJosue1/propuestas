@@ -19,6 +19,7 @@ use Database\Seeders\AssestmentCriteriaSeeder;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Validator;
@@ -323,19 +324,24 @@ class AnnouncementsController extends Controller
      */
     public function destroy(Announcements $announcement)
     {
-        $files = glob('storage' . '/' . $announcement . 'advertising' . '/*');
+
+        if (file_exists(storage_path('app/public/' . $announcement->name . 'advertising/advertising.pdf'))) {
+            unlink(storage_path('app/public/' . $announcement->name . 'advertising/advertising.pdf'));
+            rmdir(storage_path('app/public/' . $announcement->name . 'advertising'));
+        }
+        if (storage_path('app/public/' . $announcement->name . 'cover/cover.jpg')) {
+            unlink(storage_path('app/public/' . $announcement->name . 'cover/cover.jpg'));
+            rmdir(storage_path('app/public/' . $announcement->name . 'cover'));
+        }
+        else{
+            unlink(storage_path('app/public/' . $announcement->name . 'cover/cover.png'));
+            rmdir(storage_path('app/public/' . $announcement->name . 'cover'));
+        }
 
         calendar_announcement::where('announcements_id', '=', $announcement->id)->delete();
         announcement_assestment_criteria::where('announcements_id', '=', $announcement->id)->delete();
         announcements_document_supporting::where('announcements_id', '=', $announcement->id)->delete();
 
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
-        }
-
-        rmdir('storage' . '/' . $announcement . 'advertising' . '/*');
         $announcement->delete();
         return redirect()->route("{$this->routeName}index")->with('success', 'Convocatoria eliminada con éxito');
     }
