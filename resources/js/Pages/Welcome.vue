@@ -10,6 +10,7 @@ import {
   mdiGithub,
   mdiEye,
   mdiTrashCan,
+
 } from "@mdi/js";
 import TableSampleClients from "@/components/TableSampleClients.vue";
 import CardBox from "@/components/CardBox.vue";
@@ -56,23 +57,39 @@ export default {
   },
   methods: {
     viewImageForAll() {
-      this.records.data.forEach(item => {
-        this.viewImage(item.name);
+      this.records.data.forEach(async item => {
+
+        var response = await this.viewImage(item.name, "png");
+
+        if (response) {
+          console.log("succ")
+        } {
+          await this.viewImage(item.name, "jpg");
+        }
       });
     },
-    viewImage(announcement) {
-      axios({
-        url: '/view-image/' + ("cover.png") + '/' + announcement,
-        method: 'GET',
-        responseType: 'blob',
-      }).then(response => {
-        const blob = new Blob([response.data], { type: response.headers['content-type'] });
-        const link = URL.createObjectURL(blob);
+    async viewImage(announcement, format) {
 
-        this.imageUrls[announcement] = link;
+      var catched = true;
 
-        console.log('sdf')
-      });
+      try {
+        const response = await axios({
+          url: '/view-image/' + ("cover." + format) + '/' + announcement,
+          method: 'GET',
+          responseType: 'blob',
+        }).then(response => {
+          const blob = new Blob([response.data], { type: response.headers['content-type'] });
+          const link = URL.createObjectURL(blob);
+
+          this.imageUrls[announcement] = link;
+        })
+
+        console.log(response)
+      } catch (error) {
+
+        return false;
+      }
+
     },
     getDate(date_start, date_end) {
       const current = new Date();
@@ -82,7 +99,6 @@ export default {
 
       const date = `${current.getFullYear()}-0${current.getMonth() + 1}-${day}`;
 
-      console.log(date)
 
       if (date >= date_start && date <= date_end) {
         return true
@@ -156,27 +172,23 @@ export default {
                   <a v-if="
                     getDate(item.calendars[0].date_start, item.calendars[0].date_end)
                   ">
-                    <PillTag color="success" label="Inscripcion de laboratorios" :small="false" :outline="false"
-                      :icon="pillsIcon" />
+                    <PillTag color="success" label="Inscripcion de laboratorios" :small="false" :outline="false" />
                   </a>
                   <a v-else-if="
                     getDate(item.calendars[1].date_start, item.calendars[1].date_end)
                   ">
-                    <PillTag color="success" label="Inscripcion de laboratorios" :small="false" :outline="false"
-                      :icon="pillsIcon" />
+                    <PillTag color="success" label="Inscripcion de laboratorios" :small="false" :outline="false" />
                   </a>
                   <a v-else-if="
                     getDate(item.calendars[2].date_start, item.calendars[2].date_end)
                   ">
-                    <PillTag color="warning" label="Laboratorios en evaluacion" :small="false" :outline="false"
-                      :icon="pillsIcon" />
+                    <PillTag color="warning" label="Laboratorios en evaluacion" :small="false" :outline="false" />
                   </a>
                   <a v-else>
-                    <PillTag color="danger" label="Convocatoria Cerrada" :small="false" :outline="false"
-                      :icon="pillsIcon" />
+                    <PillTag color="danger" label="Convocatoria Cerrada" :small="false" :outline="false" />
                   </a>
                 </div>
-                <h2 class="mt-2 mb-2 font-bold">{{ viewImage(item.name) }}</h2>
+                <h2 class="mt-2 mb-2 font-bold">{{ item.name }}</h2>
                 <p class="text-sm">{{ item.description }}</p>
                 <div class="mt-3 flex items-center">
                   <span class="text-sm font-semibold">Fecha</span>&nbsp;<span class="font-bold text-xl">{{
@@ -195,10 +207,10 @@ export default {
                 <div class="flex flex-row space-x-2">
                   <a v-if="getDate(item.calendars[1].date_start, item.calendars[1].date_end) || getDate(item.calendars[0].date_start, item.calendars[0].date_end)"
                     :href="route('proposals.show', item.id)">
-                    <PillTag color="success" label="Inscribirse" :small="false" :outline="false" :icon="pillsIcon" />
+                    <PillTag color="success" label="Inscribirse" :small="false" :outline="false" />
                   </a>
                   <div class="cursor-pointer" @click="getPdf('advertising', item.name)">
-                    <PillTag color="info" label="Descargar" :small="false" :outline="false" :icon="pillsIcon" />
+                    <PillTag color="info" label="Descargar" :small="false" :outline="false" />
                   </div>
                 </div>
               </div>
